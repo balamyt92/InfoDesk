@@ -45,9 +45,10 @@ apt upgrade -y
 info "Install additional software"
 apt install -y git php-curl php-cli php-intl php-mysql php-gd php-fpm php-xml php-mbstring php-zip nginx mysql-server 
 
-#info "Configure MySQL"
+info "Configure MySQL"
 #sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
-#echo "Done!"
+sed -i '/\[mysqld\]/a character-set-server=utf8\ncollation-server=utf8_general_ci' /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "Done!"
 
 info "Configure PHP-FPM"
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf

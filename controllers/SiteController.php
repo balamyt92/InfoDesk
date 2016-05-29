@@ -15,8 +15,7 @@ class SiteController extends Controller
      * 
      * @return string
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         return $this->render('index');
     }
 
@@ -25,8 +24,15 @@ class SiteController extends Controller
      * 
      * @return string
      */
-    public function actionImport()
-    {
+    public function actionImport() {
         return $this->render('import');
+    }
+
+    /**
+     * Рендер страницы работы с таблицей фирм
+     * @return string
+     */
+    public function actionFirms() {
+        return $this->render('firms');
     }
 }
