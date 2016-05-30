@@ -54,6 +54,7 @@ info "Configure PHP-FPM"
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
+sed -i 's/memory_limit = 128MB/memory_limit = -1/g' /etc/php/7.0/fpm/php.ini
 echo "Done!"
 
 info "Configure NGINX"

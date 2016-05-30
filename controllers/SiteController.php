@@ -18,21 +18,4 @@ class SiteController extends Controller
     public function actionIndex() {
         return $this->render('index');
     }
-
-    /**
-     * Рендер страницы импорта
-     * 
-     * @return string
-     */
-    public function actionImport() {
-        return $this->render('import');
-    }
-
-    /**
-     * Рендер страницы работы с таблицей фирм
-     * @return string
-     */
-    public function actionFirms() {
-        return $this->render('firms');
-    }
 }

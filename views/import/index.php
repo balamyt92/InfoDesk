@@ -41,7 +41,7 @@ use yii\jui\ProgressBar;
 							if(is_readable($path . $file)) {
 								echo '<span class="label label-success">Доступен</span>';
 							} else {
-								echo '<<span class="label label-danger">Не доступен</span>';
+								echo '<span class="label label-danger">Не доступен</span>';
 							} 
 							?>
 	    				</td>

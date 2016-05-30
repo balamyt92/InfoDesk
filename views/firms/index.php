@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'Address:ntext',
             'Phone',
 //            'Comment:ntext',
-            'Enabled',
+//            'Enabled',
 //            'ActivityType:ntext',
 //            'OrganizationType',
 //            'District',
