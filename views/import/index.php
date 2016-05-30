@@ -63,7 +63,7 @@ use yii\jui\ProgressBar;
           <?php
 			echo ProgressBar::widget([
 			    'clientOptions' => [
-			        'value' => 27,
+			        'value' => 0,
 			    ],
 			]);          
           ?>
