@@ -71,7 +71,8 @@ class ImportController extends \yii\web\Controller
     public function actionImportStatus($last_id)
     {
         $status = LegacyImportTable::find()->where('id>:id', [':id' => $last_id])->all();
-        return serialize($status);
+        //return serialize($status);
+        return $last_id;
     }
 
 }

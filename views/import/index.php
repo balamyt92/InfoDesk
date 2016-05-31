@@ -3,6 +3,22 @@
 
 use yii\helpers\Html;
 use yii\jui\ProgressBar;
+
+// Запуск проверки статауса импорта при переходе на страницу
+$script = <<< JS
+$(document).ready(function() {
+	$.ajax({
+	  method: "GET",
+	  url: "index.php?r=import%2Fimport-status",
+	  data: { last_id: id}
+	})
+	  .done(function( data ) {
+	    alert( "Data Saved: " + data );
+	    id++;
+	  });
+});
+JS;
+$this->registerJs($script);
 ?>
 <h1>Импорт даных из старой базы</h1>
 <div class="col-md-6">
@@ -68,10 +84,10 @@ use yii\jui\ProgressBar;
 			]);          
           ?>
 			<br>
-			<button type="button" class="btn btn-primary" onclick="alert('Yesss!')">Запуск</button>
-
+			<button type="button" class="btn btn-primary" onclick="importStatus()">Запуск</button>
+			<span #id="import-status" class="label label-warning">Не запущенн</span>
           	<br>
-	      	<div class="form-group">
+	      	<div class="form-group col-md-12">
 			  <label for="comment">Лог процесса:</label>
 			  <textarea class="form-control" rows="20" id="comment" readonly>
 			  	
