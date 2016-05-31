@@ -20,8 +20,8 @@ issue-NUBER - ветка для конкретного issue
 1. Клонируем репозиторий и копируем файл настроек
 
     ```bash
-    git clone https://github.com/balamyt92/yii2-simple.git
-    cd yii2-simple/vagrant/config
+    git clone https://github.com/balamyt92/InfoDesk.git
+    cd InfoDesk/vagrant/config
     cp vagrant-local.example.yml vagrant-local.yml
     ```
 
