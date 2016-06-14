@@ -16,16 +16,16 @@ class LegacyImportController extends Controller
     }
 
     /**
-    	Инициализация параметров импорта
-    */
+     *	Инициализация параметров импорта
+     */
     private function initImport()
     {
     	$this->config = require(__DIR__ . '/../config/legacy-import.php');
     }
 
     /**
-    	Запуск импорта
-    */
+     *	Запуск импорта
+     */
     private function runImport()
     {
     	$this->log("Запуск импорта");
@@ -41,11 +41,11 @@ class LegacyImportController extends Controller
     }
 
     /**
-    	Функция логирования
-    	@param status передает статут выполнения процесса передаваемы с собощением
-    		   run - импорт запущен, err - ошибка импорта, wrn - предупреждение
-    		   fin - импорт завершон
-    */
+     * Функция логирования
+     * @param status string передает статут выполнения процесса передаваемы с собощением
+     * run - импорт запущен, err - ошибка импорта, wrn - предупреждение
+     * fin - импорт завершон
+     */
     private function log($message, $status = 'run')
     {
 		echo $status, ' : ', $message, PHP_EOL;
@@ -83,13 +83,14 @@ class LegacyImportController extends Controller
     }
 
     /**
-    	Функция заливающая данные в базу
-    	Функция ожидает что в базе созданы таблица в которых порядок столбцов соответсвует порядку столбцов в передаваемом @param data
-    */
+     * Функция заливающая данные в базу
+     * Функция ожидает что в базе созданы таблица в которых порядок столбцов соответсвует порядку столбцов в передаваемом @param data
+     */
+
     private function loadToBase($table, $data)
     {
     	$model = new $table();
-    	echo var_dump($model);
+    	//echo var_dump($model);
     	// while (count($data) < 100) {
     	// 	$model->load
     	// }
