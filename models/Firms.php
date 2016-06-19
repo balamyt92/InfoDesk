@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "firms".
@@ -23,7 +24,7 @@ use Yii;
  * @property string $Identifier
  * @property integer $Priority
  */
-class Firms extends \yii\db\ActiveRecord
+class Firms extends ActiveRecord implements iLegacyImport
 {
     /**
      * @inheritdoc
@@ -70,5 +71,42 @@ class Firms extends \yii\db\ActiveRecord
             'Identifier' => 'Identifier',
             'Priority' => 'Priority',
         ];
+    }
+
+    /**
+     * @param array $data данные для записи
+     * @return string возвращает массив ошибок
+     */
+    public function loadData($data)
+    {
+        // TODO: запилить транзакци
+        return self::getDb()->transaction(
+            function ($db) use ($data) {
+                while($data) {
+                    $firm = array_shift($data);
+                    self::setIsNewRecord(true);
+                    $this->id = $firm[0];
+                    $this->Name = $firm[1];
+                    $this->Address = $firm[2];
+                    $this->Phone = $firm[3];
+                    $this->Comment = $firm[4];
+                    $this->Enabled = $firm[5];
+                    $this->ActivityType = $firm[6];
+                    $this->OrganizationType = $firm[7];
+                    $this->District = $firm[8];
+                    $this->Fax = $firm[9];
+                    $this->Email = $firm[10];
+                    $this->URL = $firm[11];
+                    $this->OperatingMode = $firm[12];
+                    $this->Identifier = $firm[13];
+                    $this->Priority = $firm[14];
+                    if(!$this->save()) {
+                        var_dump($this->getFirstErrors());
+                        var_dump($firm);
+                    }
+                }
+                return $this->errors;
+            }
+        );
     }
 }

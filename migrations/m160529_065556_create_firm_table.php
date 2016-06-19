@@ -14,20 +14,20 @@ class m160529_065556_create_firm_table extends Migration
     {
         $this->createTable('firms', [
             'id' => $this->primaryKey(),
-            'Name' => $this->char(75)->notNull(),
+            'Name' => $this->char(200)->notNull(),
             'Address' => $this->text(),
-            'Phone' => $this->char(200),
+            'Phone' => $this->char(200)->defaultValue("нет"),
             'Comment' => $this->text(),
-            'Enabled' => $this->boolean()->notNull(),
-            'ActivityType' => $this->text()->notNull(),
-            'OrganizationType' => $this->char(100),
-            'District' => $this->char(200),
-            'Fax' => $this->char(100),
-            'Email' => $this->char(100),
-            'URL' => $this->char(100),
+            'Enabled' => $this->boolean()->defaultValue(1),
+            'ActivityType' => $this->text(),
+            'OrganizationType' => $this->char(100)->defaultValue(""),
+            'District' => $this->char(200)->defaultValue(""),
+            'Fax' => $this->char(100)->defaultValue(""),
+            'Email' => $this->char(100)->defaultValue(""),
+            'URL' => $this->char(100)->defaultValue(""),
             'OperatingMode' => $this->text(),
-            'Identifier' => $this->char(100)->notNull(),
-            'Priority' => $this->integer(11)->notNull(),
+            'Identifier' => $this->char(100)->defaultValue(""),
+            'Priority' => $this->integer(11)->defaultValue(100),
         ]);
     }
 

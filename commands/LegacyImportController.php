@@ -33,18 +33,21 @@ class LegacyImportController extends Controller
     	$files = $this->config["files"];
     	foreach ($files as $file) {
     		$data = $this->parseFile(__DIR__ . '/../import/' . $file[0], $file[1]);
-    		$tablename = substr($file[0], 0, count($file[0]) - 5);
-    		$this->loadToBase($tablename, $data);
+    		$tableName = substr($file[0], 0, count($file[0]) - 5);
+    		$this->loadToBase($tableName, $data);
     	}
 
-    	$this->log("Импорт завершон", "fin");
+    	$this->log("Импорт завершён", "fin");
     }
 
     /**
      * Функция логирования
-     * @param status string передает статут выполнения процесса передаваемы с собощением
-     * run - импорт запущен, err - ошибка импорта, wrn - предупреждение
-     * fin - импорт завершон
+     * @param $message
+     * @param string $status передает статут выполнения процесса передаваемы с собощением
+     *  run - импорт запущен,
+     *  err - ошибка импорта,
+     *  wrn - предупреждение,
+     *  fin - импорт завершон
      */
     private function log($message, $status = 'run')
     {
@@ -78,21 +81,56 @@ class LegacyImportController extends Controller
             }
         }
         fclose($handle);
-        unlink($filename . '.new');
+        //unlink($filename . '.new');
         return $result;
     }
 
     /**
      * Функция заливающая данные в базу
-     * Функция ожидает что в базе созданы таблица в которых порядок столбцов соответсвует порядку столбцов в передаваемом @param data
+     * Функция ожидает что в базе созданы таблица в которых порядок столбцов
+     * соответсвует порядку столбцов в передаваемом массвие $data
+     * @param string $table имя таблицы
+     * @param array $data данные на запись в таблицу
+     * @return boolean возвращает false если произошла ошибка импорта
      */
 
     private function loadToBase($table, $data)
     {
-    	$model = new $table();
-    	//echo var_dump($model);
-    	// while (count($data) < 100) {
-    	// 	$model->load
-    	// }
+        $model = null;
+
+        switch ($table) {
+            case "Firms":
+                $model = new Firms();
+                break;
+            case "Services":
+                //$model = new Service();
+                //break;
+                // TODO: дописать все ожидаемые входные файлы
+        }
+
+        if($model !== null) {
+            $this->log("Очистка таблицы " . $table);
+
+            if(!($model::deleteAll() >= 0)) {
+                $this->log('Ошибка очисти таблицы ' . $table . '. Ипорт Прерван', 'err');
+                return false;
+            }
+
+            $this->log('Заполнение таблицы ' . $table . ' (кол-во записей ' . count($data) . ')');
+
+            while ($data) {
+                $tmp = array_splice($data, 0, 1000);
+                $msg = $model->loadData($tmp);
+                if(count($msg) > 0) {
+                    $this->log(serialize($msg), 'wrn');
+                }
+
+                //var_dump($model::find()->all());
+            }
+        } else {
+            $this->log("Ошибка загрузки в базу, не правильное имя таблицы - " . $table, 'wrn');
+        }
+
+        return true;
     }
 }
