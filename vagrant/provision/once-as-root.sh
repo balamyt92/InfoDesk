@@ -23,9 +23,9 @@ mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 
-# info "Configure locales"
-# update-locale LC_ALL="C"
-# dpkg-reconfigure locales
+info "Configure locales"
+echo "ru_RU.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
 
 info "Configure timezone"
 echo ${timezone} | tee /etc/timezone
