@@ -119,7 +119,7 @@ class LegacyImportController extends Controller
             $this->log('Заполнение таблицы ' . $table . ' (кол-во записей ' . count($data) . ')');
 
             while ($data) {
-                $tmp = array_splice($data, 0, 1000);
+                $tmp = array_splice($data, 0, 100);
                 $msg = $model->loadData($tmp);
                 if(count($msg) > 0) {
                     $this->log(serialize($msg), 'wrn');

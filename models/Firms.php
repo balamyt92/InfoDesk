@@ -82,6 +82,7 @@ class Firms extends ActiveRecord implements iLegacyImport
         // TODO: запилить транзакци
         return self::getDb()->transaction(
             function ($db) use ($data) {
+                $msg = array();
                 while($data) {
                     $firm = array_shift($data);
                     self::setIsNewRecord(true);
@@ -101,11 +102,12 @@ class Firms extends ActiveRecord implements iLegacyImport
                     $this->Identifier = $firm[13];
                     $this->Priority = $firm[14];
                     if(!$this->save()) {
-                        var_dump($this->getFirstErrors());
-                        var_dump($firm);
+                        // var_dump($this->getFirstErrors());
+                        // var_dump($firm);
+                        array_push($msg, [$this->getFirstErrors(), $firm]);
                     }
                 }
-                return $this->errors;
+                return $msg;
             }
         );
     }
