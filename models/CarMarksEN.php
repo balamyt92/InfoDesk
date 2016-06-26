@@ -1,0 +1,78 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "CarMarksEN".
+ *
+ * @property integer $id
+ * @property string $Name
+ * @property integer $ID_Type
+ *
+ * @property MarkTypes $iDType
+ */
+class CarMarksEN extends \yii\db\ActiveRecord implements iLegacyImport
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'CarMarksEN';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['Name', 'ID_Type'], 'required'],
+            [['ID_Type'], 'integer'],
+            [['Name'], 'string', 'max' => 255],
+            [['ID_Type'], 'exist', 'skipOnError' => true, 'targetClass' => MarkTypes::className(), 'targetAttribute' => ['ID_Type' => 'id']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'Name' => 'Name',
+            'ID_Type' => 'Id  Type',
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIDType()
+    {
+        return $this->hasOne(MarkTypes::className(), ['id' => 'ID_Type']);
+    }
+
+    public function loadData($data)
+    {
+        return self::getDb()->transaction(
+            function ($db) use ($data) {
+                $msg = array();
+                while($data) {
+                    $mark = array_shift($data);
+                    self::setIsNewRecord(true);
+                    $this->id = $mark[0];
+                    $this->Name = $mark[1];
+                    $this->ID_Type = $mark[2];
+                    if(!$this->save()) {
+                        array_push($msg, [$this->getFirstErrors(), $mark]);
+                    }
+                }
+                return $msg;
+            }
+        );
+    }
+}

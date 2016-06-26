@@ -3,9 +3,10 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "firms".
+ * This is the model class for table "Firms".
  *
  * @property integer $id
  * @property string $Name
@@ -23,14 +24,14 @@ use Yii;
  * @property string $Identifier
  * @property integer $Priority
  */
-class Firms extends \yii\db\ActiveRecord
+class Firms extends ActiveRecord implements iLegacyImport
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'firms';
+        return 'Firms';
     }
 
     /**
@@ -39,7 +40,7 @@ class Firms extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['Name', 'Enabled', 'ActivityType', 'Identifier', 'Priority'], 'required'],
+            [['Name', 'Enabled', 'Identifier', 'Priority'], 'required'],
             [['Address', 'Comment', 'ActivityType', 'OperatingMode'], 'string'],
             [['Enabled', 'Priority'], 'integer'],
             [['Name'], 'string', 'max' => 75],
@@ -70,5 +71,41 @@ class Firms extends \yii\db\ActiveRecord
             'Identifier' => 'Identifier',
             'Priority' => 'Priority',
         ];
+    }
+
+    /**
+     * @param array $data данные для записи
+     * @return string возвращает массив ошибок
+     */
+    public function loadData($data)
+    {
+        return self::getDb()->transaction(
+            function ($db) use ($data) {
+                $msg = array();
+                while($data) {
+                    $firm = array_shift($data);
+                    self::setIsNewRecord(true);
+                    $this->id = $firm[0];
+                    $this->Name = $firm[1];
+                    $this->Address = $firm[2];
+                    $this->Phone = $firm[3];
+                    $this->Comment = $firm[4];
+                    $this->Enabled = $firm[5];
+                    $this->ActivityType = $firm[6];
+                    $this->OrganizationType = $firm[7];
+                    $this->District = $firm[8];
+                    $this->Fax = $firm[9];
+                    $this->Email = $firm[10];
+                    $this->URL = $firm[11];
+                    $this->OperatingMode = $firm[12];
+                    $this->Identifier = $firm[13];
+                    $this->Priority = $firm[14];
+                    if(!$this->save()) {
+                        array_push($msg, [$this->getFirstErrors(), $firm]);
+                    }
+                }
+                return $msg;
+            }
+        );
     }
 }

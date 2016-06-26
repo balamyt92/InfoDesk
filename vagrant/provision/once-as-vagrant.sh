@@ -35,7 +35,7 @@ composer --no-progress --prefer-dist install
 # ./init --env=Development --overwrite=y
 
 # info "Apply migrations"
-# ./yii migrate <<< "yes"
+./yii migrate <<< "yes"
 
 info "Create bash-alias for vagrant user"
 echo 'alias cc="/home/vagrant/.config/composer/vendor/bin/codecept"' | tee /home/vagrant/.bash_aliases
