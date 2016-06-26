@@ -12,7 +12,7 @@ class m160529_065556_create_firm_table extends Migration
      */
     public function up()
     {
-        $this->createTable('firms', [
+        $this->createTable('Firms', [
             'id' => $this->primaryKey(),
             'Name' => $this->char(200)->notNull(),
             'Address' => $this->text(),
@@ -36,6 +36,6 @@ class m160529_065556_create_firm_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('firms');
+        $this->dropTable('Firms');
     }
 }

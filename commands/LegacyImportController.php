@@ -2,6 +2,9 @@
 
 namespace app\commands;
 
+use app\models\CarENDetailNames;
+use app\models\CarENLinkedDetailNames;
+use app\models\ServicePresence;
 use yii\console\Controller;
 use app\models\Firms;
 use app\models\Services;
@@ -116,6 +119,15 @@ class LegacyImportController extends Controller
                     if($a[3] == $b[3]) return 0;
                     return ($a[3] < $b[3]) ?  -1 : 1;
                 });
+                break;
+            case "ServicePresence":
+                $model = new ServicePresence();
+                break;
+            case "CarENDetailNames":
+                $model = new CarENDetailNames();
+                break;
+            case "CarENLinkedDetailNames":
+                $model = new CarENLinkedDetailNames();
                 break;
                 // TODO: дописать все ожидаемые входные файлы
         }

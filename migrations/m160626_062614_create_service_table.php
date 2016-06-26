@@ -12,13 +12,13 @@ class m160626_062614_create_service_table extends Migration
      */
     public function up()
     {
-        $this->createTable('services', [
+        $this->createTable('Services', [
             'id' => $this->primaryKey(),
             'Name' => $this->string()->notNull(),
             'ID_Parent' => $this->integer(),
         ]);
-        $this->addForeignKey("service_to_service", "services", "ID_Parent",
-                             "services", "id", "RESTRICT", "RESTRICT");
+        $this->addForeignKey("service_to_service", "Services", "ID_Parent",
+                             "Services", "id", "RESTRICT", "RESTRICT");
     }
 
     /**
@@ -26,6 +26,6 @@ class m160626_062614_create_service_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('services');
+        $this->dropTable('Services');
     }
 }

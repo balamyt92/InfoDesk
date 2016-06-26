@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "services".
+ * This is the model class for table "Services".
  *
  * @property integer $id
  * @property string $Name
@@ -21,7 +21,7 @@ class Services extends \yii\db\ActiveRecord implements iLegacyImport
      */
     public static function tableName()
     {
-        return 'services';
+        return 'Services';
     }
 
     /**

@@ -6,7 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "firms".
+ * This is the model class for table "Firms".
  *
  * @property integer $id
  * @property string $Name
@@ -31,7 +31,7 @@ class Firms extends ActiveRecord implements iLegacyImport
      */
     public static function tableName()
     {
-        return 'firms';
+        return 'Firms';
     }
 
     /**
@@ -101,8 +101,6 @@ class Firms extends ActiveRecord implements iLegacyImport
                     $this->Identifier = $firm[13];
                     $this->Priority = $firm[14];
                     if(!$this->save()) {
-                        // var_dump($this->getFirstErrors());
-                        // var_dump($firm);
                         array_push($msg, [$this->getFirstErrors(), $firm]);
                     }
                 }
