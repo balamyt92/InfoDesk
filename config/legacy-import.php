@@ -21,7 +21,7 @@ return [
 //		['CarEngineModelGroupsEN.txt', 3],
 //		['CarEngineAndModelCorrespondencesEN.txt', 3],
 //		['CarEngineAndBodyCorrespondencesEN.txt', 4],
-		['CatalogNumbersEN.txt', 3],
-//		['CarPresenceEN.txt', ],
+//		['CatalogNumbersEN.txt', 3],
+		['CarPresenceEN.txt', 11],
 	],
 ];

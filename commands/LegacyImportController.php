@@ -14,11 +14,14 @@ use app\models\CarMarkGroupsEN;
 use app\models\CarMarksEN;
 use app\models\CarModelGroupsEN;
 use app\models\CarModelsEN;
+use app\models\CarPresenceEN;
 use app\models\CatalogNumbersEN;
 use app\models\ServicePresence;
+use MongoDB\Driver\Exception\ExecutionTimeoutException;
 use yii\console\Controller;
 use app\models\Firms;
 use app\models\Services;
+use yii\db\IntegrityException;
 
 class LegacyImportController extends Controller
 {
@@ -173,7 +176,11 @@ class LegacyImportController extends Controller
             case "CatalogNumbersEN":
                 $model = new CatalogNumbersEN();
                 break;
-                // TODO: дописать все ожидаемые входные файлы
+            case "CarPresenceEN":
+                $model = new CarPresenceEN();
+                break;
+
+            // TODO: дописать все ожидаемые входные файлы
         }
 
         if($model !== null) {
@@ -190,7 +197,12 @@ class LegacyImportController extends Controller
 
             while ($data) {
                 $tmp = array_splice($data, 0, 100);
-                $msg = $model->loadData($tmp);
+                try {
+                    $msg = $model->loadData($tmp);
+                }
+                catch (IntegrityException $e) {
+                    $this->log($e, 'err');
+                }
                 if(count($msg) > 0) {
                     $this->log($msg, 'wrn');
                 }
