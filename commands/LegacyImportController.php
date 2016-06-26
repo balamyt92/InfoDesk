@@ -4,6 +4,7 @@ namespace app\commands;
 
 use yii\console\Controller;
 use app\models\Firms;
+use app\models\Services;
 
 class LegacyImportController extends Controller
 {
@@ -108,16 +109,24 @@ class LegacyImportController extends Controller
                 $model = new Firms();
                 break;
             case "Services":
-                //$model = new Service();
-                //break;
+                $model = new Services();
+                // сортируем по ID_Parent для устранения ошибки внешнего ключа
+                // [ID_Parent] => Id  Parent is invalid.
+                usort($data, function ($a , $b) {
+                    if($a[3] == $b[3]) return 0;
+                    return ($a[3] < $b[3]) ?  -1 : 1;
+                });
+                break;
                 // TODO: дописать все ожидаемые входные файлы
         }
 
         if($model !== null) {
+
+            \Yii::$app->db->createCommand("SET foreign_key_checks = 0;")->execute();
             $this->log("Очистка таблицы " . $table);
 
             if(!($model::deleteAll() >= 0)) {
-                $this->log('Ошибка очисти таблицы ' . $table . '. Ипорт Прерван', 'err');
+                $this->log('Ошибка очисти таблицы ' . $table . '. Импорт прерван', 'err');
                 return false;
             }
 
@@ -132,6 +141,9 @@ class LegacyImportController extends Controller
             }
 
             $this->log('Таблица ' . $table . ' импортирована (успешно записано строк ' . $model->find()->count() . ')');
+
+            // если были отключены внешние ключи, включим их
+            \Yii::$app->db->createCommand("SET foreign_key_checks = 1;")->execute();
         }
         else {
             $this->log("Ошибка загрузки в базу, не правильное имя таблицы - " . $table, 'wrn');

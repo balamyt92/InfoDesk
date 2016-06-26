@@ -7,7 +7,7 @@
 return [
 	'files' => [
 		['Firms.txt', 15],
-		// ['Services.txt', ],
+		['Services.txt', 4],
 		// ['ServicePresence.txt', ],
 		// ['CarENDetailNames.txt', ],
 		// ['CarENLinkedDetailNames.txt', ],

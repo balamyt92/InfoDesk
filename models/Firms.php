@@ -79,7 +79,6 @@ class Firms extends ActiveRecord implements iLegacyImport
      */
     public function loadData($data)
     {
-        // TODO: запилить транзакци
         return self::getDb()->transaction(
             function ($db) use ($data) {
                 $msg = array();
