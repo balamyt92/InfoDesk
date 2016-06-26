@@ -1,7 +1,7 @@
 <?php
 /*
 	Файл настроек ипорта из старой базы данных
-	files - определяет список и порядок файлов для импорта
+	files - определяет список и порядок файлов для импорта, а так же ожидаемое число столбцов
 */
 
 return [
@@ -17,8 +17,8 @@ return [
 		['CarModelGroupsEN.txt', 3],
 		['CarBodyModelsEN.txt', 6],
 		['CarBodyModelGroupsEN.txt', 4],
-//		['CarEngineModelsEN.txt',    ],
-//		['CarEngineModelGroupsEN.txt',  ],
+		['CarEngineModelsEN.txt', 5],
+		['CarEngineModelGroupsEN.txt', 3],
 //		['CarEngineAndModelCorrespondencesEN.txt',  ],
 //		['CarEngineAndBodyCorrespondencesEN.txt', ],
 //		['CatalogNumbersEN.txt', ],
