@@ -4,6 +4,7 @@ namespace app\commands;
 
 use app\models\CarENDetailNames;
 use app\models\CarENLinkedDetailNames;
+use app\models\CarMarkGroupsEN;
 use app\models\CarMarksEN;
 use app\models\ServicePresence;
 use yii\console\Controller;
@@ -132,6 +133,10 @@ class LegacyImportController extends Controller
                 break;
             case "CarMarksEN":
                 $model = new CarMarksEN();
+                break;
+            case "CarMarkGroupsEN":
+                $model = new CarMarkGroupsEN();
+                break;
                 // TODO: дописать все ожидаемые входные файлы
         }
 
@@ -153,6 +158,7 @@ class LegacyImportController extends Controller
                 if(count($msg) > 0) {
                     $this->log($msg, 'wrn');
                 }
+                $this->log("Осталось строк " . count($data));
             }
 
             $this->log('Таблица ' . $table . ' импортирована (успешно записано строк ' . $model->find()->count() . ')');
