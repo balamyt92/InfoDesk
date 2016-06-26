@@ -17,10 +17,11 @@ class m160626_110154_create_presence_table extends Migration
             'ID_Model' => $this->integer()->notNull(),
             'ID_Name' => $this->integer()->notNull(),
             'ID_Firm' => $this->integer()->notNull(),
-            'CarYear' => $this->string(),
+            'CarYear' => $this->string(20),
             'ID_Body' => $this->integer()->notNull(),
             'ID_Engine' => $this->integer()->notNull(),
             'Comment' => $this->text(),
+            'Hash_Comment' => $this->string(),
             'TechNumber' => $this->text(),
             'Catalog_Number' => $this->string(),
             'Cost' => $this->decimal(19,4),
@@ -28,7 +29,7 @@ class m160626_110154_create_presence_table extends Migration
 
         $this->addPrimaryKey('presence_pk', 'CarPresenceEN',
             ['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear',
-             'ID_Body', 'ID_Engine', 'Catalog_Number', 'TechNumber(100)', 'Comment(255)']);
+             'ID_Body', 'ID_Engine', 'Catalog_Number', 'TechNumber(100)', 'Hash_Comment(255)']);
 
         $this->addForeignKey('presence_to_mark', 'CarPresenceEN', 'ID_Mark',
                              'CarMarksEN', 'id', "RESTRICT", "NO ACTION");

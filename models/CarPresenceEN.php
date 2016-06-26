@@ -15,6 +15,7 @@ use Yii;
  * @property integer $ID_Body
  * @property integer $ID_Engine
  * @property string $Comment
+ * @property string $Hash_Comment
  * @property string $TechNumber
  * @property string $Catalog_Number
  * @property string $Cost
@@ -42,11 +43,12 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     public function rules()
     {
         return [
-            [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear', 'ID_Body', 'ID_Engine', 'Comment', 'TechNumber', 'Catalog_Number'], 'required'],
+            [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear', 'ID_Body', 'ID_Engine', 'Hash_Comment', 'TechNumber', 'Catalog_Number'], 'required'],
             [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'ID_Body', 'ID_Engine'], 'integer'],
             [['Comment', 'TechNumber'], 'string'],
             [['Cost'], 'number'],
-            [['CarYear', 'Catalog_Number'], 'string', 'max' => 255],
+            [['CarYear'], 'string', 'max' => 20],
+            [['Hash_Comment', 'Catalog_Number'], 'string', 'max' => 255],
             [['ID_Body'], 'exist', 'skipOnError' => true, 'targetClass' => CarBodyModelsEN::className(), 'targetAttribute' => ['ID_Body' => 'id']],
             [['ID_Engine'], 'exist', 'skipOnError' => true, 'targetClass' => CarEngineModelsEN::className(), 'targetAttribute' => ['ID_Engine' => 'id']],
             [['ID_Firm'], 'exist', 'skipOnError' => true, 'targetClass' => Firms::className(), 'targetAttribute' => ['ID_Firm' => 'id']],
@@ -70,6 +72,7 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
             'ID_Body' => 'Id  Body',
             'ID_Engine' => 'Id  Engine',
             'Comment' => 'Comment',
+            'Hash_Comment' => 'Hash  Comment',
             'TechNumber' => 'Tech Number',
             'Catalog_Number' => 'Catalog  Number',
             'Cost' => 'Cost',
@@ -140,8 +143,18 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
                     $this->ID_Body = $line[5];
                     $this->ID_Engine = $line[6];
                     $this->Comment = $line[7];
-                    $this->TechNumber = $line[8];
-                    $this->Catalog_Number = $line[9];
+                    $this->Hash_Comment = md5($line[7]);
+
+                    if(empty($line[8]) || ($line[8] == ' ')) {
+                        $this->TechNumber = 'нет';
+                    } else {
+                        $this->TechNumber = $line[8];
+                    }
+                    if(empty($line[9]) || ($line[9] == ' ')) {
+                        $this->Catalog_Number = 'нет';
+                    } else {
+                        $this->Catalog_Number = $line[9];
+                    }
                     $this->Cost = floatval(substr($line[10], 0, count($line[10]) - 4));
                     if(!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $line]);

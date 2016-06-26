@@ -196,12 +196,13 @@ class LegacyImportController extends Controller
             $this->log('Заполнение таблицы ' . $table . ' (кол-во записей ' . count($data) . ')');
 
             while ($data) {
-                $tmp = array_splice($data, 0, 100);
+                $tmp = array_splice($data, 0, 1000);
                 try {
                     $msg = $model->loadData($tmp);
                 }
                 catch (IntegrityException $e) {
                     $this->log($e, 'err');
+                    $this->log($tmp, 'err');
                 }
                 if(count($msg) > 0) {
                     $this->log($msg, 'wrn');
