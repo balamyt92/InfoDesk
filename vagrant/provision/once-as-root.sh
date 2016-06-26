@@ -23,9 +23,9 @@ mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 
-# info "Configure locales"
-# update-locale LC_ALL="C"
-# dpkg-reconfigure locales
+info "Configure locales"
+echo "ru_RU.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
 
 info "Configure timezone"
 echo ${timezone} | tee /etc/timezone
@@ -54,6 +54,7 @@ info "Configure PHP-FPM"
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
+sed -i 's/memory_limit = 128MB/memory_limit = -1/g' /etc/php/7.0/fpm/php.ini
 echo "Done!"
 
 info "Configure NGINX"
