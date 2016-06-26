@@ -13,7 +13,7 @@ return [
 		['CarENLinkedDetailNames.txt', 2],
 		['CarMarksEN.txt', 3],
 		['CarMarkGroupsEN.txt', 2],
-//		['CarModelsEN.txt', ],
+		['CarModelsEN.txt', 5],
 //		['CarModelGroupsEN.txt', ],
 //		['CarBodyModelsEN.txt', ],
 //		['CarBodyModelGroupsEN.txt', ],

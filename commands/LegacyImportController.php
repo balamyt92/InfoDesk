@@ -6,6 +6,7 @@ use app\models\CarENDetailNames;
 use app\models\CarENLinkedDetailNames;
 use app\models\CarMarkGroupsEN;
 use app\models\CarMarksEN;
+use app\models\CarModelsEN;
 use app\models\ServicePresence;
 use yii\console\Controller;
 use app\models\Firms;
@@ -137,6 +138,10 @@ class LegacyImportController extends Controller
             case "CarMarkGroupsEN":
                 $model = new CarMarkGroupsEN();
                 break;
+            case "CarModelsEN":
+                $model = new CarModelsEN();
+                break;
+            
                 // TODO: дописать все ожидаемые входные файлы
         }
 
