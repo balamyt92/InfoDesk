@@ -40,7 +40,7 @@ class Firms extends ActiveRecord implements iLegacyImport
     public function rules()
     {
         return [
-            [['Name', 'Enabled', 'ActivityType', 'Identifier', 'Priority'], 'required'],
+            [['Name', 'Enabled', 'Identifier', 'Priority'], 'required'],
             [['Address', 'Comment', 'ActivityType', 'OperatingMode'], 'string'],
             [['Enabled', 'Priority'], 'integer'],
             [['Name'], 'string', 'max' => 75],

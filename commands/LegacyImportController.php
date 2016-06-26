@@ -51,7 +51,12 @@ class LegacyImportController extends Controller
      */
     private function log($message, $status = 'run')
     {
-		echo $status, ' : ', $message, PHP_EOL;
+        if(is_array($message)) {
+            echo $status, ':', PHP_EOL;
+            echo print_r($message, true);
+        } else {
+		    echo $status, ' : ', $message, PHP_EOL;
+        }
     }
 
     /**
@@ -122,12 +127,13 @@ class LegacyImportController extends Controller
                 $tmp = array_splice($data, 0, 100);
                 $msg = $model->loadData($tmp);
                 if(count($msg) > 0) {
-                    $this->log(serialize($msg), 'wrn');
+                    $this->log($msg, 'wrn');
                 }
-
-                //var_dump($model::find()->all());
             }
-        } else {
+
+            $this->log('Таблица ' . $table . ' импортирована (успешно записано строк ' . $model->find()->count() . ')');
+        }
+        else {
             $this->log("Ошибка загрузки в базу, не правильное имя таблицы - " . $table, 'wrn');
         }
 
