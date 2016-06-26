@@ -14,7 +14,7 @@ return [
 		['CarMarksEN.txt', 3],
 		['CarMarkGroupsEN.txt', 2],
 		['CarModelsEN.txt', 5],
-//		['CarModelGroupsEN.txt', ],
+		['CarModelGroupsEN.txt', 3],
 //		['CarBodyModelsEN.txt', ],
 //		['CarBodyModelGroupsEN.txt', ],
 //		['CarEngineModelsEN.txt',    ],
