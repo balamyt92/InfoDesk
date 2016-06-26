@@ -4,6 +4,7 @@ namespace app\commands;
 
 use app\models\CarENDetailNames;
 use app\models\CarENLinkedDetailNames;
+use app\models\CarMarksEN;
 use app\models\ServicePresence;
 use yii\console\Controller;
 use app\models\Firms;
@@ -129,6 +130,8 @@ class LegacyImportController extends Controller
             case "CarENLinkedDetailNames":
                 $model = new CarENLinkedDetailNames();
                 break;
+            case "CarMarksEN":
+                $model = new CarMarksEN();
                 // TODO: дописать все ожидаемые входные файлы
         }
 

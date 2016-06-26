@@ -11,7 +11,7 @@ return [
 		['ServicePresence.txt', 5],
 		['CarENDetailNames.txt', 2],
 		['CarENLinkedDetailNames.txt', 2],
-//		['CarMarksEN.txt', ],
+		['CarMarksEN.txt', 3],
 //		['CarMarkGroupsEN.txt', ],
 //		['CarModelsEN.txt', ],
 //		['CarModelGroupsEN.txt', ],
