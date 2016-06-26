@@ -2,6 +2,8 @@
 
 namespace app\commands;
 
+use app\models\CarBodyModelGroupsEN;
+use app\models\CarBodyModelsEN;
 use app\models\CarENDetailNames;
 use app\models\CarENLinkedDetailNames;
 use app\models\CarMarkGroupsEN;
@@ -144,6 +146,12 @@ class LegacyImportController extends Controller
                 break;
             case "CarModelGroupsEN":
                 $model = new CarModelGroupsEN();
+                break;
+            case "CarBodyModelsEN":
+                $model = new CarBodyModelsEN();
+                break;
+            case "CarBodyModelGroupsEN":
+                $model = new CarBodyModelGroupsEN();
                 break;
                 // TODO: дописать все ожидаемые входные файлы
         }
