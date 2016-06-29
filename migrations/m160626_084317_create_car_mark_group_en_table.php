@@ -8,13 +8,13 @@ use yii\db\Migration;
 class m160626_084317_create_car_mark_group_en_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarMarkGroupsEN', [
             'ID_Group' => $this->integer()->notNull(),
-            'ID_Mark' => $this->integer()->notNull(),
+            'ID_Mark'  => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('group_mark', 'CarMarkGroupsEN', ['ID_Group', 'ID_Mark']);
@@ -25,7 +25,7 @@ class m160626_084317_create_car_mark_group_en_table extends Migration
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

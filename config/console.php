@@ -1,21 +1,21 @@
 <?php
 
-Yii::setAlias('@tests', dirname(__DIR__) . '/tests/codeception');
-$params = require(__DIR__ . '/params.php');
-$db = require(__DIR__ . '/db.php');
+Yii::setAlias('@tests', dirname(__DIR__).'/tests/codeception');
+$params = require __DIR__.'/params.php';
+$db = require __DIR__.'/db.php';
 $config = [
-    'id' => 'InfoDesk',
-    'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'id'                  => 'InfoDesk',
+    'basePath'            => dirname(__DIR__),
+    'bootstrap'           => ['log'],
     'controllerNamespace' => 'app\commands',
-    'components' => [
+    'components'          => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'log' => [
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class'  => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
             ],
@@ -38,4 +38,5 @@ if (YII_ENV_DEV) {
         'class' => 'yii\gii\Module',
     ];
 }
+
 return $config;

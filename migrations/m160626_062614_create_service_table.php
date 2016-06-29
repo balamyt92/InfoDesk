@@ -8,21 +8,21 @@ use yii\db\Migration;
 class m160626_062614_create_service_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('Services', [
-            'id' => $this->primaryKey(),
-            'Name' => $this->string()->notNull(),
+            'id'        => $this->primaryKey(),
+            'Name'      => $this->string()->notNull(),
             'ID_Parent' => $this->integer(),
         ]);
-        $this->addForeignKey("service_to_service", "Services", "ID_Parent",
-                             "Services", "id", "RESTRICT", "RESTRICT");
+        $this->addForeignKey('service_to_service', 'Services', 'ID_Parent',
+                             'Services', 'id', 'RESTRICT', 'RESTRICT');
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

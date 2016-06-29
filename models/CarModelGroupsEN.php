@@ -2,15 +2,12 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarModelGroupsEN".
  *
- * @property integer $ID_Group
- * @property integer $ID_Model
- * @property integer $ID_Mark
- *
+ * @property int $ID_Group
+ * @property int $ID_Model
+ * @property int $ID_Mark
  * @property CarModelsEN $iDGroup
  * @property CarMarksEN $iDMark
  * @property CarModelsEN $iDModel
@@ -18,7 +15,7 @@ use Yii;
 class CarModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -26,7 +23,7 @@ class CarModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -40,14 +37,14 @@ class CarModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'ID_Group' => 'Id  Group',
             'ID_Model' => 'Id  Model',
-            'ID_Mark' => 'Id  Mark',
+            'ID_Mark'  => 'Id  Mark',
         ];
     }
 
@@ -79,17 +76,18 @@ class CarModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $group = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_Group = $group[0];
                     $this->ID_Model = $group[1];
                     $this->ID_Mark = $group[2];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $group]);
                     }
                 }
+
                 return $msg;
             }
         );

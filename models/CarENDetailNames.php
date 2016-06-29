@@ -2,18 +2,16 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarENDetailNames".
  *
- * @property integer $id
+ * @property int $id
  * @property string $Name
  */
 class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -21,7 +19,7 @@ class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -32,12 +30,12 @@ class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'   => 'ID',
             'Name' => 'Name',
         ];
     }
@@ -46,16 +44,17 @@ class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $name = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->id = $name[0];
                     $this->Name = $name[1];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $name]);
                     }
                 }
+
                 return $msg;
             }
         );

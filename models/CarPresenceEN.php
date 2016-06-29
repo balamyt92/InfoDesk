@@ -2,24 +2,21 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarPresenceEN".
  *
- * @property integer $ID_Mark
- * @property integer $ID_Model
- * @property integer $ID_Name
- * @property integer $ID_Firm
+ * @property int $ID_Mark
+ * @property int $ID_Model
+ * @property int $ID_Name
+ * @property int $ID_Firm
  * @property string $CarYear
- * @property integer $ID_Body
- * @property integer $ID_Engine
+ * @property int $ID_Body
+ * @property int $ID_Engine
  * @property string $Comment
  * @property string $Hash_Comment
  * @property string $TechNumber
  * @property string $Catalog_Number
  * @property string $Cost
- *
  * @property CarBodyModelsEN $iDBody
  * @property CarEngineModelsEN $iDEngine
  * @property Firms $iDFirm
@@ -30,7 +27,7 @@ use Yii;
 class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -38,7 +35,7 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -59,23 +56,23 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'ID_Mark' => 'Id  Mark',
-            'ID_Model' => 'Id  Model',
-            'ID_Name' => 'Id  Name',
-            'ID_Firm' => 'Id  Firm',
-            'CarYear' => 'Car Year',
-            'ID_Body' => 'Id  Body',
-            'ID_Engine' => 'Id  Engine',
-            'Comment' => 'Comment',
-            'Hash_Comment' => 'Hash  Comment',
-            'TechNumber' => 'Tech Number',
+            'ID_Mark'        => 'Id  Mark',
+            'ID_Model'       => 'Id  Model',
+            'ID_Name'        => 'Id  Name',
+            'ID_Firm'        => 'Id  Firm',
+            'CarYear'        => 'Car Year',
+            'ID_Body'        => 'Id  Body',
+            'ID_Engine'      => 'Id  Engine',
+            'Comment'        => 'Comment',
+            'Hash_Comment'   => 'Hash  Comment',
+            'TechNumber'     => 'Tech Number',
             'Catalog_Number' => 'Catalog  Number',
-            'Cost' => 'Cost',
+            'Cost'           => 'Cost',
         ];
     }
 
@@ -131,8 +128,8 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $line = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_Mark = $line[0];
@@ -145,21 +142,22 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
                     $this->Comment = $line[7];
                     $this->Hash_Comment = md5($line[7]);
 
-                    if(empty($line[8]) || ($line[8] == ' ')) {
+                    if (empty($line[8]) || ($line[8] == ' ')) {
                         $this->TechNumber = 'нет';
                     } else {
                         $this->TechNumber = $line[8];
                     }
-                    if(empty($line[9]) || ($line[9] == ' ')) {
+                    if (empty($line[9]) || ($line[9] == ' ')) {
                         $this->Catalog_Number = 'нет';
                     } else {
                         $this->Catalog_Number = $line[9];
                     }
                     $this->Cost = floatval(substr($line[10], 0, count($line[10]) - 4));
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $line]);
                     }
                 }
+
                 return $msg;
             }
         );

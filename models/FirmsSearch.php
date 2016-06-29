@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Firms;
 
 /**
  * FirmsSearch represents the model behind the search form about `app\models\Firms`.
@@ -13,7 +11,7 @@ use app\models\Firms;
 class FirmsSearch extends Firms
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +22,7 @@ class FirmsSearch extends Firms
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +31,7 @@ class FirmsSearch extends Firms
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -59,8 +57,8 @@ class FirmsSearch extends Firms
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'Enabled' => $this->Enabled,
+            'id'       => $this->id,
+            'Enabled'  => $this->Enabled,
             'Priority' => $this->Priority,
         ]);
 

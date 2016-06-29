@@ -8,12 +8,12 @@ use yii\db\Migration;
 class m160626_080416_create_car_en_linked_detail_names_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarENLinkedDetailNames', [
-            'ID_GroupDetail' => $this->integer()->notNull(),
+            'ID_GroupDetail'  => $this->integer()->notNull(),
             'ID_LinkedDetail' => $this->integer()->notNull(),
         ]);
 
@@ -27,7 +27,7 @@ class m160626_080416_create_car_en_linked_detail_names_table extends Migration
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

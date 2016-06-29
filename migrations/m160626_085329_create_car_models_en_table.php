@@ -8,28 +8,28 @@ use yii\db\Migration;
 class m160626_085329_create_car_models_en_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('ModelTypes', [
-            'id' => $this->primaryKey(),
+            'id'   => $this->primaryKey(),
             'Name' => $this->string()->notNull(),
         ]);
 
         $this->insert('ModelTypes', [
-            'id' => '1',
+            'id'   => '1',
             'Name' => 'модель',
         ]);
         $this->insert('ModelTypes', [
-            'id' => '2',
+            'id'   => '2',
             'Name' => 'группа',
         ]);
 
         $this->createTable('CarModelsEN', [
-            'id' => $this->primaryKey(),
+            'id'      => $this->primaryKey(),
             'ID_Mark' => $this->integer()->notNull(),
-            'Name' => $this->string()->notNull(),
+            'Name'    => $this->string()->notNull(),
             'ID_Type' => $this->integer()->notNull(),
         ]);
 
@@ -38,7 +38,7 @@ class m160626_085329_create_car_models_en_table extends Migration
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

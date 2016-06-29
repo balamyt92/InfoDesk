@@ -2,16 +2,13 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarBodyModelGroupsEN".
  *
- * @property integer $ID_BodyGroup
- * @property integer $ID_BodyModel
- * @property integer $ID_Mark
- * @property integer $ID_Model
- *
+ * @property int $ID_BodyGroup
+ * @property int $ID_BodyModel
+ * @property int $ID_Mark
+ * @property int $ID_Model
  * @property CarBodyModelsEN $iDBodyModel
  * @property CarBodyModelsEN $iDBodyGroup
  * @property CarMarksEN $iDMark
@@ -20,7 +17,7 @@ use Yii;
 class CarBodyModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -28,7 +25,7 @@ class CarBodyModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -43,15 +40,15 @@ class CarBodyModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'ID_BodyGroup' => 'Id  Body Group',
             'ID_BodyModel' => 'Id  Body Model',
-            'ID_Mark' => 'Id  Mark',
-            'ID_Model' => 'Id  Model',
+            'ID_Mark'      => 'Id  Mark',
+            'ID_Model'     => 'Id  Model',
         ];
     }
 
@@ -91,18 +88,19 @@ class CarBodyModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $body = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_BodyGroup = $body[0];
                     $this->ID_BodyModel = $body[1];
                     $this->ID_Mark = $body[2];
                     $this->ID_Model = $body[3];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $body]);
                     }
                 }
+
                 return $msg;
             }
         );

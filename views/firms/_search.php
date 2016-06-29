@@ -25,25 +25,25 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'Comment') ?>
 
-    <?php // echo $form->field($model, 'Enabled') ?>
+    <?php // echo $form->field($model, 'Enabled')?>
 
-    <?php // echo $form->field($model, 'ActivityType') ?>
+    <?php // echo $form->field($model, 'ActivityType')?>
 
-    <?php // echo $form->field($model, 'OrganizationType') ?>
+    <?php // echo $form->field($model, 'OrganizationType')?>
 
-    <?php // echo $form->field($model, 'District') ?>
+    <?php // echo $form->field($model, 'District')?>
 
-    <?php // echo $form->field($model, 'Fax') ?>
+    <?php // echo $form->field($model, 'Fax')?>
 
-    <?php // echo $form->field($model, 'Email') ?>
+    <?php // echo $form->field($model, 'Email')?>
 
-    <?php // echo $form->field($model, 'URL') ?>
+    <?php // echo $form->field($model, 'URL')?>
 
-    <?php // echo $form->field($model, 'OperatingMode') ?>
+    <?php // echo $form->field($model, 'OperatingMode')?>
 
-    <?php // echo $form->field($model, 'Identifier') ?>
+    <?php // echo $form->field($model, 'Identifier')?>
 
-    <?php // echo $form->field($model, 'Priority') ?>
+    <?php // echo $form->field($model, 'Priority')?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

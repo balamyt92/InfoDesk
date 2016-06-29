@@ -2,18 +2,17 @@
 
 namespace app\models;
 
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "Firms".
  *
- * @property integer $id
+ * @property int $id
  * @property string $Name
  * @property string $Address
  * @property string $Phone
  * @property string $Comment
- * @property integer $Enabled
+ * @property int $Enabled
  * @property string $ActivityType
  * @property string $OrganizationType
  * @property string $District
@@ -22,12 +21,12 @@ use yii\db\ActiveRecord;
  * @property string $URL
  * @property string $OperatingMode
  * @property string $Identifier
- * @property integer $Priority
+ * @property int $Priority
  */
 class Firms extends ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -35,7 +34,7 @@ class Firms extends ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -50,39 +49,40 @@ class Firms extends ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'Name' => 'Name',
-            'Address' => 'Address',
-            'Phone' => 'Phone',
-            'Comment' => 'Comment',
-            'Enabled' => 'Enabled',
-            'ActivityType' => 'Activity Type',
+            'id'               => 'ID',
+            'Name'             => 'Name',
+            'Address'          => 'Address',
+            'Phone'            => 'Phone',
+            'Comment'          => 'Comment',
+            'Enabled'          => 'Enabled',
+            'ActivityType'     => 'Activity Type',
             'OrganizationType' => 'Organization Type',
-            'District' => 'District',
-            'Fax' => 'Fax',
-            'Email' => 'Email',
-            'URL' => 'Url',
-            'OperatingMode' => 'Operating Mode',
-            'Identifier' => 'Identifier',
-            'Priority' => 'Priority',
+            'District'         => 'District',
+            'Fax'              => 'Fax',
+            'Email'            => 'Email',
+            'URL'              => 'Url',
+            'OperatingMode'    => 'Operating Mode',
+            'Identifier'       => 'Identifier',
+            'Priority'         => 'Priority',
         ];
     }
 
     /**
      * @param array $data данные для записи
+     *
      * @return string возвращает массив ошибок
      */
     public function loadData($data)
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $firm = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->id = $firm[0];
@@ -100,10 +100,11 @@ class Firms extends ActiveRecord implements iLegacyImport
                     $this->OperatingMode = $firm[12];
                     $this->Identifier = $firm[13];
                     $this->Priority = $firm[14];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $firm]);
                     }
                 }
+
                 return $msg;
             }
         );
