@@ -15,7 +15,8 @@ class LegacyImportTableQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return LegacyImportTable[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class LegacyImportTableQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return LegacyImportTable|array|null
      */
     public function one($db = null)

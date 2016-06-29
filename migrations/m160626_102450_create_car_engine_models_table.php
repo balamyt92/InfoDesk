@@ -8,14 +8,14 @@ use yii\db\Migration;
 class m160626_102450_create_car_engine_models_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarEngineModelsEN', [
-            'id' => $this->integer()->notNull(),
+            'id'      => $this->integer()->notNull(),
             'ID_Mark' => $this->integer()->notNull(),
-            'Name' => $this->string()->notNull(),
+            'Name'    => $this->string()->notNull(),
             'ID_Type' => $this->integer()->notNull(),
         ]);
 
@@ -28,7 +28,7 @@ class m160626_102450_create_car_engine_models_table extends Migration
         $this->createTable('CarEngineModelGroupsEN', [
             'ID_EngineGroup' => $this->integer()->notNull(),
             'ID_EngineModel' => $this->integer()->notNull(),
-            'ID_Mark' => $this->integer()->notNull(),
+            'ID_Mark'        => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('engine_group', 'CarEngineModelGroupsEN',
@@ -42,11 +42,10 @@ class m160626_102450_create_car_engine_models_table extends Migration
 
         $this->addForeignKey('engine_group_to_mark', 'CarEngineModelGroupsEN', 'ID_Mark',
             'CarMarksEN', 'id', 'RESTRICT', 'CASCADE');
-        
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

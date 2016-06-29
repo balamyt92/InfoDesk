@@ -2,17 +2,14 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarBodyModelsEN".
  *
- * @property integer $id
- * @property integer $ID_Mark
- * @property integer $ID_Model
+ * @property int $id
+ * @property int $ID_Mark
+ * @property int $ID_Model
  * @property string $Name
- * @property integer $ID_Type
- *
+ * @property int $ID_Type
  * @property CarBodyModelGroupsEN[] $carBodyModelGroupsENs
  * @property CarBodyModelGroupsEN[] $carBodyModelGroupsENs0
  * @property CarMarksEN $iDMark
@@ -21,7 +18,7 @@ use Yii;
 class CarBodyModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -29,7 +26,7 @@ class CarBodyModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -43,16 +40,16 @@ class CarBodyModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'ID_Mark' => 'Id  Mark',
+            'id'       => 'ID',
+            'ID_Mark'  => 'Id  Mark',
             'ID_Model' => 'Id  Model',
-            'Name' => 'Name',
-            'ID_Type' => 'Id  Type',
+            'Name'     => 'Name',
+            'ID_Type'  => 'Id  Type',
         ];
     }
 
@@ -92,8 +89,8 @@ class CarBodyModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $body = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->id = $body[0];
@@ -101,10 +98,11 @@ class CarBodyModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
                     $this->ID_Model = $body[2];
                     $this->Name = $body[3];
                     $this->ID_Type = $body[5];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $body]);
                     }
                 }
+
                 return $msg;
             }
         );

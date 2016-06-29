@@ -8,22 +8,22 @@ use yii\db\Migration;
 class m160626_105528_create_catalog_numbers_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CatalogNumbersEN', [
             'Catalog_Number' => $this->string()->notNull(),
-            'ID_Mark' => $this->integer()->notNull(),
-            'ID_Name' => $this->integer()->notNull(),
+            'ID_Mark'        => $this->integer()->notNull(),
+            'ID_Name'        => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('catalog_numb', 'CatalogNumbersEN',
-                            ['Catalog_Number','ID_Mark','ID_Name']);
+                            ['Catalog_Number', 'ID_Mark', 'ID_Name']);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

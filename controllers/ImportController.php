@@ -3,13 +3,10 @@
 namespace app\controllers;
 
 use app\models\LegacyImportTable;
-use app\models\LegacyImportTableQuery;
 
 /**
- * Class ImportController
- * @package app\controllers
+ * Class ImportController.
  */
-
 class ImportController extends \yii\web\Controller
 {
     public function actionIndex()
@@ -18,7 +15,8 @@ class ImportController extends \yii\web\Controller
     }
 
     /**
-     * Запуск импорта в фоновом режиме
+     * Запуск импорта в фоновом режиме.
+     *
      * @return string
      */
     public function actionStartImport()
@@ -29,13 +27,14 @@ class ImportController extends \yii\web\Controller
 //        $result = $this->parseFile(__DIR__ . '/../import/CarPresenceEN.txt');
 //        return serialize($result[count($result) - 1]);
         // Возвращать статус запуслии или уже запущенна
-        return "start";
+        return 'start';
     }
 
-
     /**
-     * Проверка статуса импорта
+     * Проверка статуса импорта.
+     *
      * @param int $last_id поледнее полученное сообщение
+     *
      * @return $this
      *
      * запрос вид 1 import-status&last_id=1
@@ -46,5 +45,4 @@ class ImportController extends \yii\web\Controller
         //return serialize($status);
         return $last_id;
     }
-
 }

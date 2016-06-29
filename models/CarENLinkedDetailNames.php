@@ -2,21 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarENLinkedDetailNames".
  *
- * @property integer $ID_GroupDetail
- * @property integer $ID_LinkedDetail
- *
+ * @property int $ID_GroupDetail
+ * @property int $ID_LinkedDetail
  * @property CarENDetailNames $iDLinkedDetail
  * @property CarENDetailNames $iDGroupDetail
  */
 class CarENLinkedDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,7 +21,7 @@ class CarENLinkedDetailNames extends \yii\db\ActiveRecord implements iLegacyImpo
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -37,12 +34,12 @@ class CarENLinkedDetailNames extends \yii\db\ActiveRecord implements iLegacyImpo
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'ID_GroupDetail' => 'Id  Group Detail',
+            'ID_GroupDetail'  => 'Id  Group Detail',
             'ID_LinkedDetail' => 'Id  Linked Detail',
         ];
     }
@@ -67,16 +64,17 @@ class CarENLinkedDetailNames extends \yii\db\ActiveRecord implements iLegacyImpo
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $name = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_GroupDetail = $name[0];
                     $this->ID_LinkedDetail = $name[1];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $name]);
                     }
                 }
+
                 return $msg;
             }
         );

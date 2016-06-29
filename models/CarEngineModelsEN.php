@@ -2,16 +2,13 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarEngineModelsEN".
  *
- * @property integer $id
- * @property integer $ID_Mark
+ * @property int $id
+ * @property int $ID_Mark
  * @property string $Name
- * @property integer $ID_Type
- *
+ * @property int $ID_Type
  * @property CarEngineModelGroupsEN[] $carEngineModelGroupsENs
  * @property CarEngineModelGroupsEN[] $carEngineModelGroupsENs0
  * @property CarMarksEN $iDMark
@@ -19,7 +16,7 @@ use Yii;
 class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -27,7 +24,7 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -40,14 +37,14 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'      => 'ID',
             'ID_Mark' => 'Id  Mark',
-            'Name' => 'Name',
+            'Name'    => 'Name',
             'ID_Type' => 'Id  Type',
         ];
     }
@@ -80,18 +77,19 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $engine = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->id = $engine[0];
                     $this->ID_Mark = $engine[1];
                     $this->Name = $engine[2];
                     $this->ID_Type = $engine[4];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $engine]);
                     }
                 }
+
                 return $msg;
             }
         );

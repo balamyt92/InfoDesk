@@ -8,16 +8,16 @@ use yii\db\Migration;
 class m160626_091310_create_car_body_model_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarBodyModelsEN', [
-            'id' => $this->integer()->notNull(),
-            'ID_Mark' => $this->integer()->notNull(),
+            'id'       => $this->integer()->notNull(),
+            'ID_Mark'  => $this->integer()->notNull(),
             'ID_Model' => $this->integer()->notNull(),
-            'Name' => $this->string()->notNull(),
-            'ID_Type' => $this->integer()->notNull(),
+            'Name'     => $this->string()->notNull(),
+            'ID_Type'  => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('body', 'CarBodyModelsEN', ['id', 'ID_Mark', 'ID_Model']);
@@ -34,8 +34,8 @@ class m160626_091310_create_car_body_model_table extends Migration
         $this->createTable('CarBodyModelGroupsEN', [
             'ID_BodyGroup' => $this->integer()->notNull(),
             'ID_BodyModel' => $this->integer()->notNull(),
-            'ID_Mark' => $this->integer()->notNull(),
-            'ID_Model' => $this->integer()->notNull(),
+            'ID_Mark'      => $this->integer()->notNull(),
+            'ID_Model'     => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('body_group', 'CarBodyModelGroupsEN',
@@ -52,11 +52,10 @@ class m160626_091310_create_car_body_model_table extends Migration
 
         $this->addForeignKey('body_group_to_model', 'CarBodyModelGroupsEN', 'ID_Model',
                              'CarModelsEN', 'id', 'RESTRICT', 'CASCADE');
-
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

@@ -2,19 +2,17 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "legacy_import_table".
  *
- * @property integer $id
- * @property integer $status
+ * @property int $id
+ * @property int $status
  * @property string $message
  */
 class LegacyImportTable extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class LegacyImportTable extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,19 +31,20 @@ class LegacyImportTable extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'status' => 'Status',
+            'id'      => 'ID',
+            'status'  => 'Status',
             'message' => 'Message',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return LegacyImportTableQuery the active query used by this AR class.
      */
     public static function find()

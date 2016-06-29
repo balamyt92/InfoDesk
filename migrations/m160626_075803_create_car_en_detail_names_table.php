@@ -8,18 +8,18 @@ use yii\db\Migration;
 class m160626_075803_create_car_en_detail_names_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarENDetailNames', [
-            'id' => $this->primaryKey(),
+            'id'   => $this->primaryKey(),
             'Name' => $this->string()->notNull(),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {
