@@ -4,9 +4,9 @@
 /* @var $content string */
 
 use app\assets\AppAsset;
-use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 ?>
@@ -27,8 +27,8 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => 'InfoDesk',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
+        'brandUrl'   => Yii::$app->homeUrl,
+        'options'    => [
             'class' => 'navbar-default navbar-fixed-top',
         ],
     ]);
@@ -51,7 +51,7 @@ AppAsset::register($this);
 //    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
+        'items'   => $menuItems,
     ]);
     NavBar::end();
     ?>

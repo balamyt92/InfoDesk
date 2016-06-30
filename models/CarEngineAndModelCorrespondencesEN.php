@@ -2,19 +2,17 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarEngineAndModelCorrespondencesEN".
  *
- * @property integer $ID_Mark
- * @property integer $ID_Engine
- * @property integer $ID_Model
+ * @property int $ID_Mark
+ * @property int $ID_Engine
+ * @property int $ID_Model
  */
 class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,14 +31,14 @@ class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'ID_Mark' => 'Id  Mark',
+            'ID_Mark'   => 'Id  Mark',
             'ID_Engine' => 'Id  Engine',
-            'ID_Model' => 'Id  Model',
+            'ID_Model'  => 'Id  Model',
         ];
     }
 
@@ -48,17 +46,18 @@ class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $line = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_Mark = $line[0];
                     $this->ID_Engine = $line[1];
                     $this->ID_Model = $line[2];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $line]);
                     }
                 }
+
                 return $msg;
             }
         );

@@ -1,21 +1,21 @@
 <?php
 
 namespace app\controllers;
-use \yii\web\Controller;
+
+use yii\web\Controller;
 
 /**
- * Class SiteController
- * @package app\controllers
+ * Class SiteController.
  */
-
 class SiteController extends Controller
 {
     /**
-     * Рендер гланой
-     * 
+     * Рендер гланой.
+     *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         return $this->render('index');
     }
 }

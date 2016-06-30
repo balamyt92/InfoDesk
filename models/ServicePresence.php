@@ -2,24 +2,21 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "ServicePresence".
  *
- * @property integer $ID_Service
- * @property integer $ID_Firm
+ * @property int $ID_Service
+ * @property int $ID_Firm
  * @property string $Comment
  * @property string $CarList
  * @property string $Coast
- *
  * @property Firms $iDFirm
  * @property Services $iDService
  */
 class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -27,7 +24,7 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -41,16 +38,16 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'ID_Service' => 'Id  Service',
-            'ID_Firm' => 'Id  Firm',
-            'Comment' => 'Comment',
-            'CarList' => 'Car List',
-            'Coast' => 'Coast',
+            'ID_Firm'    => 'Id  Firm',
+            'Comment'    => 'Comment',
+            'CarList'    => 'Car List',
+            'Coast'      => 'Coast',
         ];
     }
 
@@ -72,14 +69,15 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
 
     /**
      * @param array $data данные для записи
+     *
      * @return string возвращает массив ошибок
      */
     public function loadData($data)
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $service = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_Service = $service[0];
@@ -87,10 +85,11 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
                     $this->Comment = $service[2];
                     $this->CarList = $service[3];
                     $this->Coast = $service[4];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $service]);
                     }
                 }
+
                 return $msg;
             }
         );

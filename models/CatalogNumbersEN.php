@@ -2,19 +2,17 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CatalogNumbersEN".
  *
  * @property string $Catalog_Number
- * @property integer $ID_Mark
- * @property integer $ID_Name
+ * @property int $ID_Mark
+ * @property int $ID_Name
  */
 class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,14 +32,14 @@ class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'Catalog_Number' => 'Catalog  Number',
-            'ID_Mark' => 'Id  Mark',
-            'ID_Name' => 'Id  Name',
+            'ID_Mark'        => 'Id  Mark',
+            'ID_Name'        => 'Id  Name',
         ];
     }
 
@@ -49,17 +47,18 @@ class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $number = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->Catalog_Number = $number[0];
                     $this->ID_Mark = $number[1];
                     $this->ID_Name = $number[2];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $number]);
                     }
                 }
+
                 return $msg;
             }
         );

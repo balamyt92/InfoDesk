@@ -16,91 +16,93 @@ use app\models\CarModelGroupsEN;
 use app\models\CarModelsEN;
 use app\models\CarPresenceEN;
 use app\models\CatalogNumbersEN;
-use app\models\ServicePresence;
-use MongoDB\Driver\Exception\ExecutionTimeoutException;
-use yii\console\Controller;
 use app\models\Firms;
+use app\models\ServicePresence;
 use app\models\Services;
+use yii\console\Controller;
 use yii\db\IntegrityException;
 
 class LegacyImportController extends Controller
 {
-	private $config;
+    private $config;
 
     public function actionIndex()
     {
-    	$this->initImport();
-    	$this->runImport();
+        $this->initImport();
+        $this->runImport();
     }
 
     /**
-     *	Инициализация параметров импорта
+     *	Инициализация параметров импорта.
      */
     private function initImport()
     {
-    	$this->config = require(__DIR__ . '/../config/legacy-import.php');
+        $this->config = require __DIR__.'/../config/legacy-import.php';
     }
 
     /**
-     *	Запуск импорта
+     *	Запуск импорта.
      */
     private function runImport()
     {
-    	$this->log("Запуск импорта");
+        $this->log('Запуск импорта');
 
-    	$files = $this->config["files"];
-    	foreach ($files as $file) {
-    		$data = $this->parseFile(__DIR__ . '/../import/' . $file[0], $file[1]);
-    		$tableName = substr($file[0], 0, count($file[0]) - 5);
-    		$this->loadToBase($tableName, $data);
-    	}
+        $files = $this->config['files'];
+        foreach ($files as $file) {
+            $data = $this->parseFile(__DIR__.'/../import/'.$file[0], $file[1]);
+            $tableName = substr($file[0], 0, count($file[0]) - 5);
+            $this->loadToBase($tableName, $data);
+        }
 
-    	$this->log("Импорт завершён", "fin");
+        $this->log('Импорт завершён', 'fin');
     }
 
     /**
-     * Функция логирования
+     * Функция логирования.
+     *
      * @param $message
      * @param string $status передает статут выполнения процесса передаваемы с собощением
-     *  run - импорт запущен,
-     *  err - ошибка импорта,
-     *  wrn - предупреждение,
-     *  fin - импорт завершон
+     *                       run - импорт запущен,
+     *                       err - ошибка импорта,
+     *                       wrn - предупреждение,
+     *                       fin - импорт завершон
      */
     private function log($message, $status = 'run')
     {
-        if(is_array($message)) {
+        if (is_array($message)) {
             echo $status, ':', PHP_EOL;
             echo print_r($message, true);
         } else {
-		    echo $status, ' : ', $message, PHP_EOL;
+            echo $status, ' : ', $message, PHP_EOL;
         }
     }
 
     /**
-     * Функция парсит файл и возвращает двумерный массив[строка][ячейка]
+     * Функция парсит файл и возвращает двумерный массив[строка][ячейка].
+     *
      * @param $filename
      * @param null $column ожидаемое число столбцов
+     *
      * @return array результирующий массив
      */
     private function parseFile($filename, $column = null)
     {
         $f = file_get_contents($filename);
-        $f = iconv("WINDOWS-1251", "UTF-8", $f);
-        file_put_contents($filename . '.new', $f);
+        $f = iconv('WINDOWS-1251', 'UTF-8', $f);
+        file_put_contents($filename.'.new', $f);
 
-        $handle = fopen($filename . '.new', "r");
-        $result = array();
+        $handle = fopen($filename.'.new', 'r');
+        $result = [];
 
         while (!feof($handle)) {
-            $firm = fgetcsv($handle, 0, ";");
-            while(count($firm) < $column && !feof($handle)) {
-                $tmp = fgetcsv($handle, 0, ";");
-                $tmp[0] = array_pop($firm) . $tmp[0];
+            $firm = fgetcsv($handle, 0, ';');
+            while (count($firm) < $column && !feof($handle)) {
+                $tmp = fgetcsv($handle, 0, ';');
+                $tmp[0] = array_pop($firm).$tmp[0];
                 $firm = array_merge($firm, $tmp);
             }
-            if($firm != false) {
-            	array_push($result, $firm);
+            if ($firm != false) {
+                array_push($result, $firm);
             }
         }
         fclose($handle);
@@ -111,112 +113,114 @@ class LegacyImportController extends Controller
     /**
      * Функция заливающая данные в базу
      * Функция ожидает что в базе созданы таблица в которых порядок столбцов
-     * соответсвует порядку столбцов в передаваемом массвие $data
+     * соответсвует порядку столбцов в передаваемом массвие $data.
+     *
      * @param string $table имя таблицы
-     * @param array $data данные на запись в таблицу
-     * @return boolean возвращает false если произошла ошибка импорта
+     * @param array  $data  данные на запись в таблицу
+     *
+     * @return bool возвращает false если произошла ошибка импорта
      */
-
     private function loadToBase($table, $data)
     {
         $model = null;
 
         switch ($table) {
-            case "Firms":
+            case 'Firms':
                 $model = new Firms();
                 break;
-            case "Services":
+            case 'Services':
                 $model = new Services();
                 // сортируем по ID_Parent для устранения ошибки внешнего ключа
                 // [ID_Parent] => Id  Parent is invalid.
-                usort($data, function ($a , $b) {
-                    if($a[3] == $b[3]) return 0;
+                usort($data, function ($a, $b) {
+                    if ($a[3] == $b[3]) {
+                        return 0;
+                    }
+
                     return ($a[3] < $b[3]) ?  -1 : 1;
                 });
                 break;
-            case "ServicePresence":
+            case 'ServicePresence':
                 $model = new ServicePresence();
                 break;
-            case "CarENDetailNames":
+            case 'CarENDetailNames':
                 $model = new CarENDetailNames();
                 break;
-            case "CarENLinkedDetailNames":
+            case 'CarENLinkedDetailNames':
                 $model = new CarENLinkedDetailNames();
                 break;
-            case "CarMarksEN":
+            case 'CarMarksEN':
                 $model = new CarMarksEN();
                 break;
-            case "CarMarkGroupsEN":
+            case 'CarMarkGroupsEN':
                 $model = new CarMarkGroupsEN();
                 break;
-            case "CarModelsEN":
+            case 'CarModelsEN':
                 $model = new CarModelsEN();
                 break;
-            case "CarModelGroupsEN":
+            case 'CarModelGroupsEN':
                 $model = new CarModelGroupsEN();
                 break;
-            case "CarBodyModelsEN":
+            case 'CarBodyModelsEN':
                 $model = new CarBodyModelsEN();
                 break;
-            case "CarBodyModelGroupsEN":
+            case 'CarBodyModelGroupsEN':
                 $model = new CarBodyModelGroupsEN();
                 break;
-            case "CarEngineModelGroupsEN":
+            case 'CarEngineModelGroupsEN':
                 $model = new CarEngineModelGroupsEN();
                 break;
-            case "CarEngineModelsEN":
+            case 'CarEngineModelsEN':
                 $model = new CarEngineModelsEN();
                 break;
-            case "CarEngineAndModelCorrespondencesEN":
+            case 'CarEngineAndModelCorrespondencesEN':
                 $model = new CarEngineAndModelCorrespondencesEN();
                 break;
-            case "CarEngineAndBodyCorrespondencesEN":
+            case 'CarEngineAndBodyCorrespondencesEN':
                 $model = new CarEngineAndBodyCorrespondencesEN();
                 break;
-            case "CatalogNumbersEN":
+            case 'CatalogNumbersEN':
                 $model = new CatalogNumbersEN();
                 break;
-            case "CarPresenceEN":
+            case 'CarPresenceEN':
                 $model = new CarPresenceEN();
                 break;
 
             // TODO: дописать все ожидаемые входные файлы
         }
 
-        if($model !== null) {
+        if ($model !== null) {
+            \Yii::$app->db->createCommand('SET foreign_key_checks = 0;')->execute();
+            $this->log('Очистка таблицы '.$table);
 
-            \Yii::$app->db->createCommand("SET foreign_key_checks = 0;")->execute();
-            $this->log("Очистка таблицы " . $table);
+            if (!($model::deleteAll() >= 0)) {
+                $this->log('Ошибка очисти таблицы '.$table.'. Импорт прерван', 'err');
 
-            if(!($model::deleteAll() >= 0)) {
-                $this->log('Ошибка очисти таблицы ' . $table . '. Импорт прерван', 'err');
                 return false;
             }
 
-            $this->log('Заполнение таблицы ' . $table . ' (кол-во записей ' . count($data) . ')');
+            $this->log('Заполнение таблицы '.$table.' (кол-во записей '.count($data).')');
 
             while ($data) {
                 $tmp = array_splice($data, 0, 1000);
                 try {
                     $msg = $model->loadData($tmp);
-                }
-                catch (IntegrityException $e) {
+                } catch (IntegrityException $e) {
                     $this->log($e, 'err');
                     $this->log($tmp, 'err');
                 }
-                if(count($msg) > 0) {
+                if (count($msg) > 0) {
                     $this->log($msg, 'wrn');
                 }
-                $this->log("Осталось строк " . count($data));
+                $this->log('Осталось строк '.count($data));
             }
 
-            $this->log('Таблица ' . $table . ' импортирована (успешно записано строк ' . $model->find()->count() . ')');
+            $this->log('Таблица '.$table.' импортирована (успешно записано строк '.$model->find()->count().')');
 
             // если были отключены внешние ключи, включим их
-            \Yii::$app->db->createCommand("SET foreign_key_checks = 1;")->execute();
-        }
-        else {
-            $this->log("Ошибка загрузки в базу, не правильное имя таблицы - " . $table, 'wrn');
+            \Yii::$app->db->createCommand('SET foreign_key_checks = 1;')->execute();
+        } else {
+            $this->log('Ошибка загрузки в базу, не правильное имя таблицы - '.$table, 'wrn');
         }
 
         return true;

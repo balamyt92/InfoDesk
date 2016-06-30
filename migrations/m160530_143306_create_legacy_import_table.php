@@ -8,19 +8,19 @@ use yii\db\Migration;
 class m160530_143306_create_legacy_import_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('legacy_import_table', [
-            'id' => $this->primaryKey(),
-            'status' => $this->integer(),
+            'id'      => $this->primaryKey(),
+            'status'  => $this->integer(),
             'message' => $this->string(),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

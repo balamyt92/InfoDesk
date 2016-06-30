@@ -1,11 +1,10 @@
 <?php
 /* @var $this yii\web\View */
 
-use yii\helpers\Html;
 use yii\jui\ProgressBar;
 
 // Запуск проверки статауса импорта при переходе на страницу
-$script = <<< JS
+$script = <<< 'JS'
 $(document).ready(function() {
 	$.ajax({
 	  method: "GET",
@@ -36,35 +35,36 @@ $this->registerJs($script);
 	    		</thead>
 	    		<tbody>
 	    		<?php 
-				    $files = ['CarBodyModelGroupsEN.txt', 'CarMarksEN.txt', 
-							  'CarBodyModelsEN.txt', 'CarModelGroupsEN.txt',
-							  'CarENDetailNames.txt', 'CarModelsEN.txt',
-							  'CarEngineAndBodyCorrespondencesEN.txt', 'CarPresenceEN.txt',
-							  'CarEngineAndModelCorrespondencesEN.txt', 'CatalogNumbersEN.txt',
-							  'CarEngineModelGroupsEN.txt', 'Firms.txt', 'CarEngineModelsEN.txt',
-							  'CarENLinkedDetailNames.txt', 'ServicePresence.txt',
-							  'CarMarkGroupsEN.txt', 'Services.txt',];
-					while ($files) {
-						$file = array_shift($files);
-						$path = __DIR__ . '/../../import/';
-					    ?>
+                    $files = ['CarBodyModelGroupsEN.txt', 'CarMarksEN.txt',
+                              'CarBodyModelsEN.txt', 'CarModelGroupsEN.txt',
+                              'CarENDetailNames.txt', 'CarModelsEN.txt',
+                              'CarEngineAndBodyCorrespondencesEN.txt', 'CarPresenceEN.txt',
+                              'CarEngineAndModelCorrespondencesEN.txt', 'CatalogNumbersEN.txt',
+                              'CarEngineModelGroupsEN.txt', 'Firms.txt', 'CarEngineModelsEN.txt',
+                              'CarENLinkedDetailNames.txt', 'ServicePresence.txt',
+                              'CarMarkGroupsEN.txt', 'Services.txt', ];
+                    while ($files) {
+                        $file = array_shift($files);
+                        $path = __DIR__.'/../../import/';
+                        ?>
 	    			<tr>
 	    				<td>
-	    					<?php echo '<span class="lable">' . $file . '</span>'; ?>
+	    					<?php echo '<span class="lable">'.$file.'</span>';
+                        ?>
 	    				</td>
 	    				<td>
 							<?php
-							if(is_readable($path . $file)) {
-								echo '<span class="label label-success">Доступен</span>';
-							} else {
-								echo '<span class="label label-danger">Не доступен</span>';
-							} 
-							?>
+                            if (is_readable($path.$file)) {
+                                echo '<span class="label label-success">Доступен</span>';
+                            } else {
+                                echo '<span class="label label-danger">Не доступен</span>';
+                            }
+                        ?>
 	    				</td>
 	    			</tr>
 	    			<?php 
-	    			}
-	    			?>
+                    }
+                    ?>
 			    </tbody>
 	    	</table>
         </div>
@@ -77,11 +77,11 @@ $this->registerJs($script);
         </div>
         <div class="panel-body">
           <?php
-			echo ProgressBar::widget([
-			    'clientOptions' => [
-			        'value' => 0,
-			    ],
-			]);          
+            echo ProgressBar::widget([
+                'clientOptions' => [
+                    'value' => 0,
+                ],
+            ]);
           ?>
 			<br>
 			<button type="button" class="btn btn-primary" onclick="importStatus()">Запуск</button>

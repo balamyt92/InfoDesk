@@ -2,21 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "CarMarkGroupsEN".
  *
- * @property integer $ID_Group
- * @property integer $ID_Mark
- *
+ * @property int $ID_Group
+ * @property int $ID_Mark
  * @property CarMarksEN $iDGroup
  * @property CarMarksEN $iDMark
  */
 class CarMarkGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,7 +21,7 @@ class CarMarkGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -37,13 +34,13 @@ class CarMarkGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'ID_Group' => 'Id  Group',
-            'ID_Mark' => 'Id  Mark',
+            'ID_Mark'  => 'Id  Mark',
         ];
     }
 
@@ -67,16 +64,17 @@ class CarMarkGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return self::getDb()->transaction(
             function ($db) use ($data) {
-                $msg = array();
-                while($data) {
+                $msg = [];
+                while ($data) {
                     $mark = array_shift($data);
                     self::setIsNewRecord(true);
                     $this->ID_Group = $mark[0];
                     $this->ID_Mark = $mark[1];
-                    if(!$this->save()) {
+                    if (!$this->save()) {
                         array_push($msg, [$this->getFirstErrors(), $mark]);
                     }
                 }
+
                 return $msg;
             }
         );

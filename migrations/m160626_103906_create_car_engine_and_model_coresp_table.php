@@ -8,25 +8,25 @@ use yii\db\Migration;
 class m160626_103906_create_car_engine_and_model_coresp_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('CarEngineAndModelCorrespondencesEN', [
-            'ID_Mark' => $this->integer()->notNull(),
+            'ID_Mark'   => $this->integer()->notNull(),
             'ID_Engine' => $this->integer()->notNull(),
-            'ID_Model' => $this->integer()->notNull(),
+            'ID_Model'  => $this->integer()->notNull(),
         ]);
 
         $this->addPrimaryKey('eng-model-cor', 'CarEngineAndModelCorrespondencesEN',
                             ['ID_Mark', 'ID_Engine', 'ID_Model']);
 
-        // TODO: добавить внешние ключи если понадобяться 
+        // TODO: добавить внешние ключи если понадобяться
 
         $this->createTable('CarEngineAndBodyCorrespondencesEN', [
-            'ID_Mark' => $this->integer()->notNull(),
-            'ID_Model' => $this->integer()->notNull(),
-            'ID_Body' => $this->integer()->notNull(),
+            'ID_Mark'   => $this->integer()->notNull(),
+            'ID_Model'  => $this->integer()->notNull(),
+            'ID_Body'   => $this->integer()->notNull(),
             'ID_Engine' => $this->integer()->notNull(),
         ]);
 
@@ -37,7 +37,7 @@ class m160626_103906_create_car_engine_and_model_coresp_table extends Migration
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

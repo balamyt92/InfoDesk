@@ -2,20 +2,17 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "MarkTypes".
  *
- * @property integer $id
+ * @property int $id
  * @property string $Name
- *
  * @property CarMarksEN[] $carMarksENs
  */
 class MarkTypes extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +20,7 @@ class MarkTypes extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,12 +31,12 @@ class MarkTypes extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'   => 'ID',
             'Name' => 'Name',
         ];
     }
