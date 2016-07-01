@@ -10,6 +10,9 @@ $config = [
             'cookieValidationKey' => 'secret',
         ],
         'db' => $db,
+        'assetManager' => [
+            'appendTimestamp' => true,
+        ],
     ],
 
 ];

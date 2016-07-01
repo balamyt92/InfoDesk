@@ -31,6 +31,9 @@ AppAsset::register($this);
         'options'    => [
             'class' => 'navbar-default navbar-fixed-top',
         ],
+        'innerContainerOptions' => [
+            'class' => 'container-fluid',
+        ],
     ]);
     $menuItems = [
         ['label' => 'Call-center', 'url' => ['/site/index']],
@@ -56,7 +59,7 @@ AppAsset::register($this);
     NavBar::end();
     ?>
 
-    <div class="container">
+    <div class="container-fluid">
 
         <?= $content ?>
     </div>
