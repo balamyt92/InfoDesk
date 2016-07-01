@@ -20,7 +20,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<body onkeyup="navTab(event);">
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -53,7 +53,7 @@ AppAsset::register($this);
 //            . '</li>';
 //    }
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
+        'options' => ['class' => 'navbar-nav nav-pills'],
         'items'   => $menuItems,
     ]);
     NavBar::end();

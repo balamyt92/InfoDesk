@@ -36,7 +36,7 @@ class SiteController extends Controller
                                 orFilterWhere(['like', 'District', $str ])->
                                 orFilterWhere(['like', 'OrganizationType', $str ])->
                                 orFilterWhere(['like', 'Email', $str ])->
-                                orFilterWhere(['like', 'URL', $str ])->all();
+                                orFilterWhere(['like', 'URL', $str ])->orderBy('Name', 'Addres')->all();
         \Yii::$app->response->format = Response::FORMAT_JSON;
         $result = [
             'success' => true,
