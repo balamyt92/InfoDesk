@@ -1,26 +1,15 @@
-// var id = 0;
-
-// function importStatus() {
-//     $.ajax({
-//         method: "GET",
-//         url: "index.php?r=import%2Fimport-status",
-//         data: {last_id: id}
-//     })
-//         .done(function (data) {
-//             alert("Data Saved: " + data);
-//             id++;
-//         });
-// }
-
-
 /**
  * Функция осуществляет поиск фирмы в базе по подстроке из инпута
  */
+var result = {
+    index : 0,
+    row : {}
+};
+
 function searchFirm() {
-    $(document.getElementById('loader')).show();
-    $(document.getElementById('search-firm-result')).html('');
+    $('#loader').show();
+    $('#search-firm-result').html('');
     var str = document.getElementById('search-line').value;
-    console.log(str);
     $.ajax({
         method: "GET",
         url: "index.php?r=site%2Fsearch",
@@ -28,25 +17,32 @@ function searchFirm() {
     })
         .done(function (data) {
             var render = document.getElementById('search-firm-result');
-            $(document.getElementsByClassName('panel-title')).html('Найдено фирм - ' + data.message.length);
+            $('.panel-title').html('Найдено фирм - ' + data.message.length);
             if(data.message.length > 0) {
-                $(render).html('<table class="table table-striped"><thead><tr><th>Название</th><th>Адрес</th><th>Телефон</th><th>Район</th></tr></thead><tbody></tbody></table>');
+                $(render).html('<table class="table table-hover"><thead><tr><th>Название</th><th>Адрес</th><th>Телефон</th><th>Район</th></tr></thead><tbody></tbody></table>');
                 data.message.forEach(
                     function (item, i, arr) {
-                        $(render).children().children('tbody').append('<tr><td><a href="#" onclick="openFirm('+ JSON.stringify(item) +');">'+
-                                                                                item.Name + '</a></td><td>' + 
-                                                                                item.Address + '</td><td>' + 
-                                                                                item.Phone + '</td><td>' + 
-                                                                                item.District + '</td></tr>');
+                        $(render)
+                        .children()
+                        .children('tbody')
+                        .append('<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+ JSON.stringify(item) +');\'>'+
+                                                                        item.Name + '</a></td><td>' + 
+                                                                        item.Address + '</td><td>' + 
+                                                                        item.Phone + '</td><td>' + 
+                                                                        item.District + '</td></tr>');
                         if(i + 1 == arr.length) {
-                            $(document.getElementById('loader')).hide();
+                            $('#loader').hide();
 
+                            result.index = 0;
+                            result.row = $(render).children().children().children();
                             // Делаем так что бы при клике на строку открывалась ссылка
-                            $('tr').click( function() {
-                                window.location = $(this).find('a').attr('href');
-                            }).hover( function() {
-                                $(this).toggleClass('hover');
-                            });
+                            // TODO: придумать как при клике на заголовок таблицы ничего не происходило
+                            // $('tr').click( function() {
+                            //     window.location = $(this).find('a').attr('href');
+                            // }).hover( function() {
+                            //     $(this).toggleClass('hover');
+                            // });
+
                         }
                     }
                 );
@@ -58,7 +54,6 @@ function searchFirm() {
         });
 }
 
-
 /**
  * По энтеру в поле запускаем поиск фирм
  */
@@ -69,8 +64,12 @@ function runSearch(e) {
     }
 }
 
-function navTab(event){
+/**
+ * Функция обработки хоткеев навигации
+ */
+function keyNavigate(event){
     var tabs = $(document.getElementsByClassName('nav-tabs')[0]).children();
+    // перемещение по табу в право
     if(event.keyCode == 39 && event.ctrlKey) {
         if(tabs[0].className == 'active') {
             $(tabs[1]).children().click();
@@ -80,6 +79,7 @@ function navTab(event){
             $(tabs[0]).children().click();
         }
     }
+    // перемещение по табу в лево
     if(event.keyCode == 37 && event.ctrlKey) {
         if(tabs[0].className == 'active') {
             $(tabs[2]).children().click();
@@ -90,17 +90,32 @@ function navTab(event){
         }
     }
     
+    if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length) {
+        //40 низ
+        result.index = result.index + 1;
+        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+
+    } else if(event.keyCode == 38 && event.ctrlKey && result.index >= 1) {
+        //38 верх
+        result.index = result.index - 1;
+        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+
+    } else if(result.index <= 1) {
+        $($('#search-line').focus()).select();
+    }
+    
 }
 
-// $('#firmModal').on('show.bs.modal', function (event) {
-//   var button = $(event.relatedTarget);
-//   var recipient = button.data('whatever') ;
-//   var modal = $(this);
-//   modal.find('.modal-title').text('Фирма ' + recipient)
-//   modal.find('.modal-body input').val(recipient)
-// })
-
-// function openFirm(string) {
-//     data = JSON.parse(string);
-//     console.log();
-// }
+function openFirm(data) {
+    $('#firmName').html(data.Name);
+    $('#firmOrganizationType').html(data.OrganizationType);
+    $('#firmActivityType').html(data.ActivityType);
+    $('#firmDistrict').html(data.District);
+    $('#firmAddress').html(data.Address);
+    $('#firmPhone').html(data.Phone);
+    $('#firmFax').html(data.Fax);
+    $('#firmEmail').html(data.Email);
+    $('#firmURL').html(data.URL);
+    $('#firmOperatingMode').html(data.OperatingMode);
+    $('#modalFirm').modal();
+}
