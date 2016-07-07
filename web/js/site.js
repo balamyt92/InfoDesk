@@ -86,6 +86,7 @@ function keyNavigate(event){
             $(tabs[2]).children().click();
         } else if (tabs[2].className == 'active') {
             $(tabs[0]).children().click();
+            $($('#search-line').focus()).select();
         }
     }
     // перемещение по табу в лево
@@ -94,6 +95,7 @@ function keyNavigate(event){
             $(tabs[2]).children().click();
         } else if (tabs[1].className == 'active') {
             $(tabs[0]).children().click();
+            $($('#search-line').focus()).select();
         } else if (tabs[2].className == 'active') {
             $(tabs[1]).children().click();
         }

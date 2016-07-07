@@ -27,21 +27,48 @@ class SiteController extends Controller
      */
     public function actionSearch($str)
     {
-        $firms = Firms::find()->filterWhere(['like', 'Name', $str])->
-                                orFilterWhere(['like', 'Address', $str ])->
-                                orFilterWhere(['like', 'Comment', $str ])->
-                                orFilterWhere(['like', 'ActivityType', $str ])->
-                                orFilterWhere(['like', 'OperatingMode', $str ])->
-                                orFilterWhere(['like', 'Phone', $str ])->
-                                orFilterWhere(['like', 'District', $str ])->
-                                orFilterWhere(['like', 'OrganizationType', $str ])->
-                                orFilterWhere(['like', 'Email', $str ])->
-                                orFilterWhere(['like', 'URL', $str ])->orderBy('Name', 'Addres')->all();
+        $search_array = explode("+", $str);
+        $sql = "SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
+                "OR Address LIKE '%{$search_array[0]}%' ".
+                "OR Phone LIKE '%{$search_array[0]}%' ".
+                "OR Comment LIKE '%{$search_array[0]}%' ".
+                "OR ActivityType LIKE '%{$search_array[0]}%' ".
+                "OR OrganizationType LIKE '%{$search_array[0]}%' ".
+                "OR District LIKE '%{$search_array[0]}%' ".
+                "OR Fax LIKE '%{$search_array[0]}%' ".
+                "OR Email LIKE '%{$search_array[0]}%' ".
+                "OR URL LIKE '%{$search_array[0]}%' ".
+                "OR OperatingMode LIKE '%{$search_array[0]}%')";
+
+
+
+
+        if(count($search_array) > 1) {
+            $options = explode(" ", $search_array[1]);
+            foreach ($options as $key => $value) {
+                $sql .= " AND (Name LIKE '%{$value}%' " .
+                "OR Address LIKE '%{$value}%' ".
+                "OR Phone LIKE '%{$value}%' ".
+                "OR Comment LIKE '%{$value}%' ".
+                "OR ActivityType LIKE '%{$value}%' ".
+                "OR OrganizationType LIKE '%{$value}%' ".
+                "OR District LIKE '%{$value}%' ".
+                "OR Fax LIKE '%{$value}%' ".
+                "OR Email LIKE '%{$value}%' ".
+                "OR URL LIKE '%{$value}%' ".
+                "OR OperatingMode LIKE '%{$value}%')";
+            }
+        }
+        $sql .= " ORDER BY Name, Address";
+
+        // return var_dump($sql);
+
+        $firms = Firms::findBySql($sql)->all();
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
-        $result = [
+        return [
             'success' => true,
             'message' => $firms,
         ];
-        return $result;
     }
 }
