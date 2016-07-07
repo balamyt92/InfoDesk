@@ -20,7 +20,7 @@ $this->title = 'InfoDesk'; ?>
                 <div class="form-inline">
                     <div class="form-group input-group col-md-4">
                         <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)">
-                        <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="searchFirm();" value="default action"><i class="fa">Поиск</i></button></span>
+                        <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="SearcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
                     </div>
                 </div>
             </div>
