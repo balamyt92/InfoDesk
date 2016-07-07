@@ -1,57 +1,66 @@
+"use strict";
+
 /**
- * Функция осуществляет поиск фирмы в базе по подстроке из инпута
+ * Объект хранящий DOM дерево с результатами поиска
  */
+
 var result = {
     index : 0,
     row : {}
 };
 
-function searchFirm() {
-    $('#loader').show();
-    $('#search-firm-result').html('');
-    var str = document.getElementById('search-line').value;
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site%2Fsearch",
-        data: {str: str}
-    })
-        .done(function (data) {
-            var render = document.getElementById('search-firm-result');
-            $('.panel-title').html('Найдено фирм - ' + data.message.length);
-            if(data.message.length > 0) {
-                $(render).html('<table class="table table-hover"><thead><tr><th>Название</th><th>Адрес</th><th>Телефон</th><th>Район</th></tr></thead><tbody></tbody></table>');
-                data.message.forEach(
-                    function (item, i, arr) {
-                        $(render)
-                        .children()
-                        .children('tbody')
-                        .append('<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+ JSON.stringify(item) +');\'>'+
-                                                                        item.Name + '</a></td><td>' + 
-                                                                        item.Address + '</td><td>' + 
-                                                                        item.Phone + '</td><td>' + 
-                                                                        item.District + '</td></tr>');
-                        if(i + 1 == arr.length) {
-                            $('#loader').hide();
+/**
+ * Объект хранящий табы, необходим для переключения между ними
+ */
+var tabs = $(document.getElementsByClassName('nav-tabs')[0]).children();
 
-                            result.index = 0;
-                            result.row = $(render).children().children().children();
-                            // Делаем так что бы при клике на строку открывалась ссылка
-                            // TODO: придумать как при клике на заголовок таблицы ничего не происходило
-                            // $('tr').click( function() {
-                            //     window.location = $(this).find('a').attr('href');
-                            // }).hover( function() {
-                            //     $(this).toggleClass('hover');
-                            // });
-
-                        }
-                    }
-                );
-            } else {
-                $(render).html('<h3>Нет таких фирм</h3>');
-                $(document.getElementById('loader')).hide();
-            }
-
+/**
+ * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
+ */
+var SearcherFirms = {
+    render : function(data) {
+        let resultData = "<table class='table table-hover'>\
+                            <thead>\
+                                <tr><th>Название</th><th>Адрес</th>\
+                                <th>Телефон</th><th>Район</th></tr>\
+                            </thead>\
+                            <tbody>";
+        
+        if(data.message.length > 0){
+            data.message.forEach( function (item, i, arr){
+                resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+ 
+                                        JSON.stringify(item) +');\'>'+ 
+                                        item.Name + '</a></td><td>' + 
+                                        item.Address + '</td><td>' + 
+                                        item.Phone + '</td><td>' + 
+                                        item.District + '</td></tr>';
+                if(i + 1 == arr.length) {
+                    resultData += "</tbody></table>";
+                    $("#search-firm-result").html(resultData);
+                    result.index = 0;
+                    result.row = $("#search-firm-result").children().children().children();
+                    $("#loader").hide();
+                }
+            });
+        } else {
+            resultData = "<h3>Нет таких фирм</h3>";
+            $("#search-firm-result").html(resultData);
+            $("#loader").hide();
+        }
+        $($($("#search-firm-result").siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
+    },
+    search : function() {
+        $('#loader').show();
+        $('#search-firm-result').html('');
+        let str = document.getElementById('search-line').value;
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fsearch",
+            data: {str: str}
+        }).done(function(data){
+            SearcherFirms.render(data);
         });
+    },
 }
 
 /**
@@ -59,7 +68,8 @@ function searchFirm() {
  */
 function runSearch(e) {
     if (e.keyCode == 13) {
-        searchFirm();
+        SearcherFirms.search();
+        $($('#search-line').focus()).select();
         return false;
     }
 }
@@ -68,7 +78,6 @@ function runSearch(e) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event){
-    var tabs = $(document.getElementsByClassName('nav-tabs')[0]).children();
     // перемещение по табу в право
     if(event.keyCode == 39 && event.ctrlKey) {
         if(tabs[0].className == 'active') {
@@ -90,20 +99,21 @@ function keyNavigate(event){
         }
     }
     
-    if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length) {
+    if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
         //40 низ
         result.index = result.index + 1;
+        console.log(result.index);
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
 
-    } else if(event.keyCode == 38 && event.ctrlKey && result.index >= 1) {
+    } else if(event.keyCode == 38 && event.ctrlKey && result.index > 1) {
         //38 верх
         result.index = result.index - 1;
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-
-    } else if(result.index <= 1) {
+    } else if(result.index == 1) {
         $($('#search-line').focus()).select();
+        window.scrollTo(0, 0);
+        result.index = 0;
     }
-    
 }
 
 function openFirm(data) {

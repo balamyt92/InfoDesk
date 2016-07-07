@@ -28,7 +28,7 @@ $this->title = 'InfoDesk'; ?>
             <div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title" data-select-like-a-boss="1"><i class="fa fa-bar-chart-o fa-fw"></i> Рузультаты поиска</h3>
+                        <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
                     </div>
                     <div id="search-firm-result" class="panel-body">
                         рузельтаты
