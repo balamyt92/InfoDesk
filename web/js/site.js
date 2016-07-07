@@ -104,14 +104,21 @@ function keyNavigate(event){
         result.index = result.index + 1;
         console.log(result.index);
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        $(result.row[result.index]).addClass("hover");
+        if(result.index > 1)
+            $(result.row[result.index - 1]).removeClass("hover");
 
     } else if(event.keyCode == 38 && event.ctrlKey && result.index > 1) {
         //38 верх
         result.index = result.index - 1;
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-    } else if(result.index == 1) {
+        $(result.row[result.index]).addClass("hover");
+        $(result.row[result.index + 1]).removeClass("hover");
+
+    } else if(event.keyCode == 38 && event.ctrlKey && result.index == 1) {
         $($('#search-line').focus()).select();
         window.scrollTo(0, 0);
+        $(result.row[result.index]).removeClass("hover");
         result.index = 0;
     }
 }
@@ -127,5 +134,11 @@ function openFirm(data) {
     $('#firmEmail').html(data.Email);
     $('#firmURL').html(data.URL);
     $('#firmOperatingMode').html(data.OperatingMode);
-    $('#modalFirm').modal();
+    $('#modalFirm').modal().done(function () {
+        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+    });
 }
+
+$('#modalFirm').on('hidden.bs.modal', function () {
+    $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+})

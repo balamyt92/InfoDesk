@@ -41,7 +41,7 @@ $this->title = 'InfoDesk'; ?>
         <div class="tab-pane" id="service">Поиск сервисов</div>
     </div>
 
-    <div class="modal fade" id="modalFirm" tabindex="-1" role="dialog">
+    <div class="modal" id="modalFirm" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
