@@ -5,12 +5,12 @@ $db = require __DIR__.'/db.php';
 $config = [
     'id'         => 'InfoDesk',
     'basePath'   => dirname(__DIR__),
-    'language' => 'ru_RU',
+    'language'   => 'ru_RU',
     'components' => [
         'request' => [
             'cookieValidationKey' => 'secret',
         ],
-        'db' => $db,
+        'db'           => $db,
         'assetManager' => [
             'appendTimestamp' => true,
         ],
