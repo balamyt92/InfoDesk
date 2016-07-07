@@ -23,11 +23,12 @@ class SiteController extends Controller
 
     /**
      * @param string $str строка запроса
+     *
      * @return string
      */
     public function actionSearch($str)
     {
-        $search_array = explode("+", $str);
+        $search_array = explode('+', $str);
         $sql = "SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
                 "OR Address LIKE '%{$search_array[0]}%' ".
                 "OR Phone LIKE '%{$search_array[0]}%' ".
@@ -43,10 +44,10 @@ class SiteController extends Controller
 
 
 
-        if(count($search_array) > 1) {
-            $options = explode(" ", $search_array[1]);
+        if (count($search_array) > 1) {
+            $options = explode(' ', $search_array[1]);
             foreach ($options as $key => $value) {
-                $sql .= " AND (Name LIKE '%{$value}%' " .
+                $sql .= " AND (Name LIKE '%{$value}%' ".
                 "OR Address LIKE '%{$value}%' ".
                 "OR Phone LIKE '%{$value}%' ".
                 "OR Comment LIKE '%{$value}%' ".
@@ -59,13 +60,14 @@ class SiteController extends Controller
                 "OR OperatingMode LIKE '%{$value}%')";
             }
         }
-        $sql .= " ORDER BY Name, Address";
+        $sql .= ' ORDER BY Name, Address';
 
         // return var_dump($sql);
 
         $firms = Firms::findBySql($sql)->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
+
         return [
             'success' => true,
             'message' => $firms,
