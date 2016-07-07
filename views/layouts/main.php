@@ -20,7 +20,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<body onkeyup="keyNavigate(event);">
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -30,6 +30,9 @@ AppAsset::register($this);
         'brandUrl'   => Yii::$app->homeUrl,
         'options'    => [
             'class' => 'navbar-default navbar-fixed-top',
+        ],
+        'innerContainerOptions' => [
+            'class' => 'container-fluid',
         ],
     ]);
     $menuItems = [
@@ -50,13 +53,13 @@ AppAsset::register($this);
 //            . '</li>';
 //    }
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
+        'options' => ['class' => 'navbar-nav nav-pills'],
         'items'   => $menuItems,
     ]);
     NavBar::end();
     ?>
 
-    <div class="container">
+    <div class="container-fluid">
 
         <?= $content ?>
     </div>

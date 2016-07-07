@@ -95,9 +95,9 @@ class LegacyImportController extends Controller
         $result = [];
 
         while (!feof($handle)) {
-            $firm = fgetcsv($handle, 0, ';');
+            $firm = fgetcsv($handle, 0, ';', '^');
             while (count($firm) < $column && !feof($handle)) {
-                $tmp = fgetcsv($handle, 0, ';');
+                $tmp = fgetcsv($handle, 0, ';', '^');
                 $tmp[0] = array_pop($firm).$tmp[0];
                 $firm = array_merge($firm, $tmp);
             }
