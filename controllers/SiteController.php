@@ -12,7 +12,7 @@ use yii\web\Response;
 class SiteController extends Controller
 {
     /**
-     * Рендер гланой.
+     * Рендер главной.
      *
      * @return string
      */
@@ -41,9 +41,6 @@ class SiteController extends Controller
                 "OR URL LIKE '%{$search_array[0]}%' ".
                 "OR OperatingMode LIKE '%{$search_array[0]}%')";
 
-
-
-
         if (count($search_array) > 1) {
             $options = explode(' ', $search_array[1]);
             foreach ($options as $key => $value) {
@@ -61,8 +58,6 @@ class SiteController extends Controller
             }
         }
         $sql .= ' ORDER BY Name, Address';
-
-        // return var_dump($sql);
 
         $firms = Firms::findBySql($sql)->all();
 

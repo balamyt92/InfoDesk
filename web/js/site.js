@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Объект хранящий DOM дерево с результатами поиска
+ * Объект хранящий рузультаты поиска по фирмам
  */
 
 var result = {
@@ -25,6 +25,7 @@ var SearcherFirms = {
                                 <th>Телефон</th><th>Район</th></tr>\
                             </thead>\
                             <tbody>";
+        let renderLayout = $("#search-firm-result");
         
         if(data.message.length > 0){
             data.message.forEach( function (item, i, arr){
@@ -36,21 +37,21 @@ var SearcherFirms = {
                                         item.District + '</td></tr>';
                 if(i + 1 == arr.length) {
                     resultData += "</tbody></table>";
-                    $("#search-firm-result").html(resultData);
+                    renderLayout.html(resultData);
                     result.index = 0;
-                    result.row = $("#search-firm-result").children().children().children();
-                    $("#loader").hide();
+                    result.row = renderLayout.children().children().children();
+                    $("#firms-loader").hide();
                 }
             });
         } else {
             resultData = "<h3>Нет таких фирм</h3>";
-            $("#search-firm-result").html(resultData);
-            $("#loader").hide();
+            renderLayout.html(resultData);
+            $("#firms-loader").hide();
         }
-        $($($("#search-firm-result").siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
+        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
     },
     search : function() {
-        $('#loader').show();
+        $('#firms-loader').show();
         $('#search-firm-result').html('');
         let str = document.getElementById('search-line').value;
         $.ajax({
@@ -143,4 +144,4 @@ function openFirm(data) {
 
 $('#modalFirm').on('hidden.bs.modal', function () {
     $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-})
+});

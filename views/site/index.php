@@ -33,11 +33,27 @@ $this->title = 'InfoDesk'; ?>
                     <div id="search-firm-result" class="panel-body">
                         рузельтаты
                     </div>
-                    <div id="loader" class="loader panel-body"></div>
+                    <div id="firms-loader" class="loader panel-body"></div>
                 </div>
             </div> 
         </div>
-        <div class="tab-pane" id="parts">Поиск запчастей с помощью фильтра</div>
+        <div class="tab-pane" id="parts">
+            <div style="padding-bottom: 20px">
+                <h3>Поиск запчастей</h3>
+            </div>
+
+            <div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
+                    </div>
+                    <div id="search-parts-result" class="panel-body">
+
+                    </div>
+                    <div id="parts-loader" class="loader panel-body"></div>
+                </div>
+            </div>
+        </div>
         <div class="tab-pane" id="service">Поиск сервисов</div>
     </div>
 
