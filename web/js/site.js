@@ -20,12 +20,12 @@ var tabs = $(document.getElementsByClassName('nav-tabs')[0]).children();
  */
 var SearcherFirms = {
     render : function(data) {
-        let resultData = "<table class='table table-hover'>\
-                            <thead>\
-                                <tr><th>Название</th><th>Адрес</th>\
-                                <th>Телефон</th><th>Район</th></tr>\
-                            </thead>\
-                            <tbody>";
+        let resultData = `<table class='table table-hover'>
+                            <thead>
+                                <tr><th>Название</th><th>Адрес</th>
+                                <th>Телефон</th><th>Район</th></tr>
+                            </thead>
+                          <tbody>`;
         let renderLayout = $("#search-firm-result");
         
         if(data.message.length > 0){

@@ -38,11 +38,71 @@ $this->title = 'InfoDesk'; ?>
             </div> 
         </div>
         <div class="tab-pane" id="parts">
-            <div style="padding-bottom: 20px">
+            <div style="padding-bottom: 20px; row">
                 <h3>Поиск запчастей</h3>
+                <div class="col-md-4" style="float: none;">
+                    <label>Деталь</label>
+                    <?php
+                    echo \kartik\select2\Select2::widget([
+                        'name' => 'details',
+                        'value' => '',
+                        'data' => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy("Name")->all(), 'id', 'Name'),
+                        'options' => ['placeholder' => 'Деталь'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);?>
+                    <label>Марка</label>
+                    <?php
+                    echo \kartik\select2\Select2::widget([
+                        'name' => 'marks',
+                        'value' => '',
+                        'data' => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                        'options' => ['placeholder' => 'Марка'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);?>
+                    <label>Модель</label>
+                    <?php
+                    echo \kartik\select2\Select2::widget([
+                        'name' => 'models',
+                        'value' => '',
+                        'disabled' => true,
+                        'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                        'options' => ['placeholder' => 'Модель'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);?>
+                    <label>Кузов</label>
+                    <?php
+                    echo \kartik\select2\Select2::widget([
+                        'name' => 'models',
+                        'value' => '',
+                        'disabled' => true,
+                        'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                        'options' => ['placeholder' => 'Кузов'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);?>
+                    <label>Двигатель</label>
+                    <?php
+                    echo \kartik\select2\Select2::widget([
+                        'name' => 'models',
+                        'value' => '',
+                        'disabled' => true,
+                        'data' => \yii\helpers\ArrayHelper::map(\app\models\CarEngineModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                        'options' => ['placeholder' => 'Двигатель'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);?>
+                </div>
             </div>
 
-            <div>
+            <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
