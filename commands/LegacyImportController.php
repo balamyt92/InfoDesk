@@ -206,8 +206,19 @@ class LegacyImportController extends Controller
                 try {
                     $msg = $model->loadData($tmp);
                 } catch (IntegrityException $e) {
-                    $this->log($e, 'err');
-                    $this->log($tmp, 'err');
+                    // произошла ошибка записи, скорее всего из-за дублирования ключа
+                    // перезапускаем заливу но уже по одному элементу
+                    while ($tmp) {
+                        $once = array_pop($tmp);
+                        try {
+                            $msg = $model->loadData($once);
+                        }
+                        catch (IntegrityException $e) {
+                            // поймали гадину
+                            $this->log($e, 'err');
+                            $this->log($once, 'err');
+                        }
+                    }
                 }
                 if (count($msg) > 0) {
                     $this->log($msg, 'wrn');
