@@ -16,7 +16,7 @@ class m160529_065556_create_firm_table extends Migration
             'id'               => $this->primaryKey(),
             'Name'             => $this->char(200)->notNull(),
             'Address'          => $this->text(),
-            'Phone'            => $this->char(200)->defaultValue('нет'),
+            'Phone'            => $this->char(200),
             'Comment'          => $this->text(),
             'Enabled'          => $this->boolean()->defaultValue(1),
             'ActivityType'     => $this->text(),

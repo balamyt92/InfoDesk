@@ -1,6 +1,3 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
 require 'yaml'
 require 'fileutils'
 
@@ -8,8 +5,10 @@ config = {
   local: './vagrant/config/vagrant-local.yml',
   example: './vagrant/config/vagrant-local.example.yml'
 }
+
 # copy config from example if local config not exists
 FileUtils.cp config[:example], config[:local] unless File.exist?(config[:local])
+
 # read config
 options = YAML.load_file config[:local]
 
@@ -26,7 +25,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "geerlingguy/ubuntu1604"
+  config.vm.box = "ubuntu/trusty64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -50,7 +49,7 @@ Vagrant.configure(2) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10", auto_config: false
+  config.vm.network "private_network", ip: "192.168.33.10", auto_config: true
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -83,7 +82,6 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision 'shell', inline: "ifconfig eth1 192.168.33.10", run: 'always'
   config.vm.provision 'shell', path: './vagrant/provision/once-as-root.sh', args: [options['timezone']]
   config.vm.provision 'shell', path: './vagrant/provision/once-as-vagrant.sh', args: [options['github_token']], privileged: false
   config.vm.provision 'shell', path: './vagrant/provision/always-as-root.sh', run: 'always'
