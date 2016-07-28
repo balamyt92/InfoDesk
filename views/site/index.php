@@ -145,6 +145,10 @@ $this->title = 'InfoDesk'; ?>
                     <td>Режим работы</td>
                     <td id="firmOperatingMode"></td>
                 </tr>
+                <tr>
+                    <td>Примечание</td>
+                    <td id="firmComment"></td>
+                </tr>
             </tbody>
         </table>
       </div>

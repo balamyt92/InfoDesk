@@ -109,9 +109,9 @@ function openFirm(data) {
     $('#firmEmail').html(data.Email);
     $('#firmURL').html(data.URL);
     $('#firmOperatingMode').html(data.OperatingMode);
-    $('#modalFirm').modal().done(function () {
-        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-    });
+    $('#firmComment').html(data.Comment);
+    $('#modalFirm').modal();
+    $($($(result.row[result.index]).children()[0]).children()[0]).focus();
 }
 
 $('#modalFirm').on('hidden.bs.modal', function () {
