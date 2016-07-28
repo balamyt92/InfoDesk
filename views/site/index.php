@@ -7,7 +7,7 @@ $this->title = 'InfoDesk'; ?>
 <div class="row">
     <div class="col-md-3">
         <h3>Поиск фирм</h3>
-        <div class="form-inline">
+        <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group">
                 <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)">
                 <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="SearcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
@@ -24,10 +24,17 @@ $this->title = 'InfoDesk'; ?>
             echo \kartik\select2\Select2::widget([
                 'name' => 'details',
                 'value' => '',
+                'readonly' => true,
+                'pluginLoading' => false,
+                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Деталь'],
                 'pluginOptions' => [
                     'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) {  searchParts.idDetail = data.params.data.id; }",
+                    "select2:unselect" => "function() { searchParts.idDetail = false; }"
                 ],
             ]);?>
             <label>Марка</label>
@@ -35,10 +42,26 @@ $this->title = 'InfoDesk'; ?>
             echo \kartik\select2\Select2::widget([
                 'name' => 'marks',
                 'value' => '',
+                'pluginLoading' => false,
+                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Марка'],
                 'pluginOptions' => [
                     'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) {  
+                        searchParts.idMark = data.params.data.id; 
+                        $('#w2').next().removeClass('select2-container--disabled');
+                        searchParts.getModels();
+                        $('#w4').next().removeClass('select2-container--disabled');
+                        searchParts.getEngine();
+                    }",
+                    "select2:unselect" => "function() { 
+                        searchParts.idMark = false;
+                        $('#w2').next().addClass('select2-container--disabled');
+                        $('#w4').next().addClass('select2-container--disabled');
+                    }"
                 ],
             ]);?>
             <label>Модель</label>
@@ -47,10 +70,24 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
+                'pluginLoading' => false,
+                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Модель'],
                 'pluginOptions' => [
                     'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) {  
+                        searchParts.idModel = data.params.data.id; 
+                        $('#w3').next().removeClass('select2-container--disabled');
+                        searchParts.getBodys();
+                        searchParts.getEngine();
+                    }",
+                    "select2:unselect" => "function() { 
+                        searchParts.idModel = false;
+                        $('#w3').next().addClass('select2-container--disabled');
+                    }"
                 ],
             ]);?>
             <label>Кузов</label>
@@ -59,10 +96,21 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
+                'pluginLoading' => false,
+                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Кузов'],
                 'pluginOptions' => [
                     'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) {  
+                        searchParts.idBody = data.params.data.id; 
+                        searchParts.getEngine();
+                    }",
+                    "select2:unselect" => "function() { 
+                        searchParts.idBody = false;
+                    }"
                 ],
             ]);?>
             <label>Двигатель</label>
@@ -71,6 +119,8 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
+                'pluginLoading' => false,
+                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarEngineModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Двигатель'],
                 'pluginOptions' => [

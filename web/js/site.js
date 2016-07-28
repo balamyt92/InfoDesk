@@ -61,6 +61,62 @@ var SearcherFirms = {
 }
 
 /**
+ * Объект отвечающий за работу с фильтром запчастей
+ */
+var searchParts = {
+    idDetail : false,
+    idMark   : false,
+    idModel  : false,
+    idBody   : false,
+    idEngine : false,
+    idNumber : false,
+
+    // функция вывода результата запроса
+    render : function() {
+
+    },
+
+    search : function() {
+
+    },
+
+    getModels : function() {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fget-models",
+            data: {id: searchParts.idMark}
+        }).done(function(data){
+            // рисуем модели
+            console.log(data);
+        });
+    },
+
+    getBodys : function() {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fget-bodys",
+            data: {id: searchParts.idModel}
+        }).done(function(data){
+            // рисуем кузова
+        });
+    },
+
+    getEngine : function() {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fget-engine",
+            data: {
+                mark_id: searchParts.idMark,
+                model_id: searchParts.idModel,
+                body_id: searchParts.idBody,
+            }
+        }).done(function(data){
+            // рисуем двигателя
+        });
+    },
+}
+
+/**
  * По энтеру в поле запускаем поиск фирм
  */
 function runSearch(e) {
@@ -98,7 +154,7 @@ function keyNavigate(event){
         result.index = 0;
     }
 
-    // по Esc скролим наверх
+    // по Esc скролим наверх если не открыто модальное окно
     if(event.keyCode == 27) {
         // добавить проверку какой был запрос
         // для выделения соответсвующего элемента

@@ -3,6 +3,9 @@
 namespace app\controllers;
 
 use app\models\Firms;
+use app\models\CarModelsEN;
+use app\models\CarBodyModelsEN;
+use app\models\CarEngineModelsEN;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -66,6 +69,57 @@ class SiteController extends Controller
         return [
             'success' => true,
             'message' => $firms,
+        ];
+    }
+
+    public function actionGetModels($id) 
+    {
+        $carModels = CarModelsEN::find()->where([ '=','ID_Mark', $id ])->OrderBy(['Name' => SORT_ASC])->asArray()->all();
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $carModels,
+        ];
+    }
+
+    public function actionGetBodys($id)
+    {
+        $carBodys = CarBodyModelsEN::find()->where([ '=','ID_Model', $id ])->OrderBy(['Name' => SORT_ASC])->asArray()->all();
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $carBodys,
+        ];
+    }
+
+    public function actionGetEngine($mark_id, $model_id, $body_id)
+    {
+        if($model_id === "false" && $body_id === "false") {
+            $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
+                                                    OrderBy(['Name' => SORT_ASC])->
+                                                    asArray()->all();
+        } elseif ($body_id === "false" ) {
+            // $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
+            //                                         andFilterWhere([ '=','ID_Model', $model_id ])->
+            //                                         OrderBy(['Name' => SORT_ASC])->
+            //                                         asArray()->all();
+        } else {
+            // $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
+            //                                         andFilterWhere([ '=','ID_Model', $model_id ])->
+            //                                         andFilterWhere([ '=','ID_Body', $body_id ])->
+            //                                         OrderBy(['Name' => SORT_ASC])->
+            //                                         asArray()->all();            
+        }
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $carEngine,
         ];
     }
 }
