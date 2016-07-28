@@ -127,6 +127,7 @@ $this->title = 'InfoDesk'; ?>
                 'pluginEvents' => [
                     "select2:select" => "function(data) {  
                         searchParts.idBody = data.params.data.id; 
+                        $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
                     }",
                     "select2:unselect" => "function() { 
