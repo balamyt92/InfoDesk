@@ -87,7 +87,15 @@ var searchParts = {
             data: {id: searchParts.idMark}
         }).done(function(data){
             // рисуем модели
-            console.log(data);
+            let list = '<option value="">Модель</option>';
+            if(data.message.length > 0){
+                data.message.forEach(function (item, i, arr) {
+                    list += `<option value="${item.id}">${item.Name}</option>`;
+                    if(data.message.length == i+1) {
+                        $('#w2').html(list);
+                    }
+                })
+            }
         });
     },
 
@@ -98,6 +106,15 @@ var searchParts = {
             data: {id: searchParts.idModel}
         }).done(function(data){
             // рисуем кузова
+            let list = '<option value="">Кузов</option>';
+            if(data.message.length > 0){
+                data.message.forEach(function (item, i, arr) {
+                    list += `<option value="${item.id}">${item.Name}</option>`;
+                    if(data.message.length == i+1) {
+                        $('#w3').html(list);
+                    }
+                })
+            }
         });
     },
 
@@ -112,6 +129,15 @@ var searchParts = {
             }
         }).done(function(data){
             // рисуем двигателя
+            let list = '<option value="">Двигатель</option>';
+            if(data.message.length > 0){
+                data.message.forEach(function (item, i, arr) {
+                    list += `<option value="${item.id}">${item.Name}</option>`;
+                    if(data.message.length == i+1) {
+                        $('#w4').html(list);
+                    }
+                })
+            }
         });
     },
 }

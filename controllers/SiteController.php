@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\CarEngineAndBodyCorrespondencesEN;
+use app\models\CarEngineAndModelCorrespondencesEN;
 use app\models\Firms;
 use app\models\CarModelsEN;
 use app\models\CarBodyModelsEN;
@@ -33,9 +35,9 @@ class SiteController extends Controller
     {
         $search_array = explode('+', $str);
         $sql = "SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
+                "OR Comment LIKE '%{$search_array[0]}%' " .
                 "OR Address LIKE '%{$search_array[0]}%' ".
-                "OR Phone LIKE '%{$search_array[0]}%' ".
-                "OR Comment LIKE '%{$search_array[0]}%' ".
+                "OR Phone LIKE '%{$search_array[0]}%' " .
                 "OR ActivityType LIKE '%{$search_array[0]}%' ".
                 "OR OrganizationType LIKE '%{$search_array[0]}%' ".
                 "OR District LIKE '%{$search_array[0]}%' ".
@@ -74,7 +76,9 @@ class SiteController extends Controller
 
     public function actionGetModels($id) 
     {
-        $carModels = CarModelsEN::find()->where([ '=','ID_Mark', $id ])->OrderBy(['Name' => SORT_ASC])->asArray()->all();
+        $carModels = CarModelsEN::find()->where([ '=','ID_Mark', $id ])->
+                                        OrderBy(['Name' => SORT_ASC])->
+                                        asArray()->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -86,7 +90,9 @@ class SiteController extends Controller
 
     public function actionGetBodys($id)
     {
-        $carBodys = CarBodyModelsEN::find()->where([ '=','ID_Model', $id ])->OrderBy(['Name' => SORT_ASC])->asArray()->all();
+        $carBodys = CarBodyModelsEN::find()->where([ '=','ID_Model', $id ])->
+                                            OrderBy(['Name' => SORT_ASC])->
+                                            asArray()->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -98,21 +104,24 @@ class SiteController extends Controller
 
     public function actionGetEngine($mark_id, $model_id, $body_id)
     {
+        $carEngine = [];
+
         if($model_id === "false" && $body_id === "false") {
             $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
                                                     OrderBy(['Name' => SORT_ASC])->
                                                     asArray()->all();
-        } elseif ($body_id === "false" ) {
-            // $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
-            //                                         andFilterWhere([ '=','ID_Model', $model_id ])->
-            //                                         OrderBy(['Name' => SORT_ASC])->
-            //                                         asArray()->all();
+        } elseif ($body_id === "false") {
+            $sql = "SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A " .
+                   "LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) " .
+                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL " .
+                   "GROUP BY id ORDER BY Name";
+            $carEngine = CarEngineModelsEN::findBySql($sql)->all();
         } else {
-            // $carEngine = CarEngineModelsEN::find()->where([ '=','ID_Mark', $mark_id ])->
-            //                                         andFilterWhere([ '=','ID_Model', $model_id ])->
-            //                                         andFilterWhere([ '=','ID_Body', $body_id ])->
-            //                                         OrderBy(['Name' => SORT_ASC])->
-            //                                         asArray()->all();            
+            $sql = "SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A ".
+                   "LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) " .
+                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL " .
+                   "GROUP BY id ORDER BY Name";
+            $carEngine = CarEngineModelsEN::findBySql($sql)->all();
         }
 
         \Yii::$app->response->format = Response::FORMAT_JSON;

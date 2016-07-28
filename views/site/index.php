@@ -51,16 +51,28 @@ $this->title = 'InfoDesk'; ?>
                 ],
                 'pluginEvents' => [
                     "select2:select" => "function(data) {  
-                        searchParts.idMark = data.params.data.id; 
-                        $('#w2').next().removeClass('select2-container--disabled');
+                        searchParts.idMark = data.params.data.id;
+                        $('#w2').select2(\"val\", \"\");
+                        $('#w3').select2(\"val\", \"\");
+                        $('#w4').select2(\"val\", \"\"); 
+
+                        $('#w2').prop(\"disabled\", false);
+                        $('#w3').prop(\"disabled\", true);
+                        $('#w4').prop(\"disabled\", false);
+                        
                         searchParts.getModels();
-                        $('#w4').next().removeClass('select2-container--disabled');
                         searchParts.getEngine();
                     }",
                     "select2:unselect" => "function() { 
                         searchParts.idMark = false;
-                        $('#w2').next().addClass('select2-container--disabled');
-                        $('#w4').next().addClass('select2-container--disabled');
+
+                        $('#w2').prop(\"disabled\", true);
+                        $('#w3').prop(\"disabled\", true);
+                        $('#w4').prop(\"disabled\", true);
+
+                        $('#w2').select2(\"val\", \"\");
+                        $('#w3').select2(\"val\", \"\");
+                        $('#w4').select2(\"val\", \"\");
                     }"
                 ],
             ]);?>
@@ -79,14 +91,23 @@ $this->title = 'InfoDesk'; ?>
                 ],
                 'pluginEvents' => [
                     "select2:select" => "function(data) {  
-                        searchParts.idModel = data.params.data.id; 
-                        $('#w3').next().removeClass('select2-container--disabled');
+                        searchParts.idModel = data.params.data.id;
+                        
+                        $('#w3').select2(\"val\", \"\");
+                        $('#w4').select2(\"val\", \"\"); 
+                         
+                        $('#w3').prop(\"disabled\", false);
                         searchParts.getBodys();
                         searchParts.getEngine();
                     }",
                     "select2:unselect" => "function() { 
+                        $('#w3').prop(\"disabled\", true);
+                        
+                        $('#w3').select2(\"val\", \"\");
+                        $('#w4').select2(\"val\", \"\");
+                        
                         searchParts.idModel = false;
-                        $('#w3').next().addClass('select2-container--disabled');
+                        searchParts.getEngine();
                     }"
                 ],
             ]);?>
@@ -110,6 +131,8 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:unselect" => "function() { 
                         searchParts.idBody = false;
+                        $('#w4').select2(\"val\", \"\");
+                        searchParts.getEngine();
                     }"
                 ],
             ]);?>
