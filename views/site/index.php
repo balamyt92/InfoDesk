@@ -47,7 +47,7 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Модель'],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -59,7 +59,7 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Кузов'],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -71,7 +71,7 @@ $this->title = 'InfoDesk'; ?>
                 'name' => 'models',
                 'value' => '',
                 'disabled' => true,
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\CarEngineModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
+                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarEngineModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Двигатель'],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -110,43 +110,43 @@ $this->title = 'InfoDesk'; ?>
         <table class="table table-condensed">
             <tbody>
                 <tr>
-                    <td style="border-top: none">Организация</td>
+                    <td style="border-top: none"><label>Организация</label></td>
                     <td  style="border-top: none" id="firmOrganizationType"></td>
                 </tr>
                 <tr>
-                    <td>Профиль деятельности</td>
+                    <td><label>Профиль деятельности</label></td>
                     <td id="firmActivityType"></td>
                 </tr>
                 <tr>
-                    <td>Район</td>
+                    <td><label>Район</label></td>
                     <td id="firmDistrict"></td>
                 </tr>
                 <tr>
-                    <td>Адрес</td>
+                    <td><label>Адрес</label></td>
                     <td id="firmAddress"></td>
                 </tr>
                 <tr>
-                    <td>Телефон</td>
+                    <td><label>Телефон</label></td>
                     <td id="firmPhone"></td>
                 </tr>
                 <tr>
-                    <td>Факс</td>
+                    <td><label>Факс</label></td>
                     <td id="firmFax"></td>
                 </tr>
                 <tr>
-                    <td>Email</td>
+                    <td><label>Email</label></td>
                     <td id="firmEmail"></td>
                 </tr>
                 <tr>
-                    <td>Сайт</td>
+                    <td><label>Сайт</label></td>
                     <td id="firmURL"></td>
                 </tr>
                 <tr>
-                    <td>Режим работы</td>
+                    <td><label>Режим работы</label></td>
                     <td id="firmOperatingMode"></td>
                 </tr>
                 <tr>
-                    <td>Примечание</td>
+                    <td><label>Примечание</label></td>
                     <td id="firmComment"></td>
                 </tr>
             </tbody>

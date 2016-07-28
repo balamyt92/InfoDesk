@@ -6,7 +6,8 @@
 
 var result = {
     index : 0,
-    row : {}
+    row : {},
+    openModelWindow : false
 };
 
 /**
@@ -16,8 +17,8 @@ var SearcherFirms = {
     render : function(data) {
         let resultData = `<table class='table table-hover'>
                             <thead>
-                                <tr><th>Название</th><th>Адрес</th>
-                                <th>Телефон</th><th>Район</th></tr>
+                                <tr><th style="width:25%;">Название<br>Телефон</th><th style="width:25%;">Адрес<br>Район</th>
+                                <th>Профиль деятельсности</th><th style="width:20%;">Режим работы<br>Коментарий</th></tr>
                             </thead>
                           <tbody>`;
         let renderLayout = $("#search-result");
@@ -26,10 +27,10 @@ var SearcherFirms = {
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+ 
                                         JSON.stringify(item) +');\'>'+ 
-                                        item.Name + '</a></td><td>' + 
-                                        item.Address + '</td><td>' + 
-                                        item.Phone + '</td><td>' + 
-                                        item.District + '</td></tr>';
+                                        item.Name + '</a><br><br>' + item.Phone + '</td><td>' + 
+                                        item.Address + '<br><br>' + item.District + '</td><td>' + 
+                                        item.ActivityType + '</td><td><pre>' + 
+                                        item.OperatingMode + '</pre><br>' + item.Comment + '</td></tr>';
                 if(i + 1 == arr.length) {
                     resultData += "</tbody></table>";
                     renderLayout.html(resultData);
@@ -96,6 +97,20 @@ function keyNavigate(event){
         $(result.row[result.index]).removeClass("hover");
         result.index = 0;
     }
+
+    // по Esc скролим наверх
+    if(event.keyCode == 27) {
+        // добавить проверку какой был запрос
+        // для выделения соответсвующего элемента
+        if(!result.openModelWindow) {
+            $($('#search-line').focus()).select();
+            window.scrollTo(0,0);
+            $(result.row[result.index]).removeClass("hover");
+            result.index = 0;
+        } else {
+            result.openModelWindow = false;
+        }
+    }
 }
 
 function openFirm(data) {
@@ -112,6 +127,7 @@ function openFirm(data) {
     $('#firmComment').html(data.Comment);
     $('#modalFirm').modal();
     $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+    result.openModelWindow = true;
 }
 
 $('#modalFirm').on('hidden.bs.modal', function () {
