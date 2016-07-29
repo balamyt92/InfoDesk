@@ -242,8 +242,8 @@ function keyNavigate(event){
         result.index = 0;
     }
 
-    // по Esc скролим наверх если не открыто модальное окно
-    if(event.keyCode == 27) {
+    // в результатах по Esc скролим наверх если не открыто модальное окно
+    if(event.keyCode == 27 && result.index > 0) {
         // добавить проверку какой был запрос
         // для выделения соответсвующего элемента
         if(!result.openModelWindow) {
