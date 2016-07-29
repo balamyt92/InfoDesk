@@ -114,13 +114,13 @@ class SiteController extends Controller
             $sql = "SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A " .
                    "LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) " .
                    "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL " .
-                   "GROUP BY id ORDER BY Name";
+                   "ORDER BY Name";
             $carEngine = CarEngineModelsEN::findBySql($sql)->all();
         } else {
             $sql = "SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A ".
                    "LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) " .
                    "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL " .
-                   "GROUP BY id ORDER BY Name";
+                   "ORDER BY Name";
             $carEngine = CarEngineModelsEN::findBySql($sql)->all();
         }
 
