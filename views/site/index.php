@@ -152,6 +152,7 @@ $this->title = 'InfoDesk'; ?>
                 ],
             ]);?>
         </div>
+        <button type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.search();">Поиск</button>
     </div>
 
     <div class="col-md-5">

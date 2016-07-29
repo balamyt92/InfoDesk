@@ -8,6 +8,7 @@ use app\models\Firms;
 use app\models\CarModelsEN;
 use app\models\CarBodyModelsEN;
 use app\models\CarEngineModelsEN;
+use app\models\CarPresenceEN;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -131,4 +132,53 @@ class SiteController extends Controller
             'message' => $carEngine,
         ];
     }
+
+    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id)
+    {
+        $parts = [];
+
+
+
+        $sql = "SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ".
+               "BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, ".
+               "A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm ".
+               "FROM CarPresenceEN AS A ".
+               "LEFT JOIN CarENDetailNames AS DETAIL ON (DETAIL.id=A.ID_Name) ".
+               "LEFT JOIN CarMarksEN as MARK ON (MARK.id=A.ID_Mark) ".
+               "LEFT JOIN CarModelsEN as MODEL ON (MODEL.id=A.ID_Model) ".
+               "LEFT JOIN CarBodyModelsEN as BODY ON (BODY.id=A.ID_Body) ".
+               "LEFT JOIN CarEngineModelsEN as ENGINE ON (ENGINE.id=A.ID_Engine) ".
+               "LEFT JOIN Firms ON (Firms.id=A.ID_Firm) ".
+               "WHERE A.ID_Name=:detail_id AND A.ID_Mark=:mark_id AND Firms.Enabled=1 ";
+
+        $map = [':detail_id' => $detail_id,
+                ':mark_id' => $mark_id,];
+
+        if(!($model_id === "false")) {
+            $sql .= "AND A.ID_Model=:model_id ";
+            $map[':model_id'] = $model_id;
+        }
+        if(!($body_id === "false")) {
+            $sql .= "AND A.ID_Body=:body_id ";
+            $map[':body_id'] = $body_id;
+        }
+        if(!($engine_id === "false")) {
+            $sql .= "AND A.ID_Engine=:engine_id ";
+            $map[':engine_id'] = $engine_id;
+        }       
+
+
+        $connection = \Yii::$app->getDb();
+        $command = $connection->createCommand($sql, $map);
+        $parts = $command->queryAll();
+        // $parts = CarPresenceEN::findBySql($sql)->all();
+
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $parts,
+        ];
+    } 
 }

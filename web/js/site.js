@@ -47,9 +47,14 @@ var SearcherFirms = {
         $($(renderLayout.siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
     },
     search : function() {
+        let str = document.getElementById('search-line').value;
+        if(str == '') {
+            alert("Введите искомую строку");
+            return false;
+        }
+
         $('#loader').show();
         $('#search-result').html('');
-        let str = document.getElementById('search-line').value;
         $.ajax({
             method: "GET",
             url: "index.php?r=site%2Fsearch",
@@ -72,12 +77,69 @@ var searchParts = {
     idNumber : false,
 
     // функция вывода результата запроса
-    render : function() {
-
+    render : function(data) {
+        let resultData = `<table class='table table-hover'>
+                            <thead>
+                                <tr><th>Наименование</th><th>Марка</th><th>Модель</th>
+                                <th>Кузов</th><th>Двигатель</th><th>Год</th><th>Цена</th>
+                                <th>Примечание</th><th>Номер</th><th>Код</th></tr>
+                            </thead>
+                          <tbody>`;
+        let renderLayout = $("#search-result");
+        
+        if(data.message.length > 0){
+            data.message.forEach( function (item, i, arr){
+                resultData +=  '<tr><td><a href="javascript:void(0);">'+ 
+                                        item.DetailName + '</a></td><td>' + 
+                                        item.MarkName + '</td><td>' + 
+                                        item.ModelName + '</td><td>' + 
+                                        item.BodyName + '</td><td>' + 
+                                        item.EngineName + '</td><td>' + 
+                                        item.CarYear + '</td><td>' + 
+                                        item.Cost + '</td><td>' + 
+                                        item.Comment + '</td><td>' + 
+                                        item.Catalog_Number + '</td><td>' + 
+                                        item.TechNumber + '</td></tr>';
+                if(i + 1 == arr.length) {
+                    resultData += "</tbody></table>";
+                    renderLayout.html(resultData);
+                    result.index = 0;
+                    result.row = renderLayout.children().children().children();
+                    $("#loader").hide();
+                }
+            });
+        } else {
+            resultData = "<h3>Нет запчастей</h3>";
+            renderLayout.html(resultData);
+            $("#loader").hide();
+        }
+        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено запчастей - " + data.message.length);
     },
 
     search : function() {
-
+        if(!searchParts.idDetail) {
+            alert('Выберите деталь');
+            return false;
+        }
+        if(!searchParts.idMark) {
+            alert('Выберите марку');
+            return false;
+        }
+        $('#loader').show();
+        $('#search-result').html('');
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fsearch-parts",
+            data: {
+                detail_id : searchParts.idDetail,
+                mark_id   : searchParts.idMark,
+                model_id  : searchParts.idModel,
+                body_id   : searchParts.idBody,
+                engine_id : searchParts.idEngine
+            }
+        }).done(function(data){
+            searchParts.render(data);
+        });
     },
 
     getModels : function() {
