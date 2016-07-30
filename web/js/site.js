@@ -7,7 +7,14 @@
 var result = {
     index : 0,
     row : {},
-    openModelWindow : false
+    openModelWindow : false,
+    paginate : false,
+    firms : false,
+    parts : false,
+    service : false,
+    loading : false,
+    toBack : false,
+    toNext : true,
 };
 
 /**
@@ -45,6 +52,11 @@ var SearcherFirms = {
             $("#loader").hide();
         }
         $($(renderLayout.siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
+        result.firms = true;
+        result.parts = false;
+        result.service = false;
+        result.paginate = false;
+
     },
     search : function() {
         let str = document.getElementById('search-line').value;
@@ -75,6 +87,8 @@ var searchParts = {
     idBody   : false,
     idEngine : false,
     idNumber : false,
+    idPage      : 1,
+    limitResult : 50,
 
     // функция вывода результата запроса
     render : function(data) {
@@ -88,6 +102,11 @@ var searchParts = {
         let renderLayout = $("#search-result");
         
         if(data.message.length > 0){
+            if(data.message.length >= searchParts.limitResult) {
+                result.paginate = true;
+            } else {
+                result.paginate = false;
+            }
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td><a href="javascript:void(0);">'+ 
                                         item.DetailName + '</a></td><td>' + 
@@ -113,10 +132,28 @@ var searchParts = {
             renderLayout.html(resultData);
             $("#loader").hide();
         }
-        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено запчастей - " + data.message.length);
+        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено запчастей - " + data.message.length +
+                                                            " (Старница " + searchParts.idPage + ")");
+        result.firms = false;
+        result.parts = true;
+        result.service = false;
+        result.loading = false;
+
+        // если возвращаемся назат то нашинаем с конца списка
+        if(result.toBack) {
+            result.toBack = false;
+            result.index = data.message.length;
+            $(result.row[result.index]).addClass("hover");
+        }
+        if(result.toNext) {
+            result.toNext = false;
+            result.index = 1;
+            $(result.row[result.index]).addClass("hover");
+        }
     },
 
     search : function() {
+        result.loading = true;
         if(!searchParts.idDetail) {
             alert('Выберите деталь');
             return false;
@@ -135,7 +172,9 @@ var searchParts = {
                 mark_id   : searchParts.idMark,
                 model_id  : searchParts.idModel,
                 body_id   : searchParts.idBody,
-                engine_id : searchParts.idEngine
+                engine_id : searchParts.idEngine,
+                page      : searchParts.idPage,
+                limit     : searchParts.limitResult,
             }
         }).done(function(data){
             searchParts.render(data);
@@ -219,10 +258,33 @@ function runSearch(e) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event){
+    console.log(event.keyCode);
+    // подгрузка следующей страницы
+    if(((event.keyCode == 40 && result.index >= searchParts.limitResult)
+        || event.keyCode == 34)  &&
+        result.paginate &&
+        result.parts &&
+        !result.loading )
+    {
+        searchParts.idPage += 1;
+        result.toNext = true;
+        searchParts.search();
+    }
+    // подгрузка предидущей страницы
+    if(((event.keyCode == 38 && result.index < 2) || event.keyCode == 33)&&
+        result.paginate &&
+        result.parts &&
+        searchParts.idPage > 1 &&
+        !result.loading )
+    {
+        searchParts.idPage -= 1;
+        result.toBack = true;
+        searchParts.search();
+    }
+
     if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
         //40 низ
         result.index = result.index + 1;
-        console.log(result.index);
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
         $(result.row[result.index]).addClass("hover");
         if(result.index > 1)
@@ -235,12 +297,14 @@ function keyNavigate(event){
         $(result.row[result.index]).addClass("hover");
         $(result.row[result.index + 1]).removeClass("hover");
 
-    } else if(event.keyCode == 38 && event.ctrlKey && result.index == 1) {
-        $($('#search-line').focus()).select();
-        window.scrollTo(0, 0);
-        $(result.row[result.index]).removeClass("hover");
-        result.index = 0;
     }
+    // отключил переход в поле поиска по ктрл + вверх ибо так удобнее, еще будем тестить
+    // else if(event.keyCode == 38 && event.ctrlKey && result.index == 1 && !result.paginate) {
+    //     $($('#search-line').focus()).select();
+    //     window.scrollTo(0, 0);
+    //     $(result.row[result.index]).removeClass("hover");
+    //     result.index = 0;
+    // }
 
     // в результатах по Esc скролим наверх если не открыто модальное окно
     if(event.keyCode == 27 && result.index > 0) {

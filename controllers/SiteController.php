@@ -133,7 +133,18 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id)
+    /**
+     * Функция поиска запчастей
+     *
+     * @param $detail_id
+     * @param $mark_id
+     * @param $model_id
+     * @param $body_id
+     * @param $engine_id
+     * @param $page integer какая страница результата нас интересует
+     * @return array возвращаем JSON
+     */
+    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit)
     {
         $connection = \Yii::$app->getDb();
         $parts = [];
@@ -148,7 +159,10 @@ class SiteController extends Controller
             array_push($tmp, $value['ID_LinkedDetail']);
         }
         $link = implode(",", $tmp);
-        $detail_id .= ','.$link;
+        if($link)
+        {
+            $detail_id .= ','.$link;
+        }
 
         // запрос результирующеё таблицы
         $sql = "SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ".
@@ -180,9 +194,16 @@ class SiteController extends Controller
         $map = [
             ':mark_id' => $mark_id,
         ];
+
+        // пагинация
+        $sql .= " LIMIT {$limit}";
+        if($page > 1) {
+            $fin = ((int)$page * (int)$limit) + (int)$limit;
+            $sql .= " OFFSET {$fin}";
+        }
+
         $command = $connection->createCommand($sql, $map);
         $parts = $command->queryAll();
-
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
