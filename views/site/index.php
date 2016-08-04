@@ -9,14 +9,14 @@ $this->title = 'InfoDesk'; ?>
         <h3>Поиск фирм</h3>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group">
-                <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)">
+                <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)" title="firm-search">
                 <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="SearcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
         </div>
     </div>
 
 
-    <div class="col-md-4">
+    <div class="col-md-4" onmousedown="searchParts.submitForm = false;" onclick="searchParts.submitForm = false;">
         <h3>Поиск запчастей</h3>
         <div>
             <label>Деталь</label>
@@ -33,8 +33,16 @@ $this->title = 'InfoDesk'; ?>
                     'allowClear' => true
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {  searchParts.idDetail = data.params.data.id; }",
-                    "select2:unselect" => "function() { searchParts.idDetail = false; }"
+                    "select2:select" => "function(data) {  
+                        searchParts.idDetail = data.params.data.id; 
+                        searchParts.submitForm = true;
+                        console.log(data);
+                    }",
+                    "select2:unselect" => "function() { 
+                        searchParts.idDetail = false;
+                        searchParts.submitForm = false; 
+                    }",
+                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
                 ],
             ]);?>
             <label>Марка</label>
@@ -50,20 +58,22 @@ $this->title = 'InfoDesk'; ?>
                     'allowClear' => true
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {  
+                    "select2:select" => "function(data) {
                         searchParts.idMark = data.params.data.id;
                         $('#w2').select2(\"val\", \"\");
                         $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\"); 
+                        $('#w4').select2(\"val\", \"\");
 
                         $('#w2').prop(\"disabled\", false);
                         $('#w3').prop(\"disabled\", true);
                         $('#w4').prop(\"disabled\", false);
-                        
+
                         searchParts.getModels();
                         searchParts.getEngine();
+                        
+                        searchParts.submitForm = true;
                     }",
-                    "select2:unselect" => "function() { 
+                    "select2:unselect" => "function() {
                         searchParts.idMark = false;
 
                         $('#w2').prop(\"disabled\", true);
@@ -73,7 +83,9 @@ $this->title = 'InfoDesk'; ?>
                         $('#w2').select2(\"val\", \"\");
                         $('#w3').select2(\"val\", \"\");
                         $('#w4').select2(\"val\", \"\");
-                    }"
+                        searchParts.submitForm = false;
+                    }",
+                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
                 ],
             ]);?>
             <label>Модель</label>
@@ -90,25 +102,28 @@ $this->title = 'InfoDesk'; ?>
                     'allowClear' => true
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {  
+                    "select2:select" => "function(data) {
                         searchParts.idModel = data.params.data.id;
-                        
+
                         $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\"); 
-                         
+                        $('#w4').select2(\"val\", \"\");
+
                         $('#w3').prop(\"disabled\", false);
                         searchParts.getBodys();
                         searchParts.getEngine();
+                        searchParts.submitForm = true;
                     }",
-                    "select2:unselect" => "function() { 
+                    "select2:unselect" => "function() {
                         $('#w3').prop(\"disabled\", true);
-                        
+
                         $('#w3').select2(\"val\", \"\");
                         $('#w4').select2(\"val\", \"\");
-                        
+
                         searchParts.idModel = false;
                         searchParts.getEngine();
-                    }"
+                        searchParts.submitForm = false;
+                    }",
+                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
                 ],
             ]);?>
             <label>Кузов</label>
@@ -125,16 +140,19 @@ $this->title = 'InfoDesk'; ?>
                     'allowClear' => true
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {  
-                        searchParts.idBody = data.params.data.id; 
+                    "select2:select" => "function(data) {
+                        searchParts.idBody = data.params.data.id;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
+                        searchParts.submitForm = true;
                     }",
-                    "select2:unselect" => "function() { 
+                    "select2:unselect" => "function() {
                         searchParts.idBody = false;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
-                    }"
+                        searchParts.submitForm = false;
+                    }",
+                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
                 ],
             ]);?>
             <label>Двигатель</label>
@@ -145,10 +163,18 @@ $this->title = 'InfoDesk'; ?>
                 'disabled' => true,
                 'pluginLoading' => false,
                 'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarEngineModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
                 'options' => ['placeholder' => 'Двигатель'],
                 'pluginOptions' => [
                     'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function() {
+                        searchParts.submitForm = true;
+                    }",
+                    "select2:unselect" => "function() {
+                        searchParts.submitForm = false;
+                    }",
+                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
                 ],
             ]);?>
         </div>

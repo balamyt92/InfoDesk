@@ -3,7 +3,6 @@
 /**
  * Объект хранящий рузультаты поиска по фирмам
  */
-
 var result = {
     index : 0,
     row : {},
@@ -21,6 +20,7 @@ var result = {
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
 var SearcherFirms = {
+    submitForm : false,
     render : function(data) {
         let resultData = `<table class='table table-hover'>
                             <thead>
@@ -32,10 +32,10 @@ var SearcherFirms = {
         
         if(data.message.length > 0){
             data.message.forEach( function (item, i, arr){
-                resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+ 
-                                        JSON.stringify(item) +');\'>'+ 
-                                        item.Name + '</a><br><br>' + item.Phone + '</td><td>' + 
-                                        item.Address + '<br><br>' + item.District + '</td><td>' + 
+                resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+
+                                        JSON.stringify(item) +');\'>'+
+                                        item.Name + '</a><br><br>' + item.Phone + '</td><td>' +
+                                        item.Address + '<br><br>' + item.District + '</td><td>' +
                                         item.ActivityType + '</td><td><pre>' + 
                                         item.OperatingMode + '</pre><br>' + item.Comment + '</td></tr>';
                 if(i + 1 == arr.length) {
@@ -43,7 +43,7 @@ var SearcherFirms = {
                     renderLayout.html(resultData);
                     result.index = 0;
                     result.row = renderLayout.children().children().children();
-                    $("#loader").hide();
+                    $('#loader').hide();
                 }
             });
         } else {
@@ -75,7 +75,7 @@ var SearcherFirms = {
             SearcherFirms.render(data);
         });
     },
-}
+};
 
 /**
  * Объект отвечающий за работу с фильтром запчастей
@@ -102,11 +102,7 @@ var searchParts = {
         let renderLayout = $("#search-result");
         
         if(data.message.length > 0){
-            if(data.message.length >= searchParts.limitResult) {
-                result.paginate = true;
-            } else {
-                result.paginate = false;
-            }
+            result.paginate = data.message.length >= searchParts.limitResult;
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td><a href="javascript:void(0);">'+ 
                                         item.DetailName + '</a></td><td>' + 
@@ -190,7 +186,7 @@ var searchParts = {
             // рисуем модели
             let list = '<option value="">Модель</option>';
             if(data.message.length > 0){
-                data.message.forEach(function (item, i, arr) {
+                data.message.forEach(function (item, i) {
                     list += `<option value="${item.id}">${item.Name}</option>`;
                     if(data.message.length == i+1) {
                         $('#w2').html(list);
@@ -232,7 +228,7 @@ var searchParts = {
             // рисуем двигателя
             let list = '<option value="">Двигатель</option>';
             if(data.message.length > 0){
-                data.message.forEach(function (item, i, arr) {
+                data.message.forEach(function (item, i) {
                     list += `<option value="${item.id}">${item.Name}</option>`;
                     if(data.message.length == i+1) {
                         $('#w4').html(list);
@@ -241,7 +237,7 @@ var searchParts = {
             }
         });
     },
-}
+};
 
 /**
  * По энтеру в поле запускаем поиск фирм
@@ -318,6 +314,11 @@ function keyNavigate(event){
         } else {
             result.openModelWindow = false;
         }
+    }
+
+    // для того что бы работол поиск по энетеру в запчастях
+    if(event.keyCode != 13) {
+        searchParts.submitForm = false;
     }
 }
 
