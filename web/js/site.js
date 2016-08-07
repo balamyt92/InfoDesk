@@ -1,5 +1,4 @@
 "use strict";
-
 /**
  * Объект хранящий рузультаты поиска по фирмам
  */
@@ -19,7 +18,7 @@ var result = {
 /**
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
-var SearcherFirms = {
+var searcherFirms = {
     submitForm : false,
     render : function(data) {
         let resultData = `<table class='table table-hover'>
@@ -29,14 +28,14 @@ var SearcherFirms = {
                             </thead>
                           <tbody>`;
         let renderLayout = $("#search-result");
-        
+
         if(data.message.length > 0){
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+
                                         JSON.stringify(item) +');\'>'+
                                         item.Name + '</a><br><br>' + item.Phone + '</td><td>' +
                                         item.Address + '<br><br>' + item.District + '</td><td>' +
-                                        item.ActivityType + '</td><td><pre>' + 
+                                        item.ActivityType + '</td><td><pre>' +
                                         item.OperatingMode + '</pre><br>' + item.Comment + '</td></tr>';
                 if(i + 1 == arr.length) {
                     resultData += "</tbody></table>";
@@ -72,7 +71,7 @@ var SearcherFirms = {
             url: "index.php?r=site%2Fsearch",
             data: {str: str}
         }).done(function(data){
-            SearcherFirms.render(data);
+            searcherFirms.render(data);
         });
     },
 };
@@ -101,20 +100,20 @@ var searchParts = {
                             </thead>
                           <tbody>`;
         let renderLayout = $("#search-result");
-        
+
         if(data.message.length > 0){
             result.paginate = data.message.length >= searchParts.limitResult;
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td>' + item.ID_Firm + '</td><td>'+ item.Priority +'</td>' +
                                        '<td><a href="javascript:void(0);">'+
-                                        item.DetailName + '</a></td><td>' + 
-                                        item.MarkName + '</td><td>' + 
-                                        item.ModelName + '</td><td>' + 
-                                        item.BodyName + '</td><td>' + 
-                                        item.EngineName + '</td><td>' + 
-                                        item.CarYear + '</td><td>' + 
-                                        item.Cost + '</td><td>' + 
-                                        item.Comment + '</td><td>' + 
+                                        item.DetailName + '</a></td><td>' +
+                                        item.MarkName + '</td><td>' +
+                                        item.ModelName + '</td><td>' +
+                                        item.BodyName + '</td><td>' +
+                                        item.EngineName + '</td><td>' +
+                                        item.CarYear + '</td><td>' +
+                                        item.Cost + '</td><td>' +
+                                        item.Comment + '</td><td>' +
                                         item.Catalog_Number + '</td></tr>';
                 if(i + 1 == arr.length) {
                     resultData += "</tbody></table>";
@@ -237,7 +236,7 @@ var searchParts = {
  */
 function runSearch(e) {
     if (e.keyCode == 13) {
-        SearcherFirms.search();
+        searcherFirms.search();
         $($('#search-line').focus()).select();
         return false;
     }
@@ -246,45 +245,41 @@ function runSearch(e) {
 /**
  * Функция обработки хоткеев навигации
  */
-function keyNavigate(event){
+function keyNavigate(event) {
     // подгрузка следующей страницы
-    if(((event.keyCode == 40 && result.index >= searchParts.limitResult)
-        || event.keyCode == 34)  &&
+    if (((event.keyCode == 40 && result.index >= searchParts.limitResult)
+        || event.keyCode == 34) &&
         result.paginate &&
-        result.parts &&
-        !result.loading )
-    {
+        result.parts && !result.loading) {
         searchParts.idPage += 1;
         result.toNext = true;
         searchParts.search();
     }
     // подгрузка предидущей страницы
-    if(((event.keyCode == 38 && result.index < 2) || event.keyCode == 33)&&
+    if (((event.keyCode == 38 && result.index < 2) || event.keyCode == 33) &&
         result.parts &&
-        searchParts.idPage > 1 &&
-        !result.loading )
-    {
+        searchParts.idPage > 1 && !result.loading) {
         searchParts.idPage -= 1;
         result.toBack = true;
         searchParts.search();
     }
 
-    if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
+    if (event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
         //40 низ
         result.index = result.index + 1;
-        if(result.parts) {
+        if (result.parts) {
             $($($(result.row[result.index]).children()[2]).children()[0]).focus();
         } else {
             $($($(result.row[result.index]).children()[0]).children()[0]).focus();
         }
         $(result.row[result.index]).addClass("hover");
-        if(result.index > 1)
+        if (result.index > 1)
             $(result.row[result.index - 1]).removeClass("hover");
 
-    } else if(event.keyCode == 38 && event.ctrlKey && result.index > 1) {
+    } else if (event.keyCode == 38 && event.ctrlKey && result.index > 1) {
         //38 верх
         result.index = result.index - 1;
-        if(result.parts) {
+        if (result.parts) {
             $($($(result.row[result.index]).children()[2]).children()[0]).focus();
         } else {
             $($($(result.row[result.index]).children()[0]).children()[0]).focus();
@@ -293,26 +288,17 @@ function keyNavigate(event){
         $(result.row[result.index + 1]).removeClass("hover");
 
     }
-    // отключил переход в поле поиска по ктрл + вверх ибо так удобнее, еще будем тестить
-    // else if(event.keyCode == 38 && event.ctrlKey && result.index == 1 && !result.paginate) {
-    //     $($('#search-line').focus()).select();
-    //     window.scrollTo(0, 0);
-    //     $(result.row[result.index]).removeClass("hover");
-    //     result.index = 0;
-    // }
 
     // в результатах по Esc скролим наверх если не открыто модальное окно
-    if(event.keyCode == 27 && result.index > 0) {
-        // добавить проверку какой был запрос
-        // для выделения соответсвующего элемента
-        if(!result.openModelWindow) {
-            if(result.parts) {
+    if (event.keyCode == 27 && result.index > 0) {
+        if (!result.openModelWindow) {
+            if (result.parts) {
                 $(searchParts.currentSelect).select2('open').select2('close');
             }
-            if(result.firms) {
+            if (result.firms) {
                 $($('#search-line').focus()).select();
             }
-            window.scrollTo(0,0);
+            window.scrollTo(0, 0);
             $(result.row[result.index]).removeClass("hover");
             result.index = 0;
         } else {
@@ -321,11 +307,47 @@ function keyNavigate(event){
     }
 
     // для того что бы работол поиск по энетеру в запчастях
-    if(event.keyCode != 13) {
+    if (event.keyCode != 13) {
         searchParts.submitForm = false;
+    }
+
+    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
+    if (event.keyCode == 39 && event.ctrlKey) {
+        if (result.firms) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $('#service').focus();
+            result.service = true;
+            result.parts = false;
+        } else if (result.service) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.service = false;
+        }
+    }
+    if (event.keyCode == 37 && event.ctrlKey) {
+        if (result.firms) {
+            $('#service').focus();
+            result.service = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.parts = false;
+        } else if (result.service) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.service = false;
+        }
     }
 }
 
+/**
+ * Функция открытия карточки фирмы в результатах поиска
+ * @param data
+ */
 function openFirm(data) {
     $('#firmName').html(data.Name);
     $('#firmOrganizationType').html(data.OrganizationType);
@@ -346,3 +368,16 @@ function openFirm(data) {
 $('#modalFirm').on('hidden.bs.modal', function () {
     $($($(result.row[result.index]).children()[0]).children()[0]).focus();
 });
+
+
+function ready() {
+    // Инициализация
+    $($('#search-line').focus()).select();
+    result.firms = true;
+    result.parts = false;
+    result.service = false;
+    searchParts.currentSelect = $('#w0');
+}
+
+document.addEventListener("DOMContentLoaded", ready);
+

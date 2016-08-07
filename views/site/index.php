@@ -10,7 +10,7 @@ $this->title = 'InfoDesk'; ?>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group">
                 <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)" title="firm-search">
-                <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="SearcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
+                <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="searcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
         </div>
     </div>
@@ -236,6 +236,7 @@ $this->title = 'InfoDesk'; ?>
 
     <div class="col-md-5">
         <h3>Поиск сервисов</h3>
+        <input type="text" id="service">
     </div>
 </div>
 
