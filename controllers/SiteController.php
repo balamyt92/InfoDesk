@@ -156,7 +156,7 @@ class SiteController extends Controller
         // запрос результирующеё таблицы
         $sql = "SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ".
             "BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, ".
-            "A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm ".
+            "A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm, Firms.Priority ".
             "FROM CarPresenceEN AS A ".
             "LEFT JOIN CarENDetailNames AS DETAIL ON (DETAIL.id=A.ID_Name) ".
             "LEFT JOIN CarMarksEN as MARK ON (MARK.id=A.ID_Mark) ".
@@ -243,6 +243,8 @@ class SiteController extends Controller
                 $sql .= "AND A.ID_Engine={$engine_id} ";
             }
         }
+
+        $sql .= " ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName";
 
         // пагинация
         $sql .= " LIMIT {$limit}";

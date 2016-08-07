@@ -36,7 +36,6 @@ $this->title = 'InfoDesk'; ?>
                     "select2:select" => "function(data) {  
                         searchParts.idDetail = data.params.data.id; 
                         searchParts.submitForm = true;
-                        console.log(data);
                     }",
                     "select2:unselect" => "function() { 
                         searchParts.idDetail = false;

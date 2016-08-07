@@ -94,9 +94,9 @@ var searchParts = {
     render : function(data) {
         let resultData = `<table class='table table-hover'>
                             <thead>
-                                <tr><th>Наименование</th><th>Марка</th><th>Модель</th>
+                                <tr><th>ID Фирмы</th><th>Приоритет</th><th>Наименование</th><th>Марка</th><th>Модель</th>
                                 <th>Кузов</th><th>Двигатель</th><th>Год</th><th>Цена</th>
-                                <th>Примечание</th><th>Номер</th><th>Код</th></tr>
+                                <th>Примечание</th><th>Номер</th></tr>
                             </thead>
                           <tbody>`;
         let renderLayout = $("#search-result");
@@ -104,7 +104,8 @@ var searchParts = {
         if(data.message.length > 0){
             result.paginate = data.message.length >= searchParts.limitResult;
             data.message.forEach( function (item, i, arr){
-                resultData +=  '<tr><td><a href="javascript:void(0);">'+ 
+                resultData +=  '<tr><td>' + item.ID_Firm + '</td><td>'+ item.Priority +'</td>' +
+                                       '<td><a href="javascript:void(0);">'+
                                         item.DetailName + '</a></td><td>' + 
                                         item.MarkName + '</td><td>' + 
                                         item.ModelName + '</td><td>' + 
@@ -113,8 +114,7 @@ var searchParts = {
                                         item.CarYear + '</td><td>' + 
                                         item.Cost + '</td><td>' + 
                                         item.Comment + '</td><td>' + 
-                                        item.Catalog_Number + '</td><td>' + 
-                                        item.TechNumber + '</td></tr>';
+                                        item.Catalog_Number + '</td></tr>';
                 if(i + 1 == arr.length) {
                     resultData += "</tbody></table>";
                     renderLayout.html(resultData);
@@ -271,7 +271,11 @@ function keyNavigate(event){
     if(event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
         //40 низ
         result.index = result.index + 1;
-        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        if(result.parts) {
+            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+        } else {
+            $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        }
         $(result.row[result.index]).addClass("hover");
         if(result.index > 1)
             $(result.row[result.index - 1]).removeClass("hover");
@@ -279,7 +283,11 @@ function keyNavigate(event){
     } else if(event.keyCode == 38 && event.ctrlKey && result.index > 1) {
         //38 верх
         result.index = result.index - 1;
-        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        if(result.parts) {
+            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+        } else {
+            $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        }
         $(result.row[result.index]).addClass("hover");
         $(result.row[result.index + 1]).removeClass("hover");
 
