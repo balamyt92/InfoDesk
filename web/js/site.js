@@ -163,6 +163,7 @@ var searchParts = {
                 engine_id : searchParts.idEngine,
                 page      : searchParts.idPage,
                 limit     : searchParts.limitResult,
+                number    : document.getElementById('number').value,
             }
         }).done(function(data){
             searchParts.render(data);

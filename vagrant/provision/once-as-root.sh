@@ -46,13 +46,16 @@ debconf-set-selections <<< "mysql-server-5.6 mysql-server/root_password_again pa
 echo "Done!"
 
 info "Install additional software"
-apt-get install -y git php7.0 php7.0-fpm php7.0-mysql php7.0-mbstring php7.0-intl php7.0-xml php7.0-xsl php7.0-zip php7.0-curl php7.0-gd nginx mysql-server
+apt-get install -y git php7.0 php7.0-fpm php7.0-mysql php7.0-mbstring php7.0-intl php7.0-xml php7.0-xsl php7.0-zip php7.0-curl php7.0-gd nginx mysql-server-5.6
 
 
 info "Configure MySQL"
 #sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
 sed -i '/\[mysqld\]/a character-set-server=utf8\ncollation-server=utf8_general_ci' /etc/mysql/my.cnf
 sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+sed -i "s/key_buffer/key_buffer_size/" /etc/mysql/my.cnf
+sed -i "s/myisam-recover/myisam-recover-options/" /etc/mysql/my.cnf
+
 echo "Done!"
 
 info "Configure PHP-FPM"

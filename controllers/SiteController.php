@@ -143,9 +143,10 @@ class SiteController extends Controller
      * @param $engine_id
      * @param $page integer какая страница результата нас интересует
      * @param $limit integer соклько строк результатов нам надо
+     * @param $number string номер детали
      * @return array возвращаем JSON
      */
-    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit)
+    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit, $number)
     {
         $connection = \Yii::$app->getDb();
         $detail_search = $detail_id;
@@ -248,6 +249,17 @@ class SiteController extends Controller
             }
         }
 
+
+        // поиск по номеру
+        if(!empty($number)) {
+//            $number_search = str_replace('-', '%', $number);
+//            $number_search = str_replace('?', '_', $number_search);
+//            $sql .= " AND (A.Comment LIKE '%{$number_search}%' OR A.Catalog_Number LIKE '%{$number_search}%') ";
+//
+            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
+        }
+
+        // сортировка
         $sql .= " ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName";
 
         // пагинация

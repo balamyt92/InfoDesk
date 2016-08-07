@@ -219,6 +219,9 @@ class LegacyImportController extends Controller
                             $this->log($once, 'err');
                         }
                     }
+                } catch (\Error $e) {
+                    // все плохо
+                    $this->log($e, 'err');
                 }
                 if (count($msg) > 0) {
                     $this->log($msg, 'wrn');
