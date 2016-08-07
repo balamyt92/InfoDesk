@@ -150,14 +150,6 @@ var searchParts = {
 
     search : function() {
         result.loading = true;
-        if(!searchParts.idDetail) {
-            alert('Выберите деталь');
-            return false;
-        }
-        if(!searchParts.idMark) {
-            alert('Выберите марку');
-            return false;
-        }
         $('#loader').show();
         $('#search-result').html('');
         $.ajax({

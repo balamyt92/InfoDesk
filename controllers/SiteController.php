@@ -148,15 +148,6 @@ class SiteController extends Controller
     {
         $connection = \Yii::$app->getDb();
         $parts = [];
-
-        // ищем все связанные детали
-        $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = :detail_id";
-        $link = $this->getLinkedString($link_detail_sql, [':detail_id' => $detail_id,], 'ID_LinkedDetail');
-        if($link)
-        {
-            $detail_id .= ','.$link;
-        }
-
         // запрос результирующеё таблицы
         $sql = "SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ".
             "BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, ".
@@ -168,12 +159,36 @@ class SiteController extends Controller
             "LEFT JOIN CarBodyModelsEN as BODY ON (BODY.id=A.ID_Body) ".
             "LEFT JOIN CarEngineModelsEN as ENGINE ON (ENGINE.id=A.ID_Engine) ".
             "LEFT JOIN Firms ON (Firms.id=A.ID_Firm) ".
-            "WHERE A.ID_Name IN ({$detail_id}) ".
-            "AND A.ID_Mark=:mark_id AND Firms.Enabled=1 ";
+            "WHERE Firms.Enabled=1 ";
+
+        if(!($detail_id === "false"))
+        {
+            // ищем все связанные детали
+            $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = :detail_id";
+            $link = $this->getLinkedString($link_detail_sql, [':detail_id' => $detail_id,], 'ID_LinkedDetail');
+            if($link)
+            {
+                $detail_id .= ','.$link;
+            }
+            $sql .= "AND A.ID_Name IN ({$detail_id}) ";
+        }
+
+        if(!($mark_id === "false")) {
+            // ищем связанные марки
+            $lin_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= :mark_id) UNION 
+                            (SELECT id FROM CarMarksEN WHERE Name = '***')";
+            $link = $this->getLinkedString($lin_mar_sql, [':mark_id' => $mark_id,], 'ID_Group');
+            if($link)
+            {
+                $mark_id .= ','.$link;
+            }
+            $sql .= "AND A.ID_Mark IN ({$mark_id}) ";
+        }
 
         if(!($model_id === "false")) {
             // ищем связанные модели
-            $lin_model_sql = "SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = :model_id";
+            $lin_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = :model_id) UNION 
+                              (SELECT id FROM CarModelsEN WHERE Name = '***')";
             $link = $this->getLinkedString($lin_model_sql, [':model_id' => $model_id,], 'ID_Group');
             if($link)
             {
@@ -182,15 +197,11 @@ class SiteController extends Controller
             $sql .= "AND A.ID_Model IN ({$model_id}) ";
         }
         if(!($body_id === "false")) {
-            $sql .= "AND A.ID_Body=:body_id ";
-            $map[':body_id'] = $body_id;
+            $sql .= "AND A.ID_Body={$body_id} ";
         }
         if(!($engine_id === "false")) {
-            $sql .= "AND A.ID_Engine=:engine_id ";
-            $map[':engine_id'] = $engine_id;
+            $sql .= "AND A.ID_Engine={$engine_id} ";
         }
-
-        $map[':mark_id'] = $mark_id;
 
         // пагинация
         $sql .= " LIMIT {$limit}";
@@ -199,7 +210,7 @@ class SiteController extends Controller
             $sql .= " OFFSET {$fin}";
         }
 
-        $command = $connection->createCommand($sql, $map);
+        $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
