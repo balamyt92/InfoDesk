@@ -233,7 +233,10 @@ class SiteController extends Controller
             }
         }
         if(!($engine_id === "false")) {
-            $link_engine_sql = "SELECT ID_EngineModel FROM CarEngineModelGroupsEN WHERE ID_EngineGroup={$engine_id}";
+            $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN 
+                                  WHERE ID_EngineGroup={$engine_id})
+                                UNION
+                                (SELECT id FROM CarEngineModelsEN WHERE Name='***' AND ID_Mark={$mark_id})";
             $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
             if($link)
             {
