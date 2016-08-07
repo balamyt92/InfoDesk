@@ -4,7 +4,7 @@ define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
 // подключаем панель дебага
-if(YII_DEBUG) {
+if (YII_DEBUG) {
     require __DIR__.'/../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
     $config = HTMLPurifier_Config::createDefault();
     $config->set('Core.Encoding', 'UTF-8'); // replace with your encoding

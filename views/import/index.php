@@ -45,12 +45,10 @@ $this->registerJs($script);
                               'CarMarkGroupsEN.txt', 'Services.txt', ];
                     while ($files) {
                         $file = array_shift($files);
-                        $path = __DIR__.'/../../import/';
-                        ?>
+                        $path = __DIR__.'/../../import/'; ?>
 	    			<tr>
 	    				<td>
-	    					<?php echo '<span class="lable">'.$file.'</span>';
-                        ?>
+	    					<?php echo '<span class="lable">'.$file.'</span>'; ?>
 	    				</td>
 	    				<td>
 							<?php
@@ -58,8 +56,7 @@ $this->registerJs($script);
                                 echo '<span class="label label-success">Доступен</span>';
                             } else {
                                 echo '<span class="label label-danger">Не доступен</span>';
-                            }
-                        ?>
+                            } ?>
 	    				</td>
 	    			</tr>
 	    			<?php 
