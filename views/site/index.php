@@ -23,50 +23,50 @@ $this->title = 'InfoDesk';
             <label>Деталь</label>
             <?php
             echo \kartik\select2\Select2::widget([
-                'name' => 'details',
-                'value' => '',
-                'readonly' => true,
+                'name'          => 'details',
+                'value'         => '',
+                'readonly'      => true,
                 'pluginLoading' => false,
-                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options' => ['placeholder' => 'Деталь'],
+                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy('Name')->all(), 'id', 'Name'),
+                'options'       => ['placeholder' => 'Деталь'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {  
+                    'select2:select' => 'function(data) {  
                         searchParts.idDetail = data.params.data.id; 
                         searchParts.submitForm = true;
                         searchParts.currentSelect = this;
-                    }",
-                    "select2:unselect" => "function() { 
+                    }',
+                    'select2:unselect' => 'function() { 
                         searchParts.idDetail = false;
                         searchParts.submitForm = false; 
-                    }",
-                    "select2:opening" => "function() { 
+                    }',
+                    'select2:opening' => 'function() { 
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
                         }
-                    }",
+                    }',
                 ],
-            ]);?>
+            ]); ?>
             <label>Марка</label>
             <?php
             echo \kartik\select2\Select2::widget([
-                'name' => 'marks',
-                'value' => '',
+                'name'          => 'marks',
+                'value'         => '',
                 'pluginLoading' => false,
-                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options' => ['placeholder' => 'Марка'],
+                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name'),
+                'options'       => ['placeholder' => 'Марка'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {
+                    'select2:select' => "function(data) {
                         searchParts.idMark = data.params.data.id;
                         $('#w2').select2(\"val\", \"\");
                         $('#w3').select2(\"val\", \"\");
@@ -85,7 +85,7 @@ $this->title = 'InfoDesk';
                         searchParts.submitForm = true;
                         searchParts.currentSelect = this;
                     }",
-                    "select2:unselect" => "function() {
+                    'select2:unselect' => "function() {
                         searchParts.idMark = false;
                         searchParts.idModel = false;
                         searchParts.idBody = false;
@@ -100,31 +100,31 @@ $this->title = 'InfoDesk';
                         $('#w4').select2(\"val\", \"\");
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { 
+                    'select2:opening' => 'function() { 
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
                         }
-                    }",
+                    }',
                 ],
-            ]);?>
+            ]); ?>
             <label>Модель</label>
             <?php
             echo \kartik\select2\Select2::widget([
-                'name' => 'models',
-                'value' => '',
-                'disabled' => true,
+                'name'          => 'models',
+                'value'         => '',
+                'disabled'      => true,
                 'pluginLoading' => false,
-                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options' => ['placeholder' => 'Модель'],
+                'options'       => ['placeholder' => 'Модель'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {
+                    'select2:select' => "function(data) {
                         searchParts.idModel = data.params.data.id;
 
                         $('#w3').select2(\"val\", \"\");
@@ -138,7 +138,7 @@ $this->title = 'InfoDesk';
                         searchParts.idEngine = false;
                         searchParts.currentSelect = this;
                     }",
-                    "select2:unselect" => "function() {
+                    'select2:unselect' => "function() {
                         $('#w3').prop(\"disabled\", true);
 
                         $('#w3').select2(\"val\", \"\");
@@ -150,31 +150,31 @@ $this->title = 'InfoDesk';
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { 
+                    'select2:opening' => 'function() { 
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
                         }
-                    }",
+                    }',
                 ],
-            ]);?>
+            ]); ?>
             <label>Кузов</label>
             <?php
             echo \kartik\select2\Select2::widget([
-                'name' => 'models',
-                'value' => '',
-                'disabled' => true,
+                'name'          => 'models',
+                'value'         => '',
+                'disabled'      => true,
                 'pluginLoading' => false,
-                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options' => ['placeholder' => 'Кузов'],
+                'options'       => ['placeholder' => 'Кузов'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {
+                    'select2:select' => "function(data) {
                         searchParts.idBody = data.params.data.id;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
@@ -182,55 +182,55 @@ $this->title = 'InfoDesk';
                         searchParts.idEngine = false;
                         searchParts.currentSelect = this;
                     }",
-                    "select2:unselect" => "function() {
+                    'select2:unselect' => "function() {
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { 
+                    'select2:opening' => 'function() { 
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
                         }
-                    }",
+                    }',
                 ],
-            ]);?>
+            ]); ?>
             <label>Двигатель</label>
             <?php
             echo \kartik\select2\Select2::widget([
-                'name' => 'models',
-                'value' => '',
-                'disabled' => true,
+                'name'          => 'models',
+                'value'         => '',
+                'disabled'      => true,
                 'pluginLoading' => false,
-                'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'options' => ['placeholder' => 'Двигатель'],
+                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                'options'       => ['placeholder' => 'Двигатель'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function(data) {
+                    'select2:select' => 'function(data) {
                         searchParts.submitForm = true;
                         searchParts.idEngine = data.params.data.id;
                         searchParts.currentSelect = this;
-                    }",
-                    "select2:unselect" => "function() {
+                    }',
+                    'select2:unselect' => 'function() {
                         searchParts.submitForm = false;
                         searchParts.idEngine = false;
-                    }",
-                    "select2:opening" => "function() { 
+                    }',
+                    'select2:opening' => 'function() { 
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
                         }
-                    }",
+                    }',
                 ],
-            ]);?>
+            ]); ?>
             <label>Номер</label>
             <input type="text" class="form-control" id="number">
         </div>

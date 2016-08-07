@@ -98,7 +98,7 @@ class LegacyImportController extends Controller
             $firm = fgetcsv($handle, 0, ';', '^');
             while (count($firm) < $column && !feof($handle)) {
                 $tmp = fgetcsv($handle, 0, ';', '^');
-                $tmp[0] = array_pop($firm). "\n" . $tmp[0];
+                $tmp[0] = array_pop($firm)."\n".$tmp[0];
                 $firm = array_merge($firm, $tmp);
             }
             if ($firm != false) {
@@ -137,7 +137,7 @@ class LegacyImportController extends Controller
                         return 0;
                     }
 
-                    return ($a[3] < $b[3]) ?  -1 : 1;
+                    return ($a[3] < $b[3]) ? -1 : 1;
                 });
                 break;
             case 'ServicePresence':
@@ -212,8 +212,7 @@ class LegacyImportController extends Controller
                         $once = array_pop($tmp);
                         try {
                             $msg = $model->loadData($once);
-                        }
-                        catch (IntegrityException $e) {
+                        } catch (IntegrityException $e) {
                             // поймали гадину
                             $this->log($e, 'err');
                             $this->log($once, 'err');

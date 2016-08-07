@@ -26,7 +26,7 @@ if (YII_ENV_DEV) {
     // включаем дебаг панель
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
+        'class'      => 'yii\debug\Module',
         'allowedIPs' => ['127.0.0.1', '::1', '192.168.0.*', '192.168.33.1'],
     ];
 }
