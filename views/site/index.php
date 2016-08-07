@@ -44,6 +44,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
+                            searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
@@ -93,6 +94,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
+                            searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
@@ -137,6 +139,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
+                            searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
@@ -172,6 +175,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
+                            searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
@@ -200,6 +204,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
+                            searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
                             return false; 
