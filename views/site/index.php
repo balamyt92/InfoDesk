@@ -77,11 +77,17 @@ $this->title = 'InfoDesk'; ?>
 
                         searchParts.getModels();
                         searchParts.getEngine();
+                        searchParts.idModel = false;
+                        searchParts.idBody = false;
+                        searchParts.idEngine = false;
                         
                         searchParts.submitForm = true;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.idMark = false;
+                        searchParts.idModel = false;
+                        searchParts.idBody = false;
+                        searchParts.idEngine = false;
 
                         $('#w2').prop(\"disabled\", true);
                         $('#w3').prop(\"disabled\", true);
@@ -126,6 +132,8 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.getBodys();
                         searchParts.getEngine();
                         searchParts.submitForm = true;
+                        searchParts.idBody = false;
+                        searchParts.idEngine = false;
                     }",
                     "select2:unselect" => "function() {
                         $('#w3').prop(\"disabled\", true);
@@ -134,6 +142,8 @@ $this->title = 'InfoDesk'; ?>
                         $('#w4').select2(\"val\", \"\");
 
                         searchParts.idModel = false;
+                        searchParts.idBody = false;
+                        searchParts.idEngine = false;
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
@@ -166,9 +176,11 @@ $this->title = 'InfoDesk'; ?>
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
                         searchParts.submitForm = true;
+                        searchParts.idEngine = false;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.idBody = false;
+                        searchParts.idEngine = false;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
                         searchParts.submitForm = false;
@@ -201,6 +213,7 @@ $this->title = 'InfoDesk'; ?>
                     }",
                     "select2:unselect" => "function() {
                         searchParts.submitForm = false;
+                        searchParts.idEngine = false;
                     }",
                     "select2:opening" => "function() { 
                         if(searchParts.submitForm) {
@@ -213,7 +226,7 @@ $this->title = 'InfoDesk'; ?>
                 ],
             ]);?>
         </div>
-        <button type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.search();">Поиск</button>
+        <button type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>
     </div>
 
     <div class="col-md-5">
