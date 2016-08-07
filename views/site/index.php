@@ -42,7 +42,13 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.idDetail = false;
                         searchParts.submitForm = false; 
                     }",
-                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
+                    "select2:opening" => "function() { 
+                        if(searchParts.submitForm) {
+                            searchParts.search();
+                            searchParts.submitForm = false;
+                            return false; 
+                        }
+                    }",
                 ],
             ]);?>
             <label>Марка</label>
@@ -85,7 +91,13 @@ $this->title = 'InfoDesk'; ?>
                         $('#w4').select2(\"val\", \"\");
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
+                    "select2:opening" => "function() { 
+                        if(searchParts.submitForm) {
+                            searchParts.search();
+                            searchParts.submitForm = false;
+                            return false; 
+                        }
+                    }",
                 ],
             ]);?>
             <label>Модель</label>
@@ -123,7 +135,13 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
+                    "select2:opening" => "function() { 
+                        if(searchParts.submitForm) {
+                            searchParts.search();
+                            searchParts.submitForm = false;
+                            return false; 
+                        }
+                    }",
                 ],
             ]);?>
             <label>Кузов</label>
@@ -152,7 +170,13 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
+                    "select2:opening" => "function() { 
+                        if(searchParts.submitForm) {
+                            searchParts.search();
+                            searchParts.submitForm = false;
+                            return false; 
+                        }
+                    }",
                 ],
             ]);?>
             <label>Двигатель</label>
@@ -174,7 +198,13 @@ $this->title = 'InfoDesk'; ?>
                     "select2:unselect" => "function() {
                         searchParts.submitForm = false;
                     }",
-                    "select2:opening" => "function() { if(searchParts.submitForm) return false; }",
+                    "select2:opening" => "function() { 
+                        if(searchParts.submitForm) {
+                            searchParts.search();
+                            searchParts.submitForm = false;
+                            return false; 
+                        }
+                    }",
                 ],
             ]);?>
         </div>
