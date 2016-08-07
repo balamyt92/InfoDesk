@@ -272,7 +272,11 @@ function keyNavigate(event) {
         if (result.parts) {
             $($($(result.row[result.index]).children()[2]).children()[0]).focus();
         } else {
-            $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+            if(result.openModelWindow) {
+                $($($(result.row[result.index]).children()[0]).children()[0]).click();
+            } else {
+                $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+            }
         }
         $(result.row[result.index]).addClass("hover");
         if (result.index > 1)
@@ -284,7 +288,11 @@ function keyNavigate(event) {
         if (result.parts) {
             $($($(result.row[result.index]).children()[2]).children()[0]).focus();
         } else {
-            $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+            if(result.openModelWindow) {
+                $($($(result.row[result.index]).children()[0]).children()[0]).click();
+            } else {
+                $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+            }
         }
         $(result.row[result.index]).addClass("hover");
         $(result.row[result.index + 1]).removeClass("hover");
