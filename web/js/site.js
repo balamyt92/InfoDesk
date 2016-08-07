@@ -254,7 +254,6 @@ function runSearch(e) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event){
-    console.log(event.keyCode);
     // подгрузка следующей страницы
     if(((event.keyCode == 40 && result.index >= searchParts.limitResult)
         || event.keyCode == 34)  &&
@@ -268,7 +267,6 @@ function keyNavigate(event){
     }
     // подгрузка предидущей страницы
     if(((event.keyCode == 38 && result.index < 2) || event.keyCode == 33)&&
-        result.paginate &&
         result.parts &&
         searchParts.idPage > 1 &&
         !result.loading )

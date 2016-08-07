@@ -150,15 +150,8 @@ class SiteController extends Controller
         $parts = [];
 
         // ищем все связанные детали
-        $link_detail = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = :detail_id";
-        $link_detail = $connection->createCommand($link_detail, [':detail_id' => $detail_id,]);
-        $link = $link_detail->queryAll();
-        $tmp = [];
-        foreach ($link as $value)
-        {
-            array_push($tmp, $value['ID_LinkedDetail']);
-        }
-        $link = implode(",", $tmp);
+        $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = :detail_id";
+        $link = $this->getLinkedString($link_detail_sql, [':detail_id' => $detail_id,], 'ID_LinkedDetail');
         if($link)
         {
             $detail_id .= ','.$link;
@@ -191,14 +184,12 @@ class SiteController extends Controller
             $map[':engine_id'] = $engine_id;
         }
 
-        $map = [
-            ':mark_id' => $mark_id,
-        ];
+        $map[':mark_id'] = $mark_id;
 
         // пагинация
         $sql .= " LIMIT {$limit}";
         if($page > 1) {
-            $fin = ((int)$page * (int)$limit) + (int)$limit;
+            $fin = ((int)$page - 1) * (int)$limit;
             $sql .= " OFFSET {$fin}";
         }
 
@@ -211,5 +202,24 @@ class SiteController extends Controller
             'success' => true,
             'message' => $parts,
         ];
-    } 
+    }
+
+    /**
+     * Функция формируют строку для запроса свзянных id для деталей/марок/моделей/кузовов/двигателей
+     * @param string $sql запрос которым можно получить список нужных id
+     * @param array $param массив мапинга данных в запрос вида [':detail_id' => $detail_id,]
+     * @param string $column интересующая нас колонка
+     * @return string результат в виде строки со списком id чере запятую
+     */
+    private function getLinkedString($sql, $param, $column)
+    {
+        $link = \Yii::$app->getDb()->createCommand($sql, $param)->queryAll();
+        $tmp = [];
+        foreach ($link as $value)
+        {
+            array_push($tmp, $value[$column]);
+        }
+        $link = implode(",", $tmp);
+        return $link;
+    }
 }
