@@ -142,6 +142,7 @@ class SiteController extends Controller
      * @param $body_id
      * @param $engine_id
      * @param $page integer какая страница результата нас интересует
+     * @param $limit integer соклько строк результатов нам надо
      * @return array возвращаем JSON
      */
     public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit)
