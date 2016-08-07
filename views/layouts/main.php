@@ -20,7 +20,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body onkeyup="keyNavigate(event);">
+<body onkeydown="keyNavigate(event);">
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -74,6 +74,7 @@ AppAsset::register($this);
 </footer>
 
 <?php $this->endBody() ?>
+
 </body>
 </html>
 <?php $this->endPage() ?>

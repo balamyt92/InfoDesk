@@ -3,6 +3,16 @@
 define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
+// подключаем панель дебага
+if (YII_DEBUG) {
+    require __DIR__.'/../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
+    $config = HTMLPurifier_Config::createDefault();
+    $config->set('Core.Encoding', 'UTF-8'); // replace with your encoding
+    $config->set('HTML.Doctype', 'HTML5'); // replace with your doctype
+    $purifier = new HTMLPurifier($config);
+    $clean_html = $purifier->purify('');
+}
+
 require __DIR__.'/../vendor/yiisoft/yii2/Yii.php';
 $config = require __DIR__.'/../config/web.php';
 

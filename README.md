@@ -7,9 +7,9 @@ issue-№ - ветка для конкретного issue
 
 
 ## Состав сборки
-1. Ubuntu LTS 16.04
+1. Ubuntu LTS 14.04
 2. PHP 7
-3. MySQL 5.7
+3. MySQL 5.5
 4. Nginx
 5. Yii2
 6. Codeception
