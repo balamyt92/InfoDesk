@@ -133,6 +133,18 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionGetFirm($firm_id)
+    {
+        $firm = Firms::find()->where(['=', 'id', $firm_id])->asArray()->all();
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $firm,
+        ];
+    }
+
     /**
      * Функция поиска запчастей
      *

@@ -2,7 +2,8 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'InfoDesk'; ?>
+$this->title = 'InfoDesk';
+?>
 
 <div class="row">
     <div class="col-md-3">
@@ -255,7 +256,7 @@ $this->title = 'InfoDesk'; ?>
 </div>
 
 
-
+<?php \yii\jui\Draggable::begin([]); ?>
 <div class="modal" id="modalFirm" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -315,3 +316,4 @@ $this->title = 'InfoDesk'; ?>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<?php \yii\jui\Draggable::end(); ?>

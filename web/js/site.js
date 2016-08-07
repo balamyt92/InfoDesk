@@ -105,7 +105,8 @@ var searchParts = {
             result.paginate = data.message.length >= searchParts.limitResult;
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td>' + item.ID_Firm + '</td><td>'+ item.Priority +'</td>' +
-                                       '<td><a href="javascript:void(0);">'+
+                                       '<td><a href="javascript:void(0);" onclick=\'openFirmInPats('+
+                                        JSON.stringify(item.ID_Firm) +');\'>'+
                                         item.DetailName + '</a></td><td>' +
                                         item.MarkName + '</td><td>' +
                                         item.ModelName + '</td><td>' +
@@ -350,6 +351,7 @@ function keyNavigate(event) {
  * @param data
  */
 function openFirm(data) {
+    // мапим данные
     $('#firmName').html(data.Name);
     $('#firmOrganizationType').html(data.OrganizationType);
     $('#firmActivityType').html(data.ActivityType);
@@ -361,15 +363,27 @@ function openFirm(data) {
     $('#firmURL').html(data.URL);
     $('#firmOperatingMode').html(data.OperatingMode);
     $('#firmComment').html(data.Comment);
-    $('#modalFirm').modal();
+
+    // открываем окно
+    $('#modalFirm').draggable({
+        handle: ".modal-dialog"
+    }).modal({backdrop : false});
+
     $($($(result.row[result.index]).children()[0]).children()[0]).focus();
     result.openModelWindow = true;
 }
 
-$('#modalFirm').on('hidden.bs.modal', function () {
-    $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-});
-
+function openFirmInPats(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site%2Fget-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data){
+        console.log(data);
+    });
+}
 
 function ready() {
     // Инициализация
@@ -378,6 +392,10 @@ function ready() {
     result.parts = false;
     result.service = false;
     searchParts.currentSelect = $('#w0');
+
+    $('#modalFirm').on('hidden.bs.modal', function () {
+        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+    });
 }
 
 document.addEventListener("DOMContentLoaded", ready);

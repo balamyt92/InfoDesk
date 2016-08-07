@@ -678,12 +678,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-jui.git",
-                "reference": "1612593ac710975c235e75708b69fa9ee375ab46"
+                "reference": "68ac66cca2b54e4e298a1f94e4c57043b89f72cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-jui/zipball/1612593ac710975c235e75708b69fa9ee375ab46",
-                "reference": "1612593ac710975c235e75708b69fa9ee375ab46",
+                "url": "https://api.github.com/repos/yiisoft/yii2-jui/zipball/68ac66cca2b54e4e298a1f94e4c57043b89f72cf",
+                "reference": "68ac66cca2b54e4e298a1f94e4c57043b89f72cf",
                 "shasum": ""
             },
             "require": {
@@ -720,7 +720,7 @@
                 "jQuery UI",
                 "yii2"
             ],
-            "time": "2016-06-11 22:54:20"
+            "time": "2016-08-01 15:21:27"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
@@ -811,7 +811,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/039eeba8a61788df89c7800eccb2c56723a0db34",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/5265f16ae0ae9b6acaf7c518063d80b2383a8086",
                 "reference": "039eeba8a61788df89c7800eccb2c56723a0db34",
                 "shasum": ""
             },
@@ -944,7 +944,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/07ad6f410eb60c57345e4c687e53b097c40b4a6c",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/721045af916ed66cf217f4fe66137348a165e54c",
                 "reference": "07ad6f410eb60c57345e4c687e53b097c40b4a6c",
                 "shasum": ""
             },
@@ -1038,7 +1038,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/4f7bece043b6e60571ad855cd937bf0e07e1891d",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/752f6cfc17572f32f599639770289a6e52cf3dc2",
                 "reference": "4f7bece043b6e60571ad855cd937bf0e07e1891d",
                 "shasum": ""
             },

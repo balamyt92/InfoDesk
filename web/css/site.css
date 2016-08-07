@@ -68,3 +68,15 @@ pre {
     word-wrap: normal;
     word-break: keep-all;
 }
+
+/*
+    Для перетаскиваемых модальных окон
+*/
+.modal
+{
+    overflow: hidden;
+}
+.modal-dialog{
+    margin-right: 0;
+    margin-left: 0;
+}
