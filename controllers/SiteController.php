@@ -183,9 +183,9 @@ class SiteController extends Controller
 
         if(!($mark_id === "false")) {
             // ищем связанные марки
-            $lin_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION 
+            $link_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION 
                             (SELECT id FROM CarMarksEN WHERE Name = '***')";
-            $link = $this->getLinkedString($lin_mar_sql, 'ID_Group');
+            $link = $this->getLinkedString($link_mar_sql, 'ID_Group');
             if($link)
             {
                 $mark_search .= ','.$link;
@@ -198,9 +198,9 @@ class SiteController extends Controller
 
         if(!($model_id === "false")) {
             // ищем связанные модели
-            $lin_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION 
+            $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION 
                               (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark = {$mark_id})";
-            $link = $this->getLinkedString($lin_model_sql, 'ID_Group');
+            $link = $this->getLinkedString($link_model_sql, 'ID_Group');
             if($link)
             {
                 $model_search .= ','.$link;
@@ -213,7 +213,7 @@ class SiteController extends Controller
 
         if(!($body_id === "false")) {
             // ищем связанные кузова
-            $lin_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN 
+            $link_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN 
                                 WHERE ID_BodyModel = {$body_id} AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search})) 
                               UNION 
                               (SELECT id FROM CarBodyModelsEN 
@@ -223,7 +223,7 @@ class SiteController extends Controller
                                 WHERE ID_BodyGroup IN (
                                         SELECT id FROM CarBodyModelsEN WHERE Name LIKE CONCAT('',(SELECT Name FROM CarBodyModelsEN WHERE id = {$body_id}),'')
                                 ) AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))";
-            $link = $this->getLinkedString($lin_body_sql, 'ID_BodyGroup');
+            $link = $this->getLinkedString($link_body_sql, 'ID_BodyGroup');
             if($link)
             {
                 $body_search .= ','.$link;
@@ -233,7 +233,15 @@ class SiteController extends Controller
             }
         }
         if(!($engine_id === "false")) {
-            $sql .= "AND A.ID_Engine={$engine_id} ";
+            $link_engine_sql = "SELECT ID_EngineModel FROM CarEngineModelGroupsEN WHERE ID_EngineGroup={$engine_id}";
+            $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
+            if($link)
+            {
+                $engine_search .= ','.$link;
+                $sql .= "AND A.ID_Engine IN ({$engine_search}) ";
+            } else {
+                $sql .= "AND A.ID_Engine={$engine_id} ";
+            }
         }
 
         // пагинация

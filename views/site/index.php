@@ -208,8 +208,9 @@ $this->title = 'InfoDesk'; ?>
                     'allowClear' => true
                 ],
                 'pluginEvents' => [
-                    "select2:select" => "function() {
+                    "select2:select" => "function(data) {
                         searchParts.submitForm = true;
+                        searchParts.idEngine = data.params.data.id;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.submitForm = false;
