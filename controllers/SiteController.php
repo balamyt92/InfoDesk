@@ -172,8 +172,14 @@ class SiteController extends Controller
             "AND A.ID_Mark=:mark_id AND Firms.Enabled=1 ";
 
         if(!($model_id === "false")) {
-            $sql .= "AND A.ID_Model=:model_id ";
-            $map[':model_id'] = $model_id;
+            // ищем связанные модели
+            $lin_model_sql = "SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = :model_id";
+            $link = $this->getLinkedString($lin_model_sql, [':model_id' => $model_id,], 'ID_Group');
+            if($link)
+            {
+                $model_id .= ','.$link;
+            }
+            $sql .= "AND A.ID_Model IN ({$model_id}) ";
         }
         if(!($body_id === "false")) {
             $sql .= "AND A.ID_Body=:body_id ";
