@@ -390,6 +390,18 @@ function openFirmInPats(id) {
         }
     }).done(function(data){
         console.log(data);
+        $('#partsName').html(data.message[0].Name);
+        $('#partsDistrict').html(data.message[0].District);
+        $('#partsAddress').html(data.message[0].Address);
+        $('#partsPhone').html(data.message[0].Phone);
+        $('#partsOperatingMode').html(data.message[0].OperatingMode);
+
+        $('#modalParts').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop : false});
+
+        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+        result.openModelWindow = true;
     });
 }
 
@@ -403,6 +415,10 @@ function ready() {
 
     $('#modalFirm').on('hidden.bs.modal', function () {
         $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+    });
+
+    $('#modalParts').on('hidden.bs.modal', function () {
+        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
     });
 }
 

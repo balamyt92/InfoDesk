@@ -243,18 +243,40 @@ $this->title = 'InfoDesk';
     </div>
 </div>
 
-<div class="col-md-12" style="padding-top: 20px;">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
-        </div>
-        <div id="search-result" class="panel-body">
-            рузельтаты
-        </div>
-        <div id="loader" class="loader panel-body"></div>
-    </div>
-</div>
 
+<?php \yii\jui\Draggable::begin([]); ?>
+<div class="modal" id="modalParts" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 id="partsName" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-condensed">
+                    <tbody>
+                    <tr>
+                        <td><label>Телефон</label>
+                        <td><label>Адрес</label></td>
+                        <td><label>Район</label>
+                        <td><label>Режим работы</label></td>
+                    </tr>
+                    <tr>
+                        <td id="partsPhone"></td>
+                        <td id="partsAddress"></td>
+                        <td id="partsDistrict"></td>
+                        <td id="partsOperatingMode"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<?php \yii\jui\Draggable::end(); ?>
 
 <?php \yii\jui\Draggable::begin([]); ?>
 <div class="modal" id="modalFirm" tabindex="-1" role="dialog">
@@ -317,3 +339,15 @@ $this->title = 'InfoDesk';
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php \yii\jui\Draggable::end(); ?>
+
+<div class="col-md-12" style="padding-top: 20px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
+        </div>
+        <div id="search-result" class="panel-body">
+            рузельтаты
+        </div>
+        <div id="loader" class="loader panel-body"></div>
+    </div>
+</div>
