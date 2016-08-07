@@ -89,6 +89,7 @@ var searchParts = {
     idNumber : false,
     idPage      : 1,
     limitResult : 50,
+    currentSelect : false,
 
     // функция вывода результата запроса
     render : function(data) {
@@ -305,7 +306,12 @@ function keyNavigate(event){
         // добавить проверку какой был запрос
         // для выделения соответсвующего элемента
         if(!result.openModelWindow) {
-            $($('#search-line').focus()).select();
+            if(result.parts) {
+                $(searchParts.currentSelect).select2('open').select2('close');
+            }
+            if(result.firms) {
+                $($('#search-line').focus()).select();
+            }
             window.scrollTo(0,0);
             $(result.row[result.index]).removeClass("hover");
             result.index = 0;

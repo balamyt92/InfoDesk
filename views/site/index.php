@@ -36,6 +36,7 @@ $this->title = 'InfoDesk'; ?>
                     "select2:select" => "function(data) {  
                         searchParts.idDetail = data.params.data.id; 
                         searchParts.submitForm = true;
+                        searchParts.currentSelect = this;
                     }",
                     "select2:unselect" => "function() { 
                         searchParts.idDetail = false;
@@ -81,6 +82,7 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.idEngine = false;
                         
                         searchParts.submitForm = true;
+                        searchParts.currentSelect = this;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.idMark = false;
@@ -133,6 +135,7 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.submitForm = true;
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
+                        searchParts.currentSelect = this;
                     }",
                     "select2:unselect" => "function() {
                         $('#w3').prop(\"disabled\", true);
@@ -176,6 +179,7 @@ $this->title = 'InfoDesk'; ?>
                         searchParts.getEngine();
                         searchParts.submitForm = true;
                         searchParts.idEngine = false;
+                        searchParts.currentSelect = this;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.idBody = false;
@@ -210,6 +214,7 @@ $this->title = 'InfoDesk'; ?>
                     "select2:select" => "function(data) {
                         searchParts.submitForm = true;
                         searchParts.idEngine = data.params.data.id;
+                        searchParts.currentSelect = this;
                     }",
                     "select2:unselect" => "function() {
                         searchParts.submitForm = false;
