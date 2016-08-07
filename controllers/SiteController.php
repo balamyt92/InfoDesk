@@ -147,7 +147,12 @@ class SiteController extends Controller
     public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit)
     {
         $connection = \Yii::$app->getDb();
-        $parts = [];
+        $detail_search = $detail_id;
+        $mark_search = $mark_id;
+        $model_search = $model_id;
+        $body_search = $body_id;
+        $engine_search = $engine_id;
+
         // запрос результирующеё таблицы
         $sql = "SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ".
             "BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, ".
@@ -164,40 +169,68 @@ class SiteController extends Controller
         if(!($detail_id === "false"))
         {
             // ищем все связанные детали
-            $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = :detail_id";
-            $link = $this->getLinkedString($link_detail_sql, [':detail_id' => $detail_id,], 'ID_LinkedDetail');
+            $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = {$detail_id}";
+            $link = $this->getLinkedString($link_detail_sql, 'ID_LinkedDetail');
             if($link)
             {
-                $detail_id .= ','.$link;
+                $detail_search .=','.$link;
+                $sql .= "AND A.ID_Name IN ({$detail_search}) ";
+            } else {
+                $sql .= "AND A.ID_Name = {$detail_id} ";
             }
-            $sql .= "AND A.ID_Name IN ({$detail_id}) ";
+
         }
 
         if(!($mark_id === "false")) {
             // ищем связанные марки
-            $lin_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= :mark_id) UNION 
+            $lin_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION 
                             (SELECT id FROM CarMarksEN WHERE Name = '***')";
-            $link = $this->getLinkedString($lin_mar_sql, [':mark_id' => $mark_id,], 'ID_Group');
+            $link = $this->getLinkedString($lin_mar_sql, 'ID_Group');
             if($link)
             {
-                $mark_id .= ','.$link;
+                $mark_search .= ','.$link;
+                $sql .= "AND A.ID_Mark IN ({$mark_search}) ";
+            } else {
+                $sql .= "AND A.ID_Mark = {$mark_id} ";
             }
-            $sql .= "AND A.ID_Mark IN ({$mark_id}) ";
+
         }
 
         if(!($model_id === "false")) {
             // ищем связанные модели
-            $lin_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = :model_id) UNION 
-                              (SELECT id FROM CarModelsEN WHERE Name = '***')";
-            $link = $this->getLinkedString($lin_model_sql, [':model_id' => $model_id,], 'ID_Group');
+            $lin_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION 
+                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark = {$mark_id})";
+            $link = $this->getLinkedString($lin_model_sql, 'ID_Group');
             if($link)
             {
-                $model_id .= ','.$link;
+                $model_search .= ','.$link;
+                $sql .= "AND A.ID_Model IN ({$model_search}) ";
+            } else {
+                $sql .= "AND A.ID_Model = {$model_id} ";
             }
-            $sql .= "AND A.ID_Model IN ({$model_id}) ";
+
         }
+
         if(!($body_id === "false")) {
-            $sql .= "AND A.ID_Body={$body_id} ";
+            // ищем связанные кузова
+            $lin_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN 
+                                WHERE ID_BodyModel = {$body_id} AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search})) 
+                              UNION 
+                              (SELECT id FROM CarBodyModelsEN 
+                                WHERE Name = '***' AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))
+                              UNION 
+                              (SELECT ID_BodyModel FROM CarBodyModelGroupsEN 
+                                WHERE ID_BodyGroup IN (
+                                        SELECT id FROM CarBodyModelsEN WHERE Name LIKE CONCAT('',(SELECT Name FROM CarBodyModelsEN WHERE id = {$body_id}),'')
+                                ) AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))";
+            $link = $this->getLinkedString($lin_body_sql, 'ID_BodyGroup');
+            if($link)
+            {
+                $body_search .= ','.$link;
+                $sql .= "AND A.ID_Body IN ({$body_search}) ";
+            } else {
+                $sql .= "AND A.ID_Body = {$body_id} ";
+            }
         }
         if(!($engine_id === "false")) {
             $sql .= "AND A.ID_Engine={$engine_id} ";
@@ -224,13 +257,12 @@ class SiteController extends Controller
     /**
      * Функция формируют строку для запроса свзянных id для деталей/марок/моделей/кузовов/двигателей
      * @param string $sql запрос которым можно получить список нужных id
-     * @param array $param массив мапинга данных в запрос вида [':detail_id' => $detail_id,]
      * @param string $column интересующая нас колонка
      * @return string результат в виде строки со списком id чере запятую
      */
-    private function getLinkedString($sql, $param, $column)
+    private function getLinkedString($sql, $column)
     {
-        $link = \Yii::$app->getDb()->createCommand($sql, $param)->queryAll();
+        $link = \Yii::$app->getDb()->createCommand($sql)->queryAll();
         $tmp = [];
         foreach ($link as $value)
         {
