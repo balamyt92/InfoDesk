@@ -239,7 +239,15 @@ $this->title = 'InfoDesk';
 
     <div class="col-md-5">
         <h3>Поиск сервисов</h3>
-        <input type="text" id="service">
+        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);">
+            <?php
+                $services = \app\models\Services::find()->where(["IS","ID_Parent", NULL])->orderBy(['Name' => SORT_ASC])->all();
+                foreach ($services as $value)
+                {
+                    echo '<option style="border-bottom: solid 1px;" value="', $value["id"], '">', $value["Name"], '</option>';
+                }
+            ?>
+        </select>
     </div>
 </div>
 

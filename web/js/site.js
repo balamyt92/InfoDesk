@@ -405,6 +405,48 @@ function openFirmInPats(id) {
     });
 }
 
+var serviceSearch = {
+    input      : $('#service'),
+    groupList  : $('#service')[0].innerHTML,
+    lastGroupId: $('#service')[0][0].value,
+    inCategory : false,
+    open       : function (event) {
+        if(event.keyCode == 13 && (!this.inCategory)) {
+            this.openCategory();
+            this.inCategory = true;
+            return false;
+        } else if (event.keyCode == 13 && this.inCategory) {
+            this.searchService();
+            return false;
+        }
+        if(event.keyCode == 27 && this.inCategory){
+            this.renderGroups();
+            this.inCategory = false;
+            this.input[0].value = this.lastGroupId;
+            return false;
+        }
+    },
+    openCategory: function () {
+        this.lastGroupId = this.input[0].value;
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fget-service-group",
+            data: {id: this.input[0].value}
+        }).done(function (data) {
+            serviceSearch.input.html(data.message);
+            serviceSearch.input[0].value = serviceSearch.input[0][0].value;
+        });
+
+    },
+    searchService: function () {
+
+    },
+    renderGroups : function () {
+        this.input.html(this.groupList);
+    },
+};
+
+
 function ready() {
     // Инициализация
     $($('#search-line').focus()).select();

@@ -9,6 +9,7 @@ use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
 use app\models\CarPresenceEN;
 use app\models\Firms;
+use app\models\Services;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -302,5 +303,27 @@ class SiteController extends Controller
         $link = implode(',', $tmp);
 
         return $link;
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function actionGetServiceGroup($id)
+    {
+        $services = Services::find()->where(["=","ID_Parent", $id])->orderBy(['Name' => SORT_ASC])->all();
+
+        $html = "";
+        foreach ($services as $value)
+        {
+            $html .= '<option style="border-bottom: solid 1px;" value="' . $value["id"] . '">' . $value["Name"] . '</option>';
+        }
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $html,
+        ];
     }
 }
