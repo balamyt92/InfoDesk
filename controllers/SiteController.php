@@ -326,4 +326,27 @@ class SiteController extends Controller
             'message' => $html,
         ];
     }
+
+    public function actionServiceSearch($id)
+    {
+        $rows = [];
+
+
+        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM 
+                  (SELECT @rn := 0) as r, 
+                  (SELECT A.ID_Firm, A.Comment, A.CarList, A.Coast, Firms.District 
+                    FROM ServicePresence as A 
+                    LEFT JOIN Firms ON (A.ID_Firm=Firms.id) 
+                    WHERE A.ID_Service={$id} 
+                    ORDER BY Firms.Priority) as d";
+
+        $command = \Yii::$app->getDb()->createCommand($sql);
+        $rows = $command->queryAll();
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'rows' => $rows,
+        ];
+    }
 }
