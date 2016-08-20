@@ -5,18 +5,18 @@
 $this->title = 'InfoDesk';
 
 
-list(,$url)=Yii::$app->assetManager->publish('@bower/jqgrid');
-$this->registerJsFile($url."/js/i18n/grid.locale-ru.js", ['depends' => [
+list(, $url) = Yii::$app->assetManager->publish('@bower/jqgrid');
+$this->registerJsFile($url.'/js/i18n/grid.locale-ru.js', ['depends' => [
     'yii\web\YiiAsset',
-    'yii\bootstrap\BootstrapAsset'],
+    'yii\bootstrap\BootstrapAsset', ],
 ]);
-$this->registerJsFile($url."/js/jquery.jqGrid.min.js", ['depends' => [
+$this->registerJsFile($url.'/js/jquery.jqGrid.min.js', ['depends' => [
     'yii\web\YiiAsset',
-    'yii\bootstrap\BootstrapAsset'],
+    'yii\bootstrap\BootstrapAsset', ],
 ]);
-$this->registerCssFile($url."/css/ui.jqgrid.css");
-$this->registerCssFile($url."/css/ui.jqgrid-bootstrap.css");
-$this->registerCssFile($url."/css/ui.jqgrid-bootstrap-ui.css");
+$this->registerCssFile($url.'/css/ui.jqgrid.css');
+$this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
+$this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 ?>
 
 <div class="row">
@@ -255,10 +255,9 @@ $this->registerCssFile($url."/css/ui.jqgrid-bootstrap-ui.css");
         <h3>Поиск сервисов</h3>
         <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);">
             <?php
-                $services = \app\models\Services::find()->where(["IS","ID_Parent", NULL])->orderBy(['Name' => SORT_ASC])->all();
-                foreach ($services as $value)
-                {
-                    echo '<option style="border-bottom: solid 1px;" value="', $value["id"], '">', $value["Name"], '</option>';
+                $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
+                foreach ($services as $value) {
+                    echo '<option style="border-bottom: solid 1px;" value="', $value['id'], '">', $value['Name'], '</option>';
                 }
             ?>
         </select>
