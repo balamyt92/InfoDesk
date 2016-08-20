@@ -307,16 +307,16 @@ class SiteController extends Controller
 
     /**
      * @param $id
+     *
      * @return array
      */
     public function actionGetServiceGroup($id)
     {
-        $services = Services::find()->where(["=","ID_Parent", $id])->orderBy(['Name' => SORT_ASC])->all();
+        $services = Services::find()->where(['=', 'ID_Parent', $id])->orderBy(['Name' => SORT_ASC])->all();
 
-        $html = "";
-        foreach ($services as $value)
-        {
-            $html .= '<option style="border-bottom: solid 1px;" value="' . $value["id"] . '">' . $value["Name"] . '</option>';
+        $html = '';
+        foreach ($services as $value) {
+            $html .= '<option style="border-bottom: solid 1px;" value="'.$value['id'].'">'.$value['Name'].'</option>';
         }
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
