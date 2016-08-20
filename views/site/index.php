@@ -3,6 +3,20 @@
 /* @var $this yii\web\View */
 
 $this->title = 'InfoDesk';
+
+
+list(, $url) = Yii::$app->assetManager->publish('@bower/jqgrid');
+$this->registerJsFile($url.'/js/i18n/grid.locale-ru.js', ['depends' => [
+    'yii\web\YiiAsset',
+    'yii\bootstrap\BootstrapAsset', ],
+]);
+$this->registerJsFile($url.'/js/jquery.jqGrid.min.js', ['depends' => [
+    'yii\web\YiiAsset',
+    'yii\bootstrap\BootstrapAsset', ],
+]);
+$this->registerCssFile($url.'/css/ui.jqgrid.css');
+$this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
+$this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 ?>
 
 <div class="row">
@@ -239,7 +253,14 @@ $this->title = 'InfoDesk';
 
     <div class="col-md-5">
         <h3>Поиск сервисов</h3>
-        <input type="text" id="service">
+        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);">
+            <?php
+                $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
+                foreach ($services as $value) {
+                    echo '<option style="border-bottom: solid 1px;" value="', $value['id'], '">', $value['Name'], '</option>';
+                }
+            ?>
+        </select>
     </div>
 </div>
 
@@ -271,7 +292,7 @@ $this->title = 'InfoDesk';
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -333,12 +354,29 @@ $this->title = 'InfoDesk';
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php \yii\jui\Draggable::end(); ?>
+
+<div class="modal" id="modalResult" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-fullscreen">
+        <div class="modal-content modal-content-fullscreen">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Результаты</h4>
+            </div>
+            <div class="modal-body">
+                <table id="result-search"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="col-md-12" style="padding-top: 20px;">
     <div class="panel panel-default">

@@ -389,7 +389,6 @@ function openFirmInPats(id) {
             firm_id : id,
         }
     }).done(function(data){
-        console.log(data);
         $('#partsName').html(data.message[0].Name);
         $('#partsDistrict').html(data.message[0].District);
         $('#partsAddress').html(data.message[0].Address);
@@ -405,6 +404,97 @@ function openFirmInPats(id) {
     });
 }
 
+var serviceSearch = {
+    input: $('#service'),
+    groupList: $('#service')[0].innerHTML,
+    lastGroupId: $('#service')[0][0].value,
+    gridCreate: false,
+    inCategory: false,
+    open: function (event) {
+        if (event.keyCode == 13 && (!this.inCategory)) {
+            this.openCategory();
+            this.inCategory = true;
+            return false;
+        } else if (event.keyCode == 13 && this.inCategory) {
+            this.searchService();
+            return false;
+        }
+        if (event.keyCode == 27 && this.inCategory) {
+            this.renderGroups();
+            this.inCategory = false;
+            this.input[0].value = this.lastGroupId;
+            return false;
+        }
+    },
+    openCategory: function () {
+        this.lastGroupId = this.input[0].value;
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fget-service-group",
+            data: {id: this.input[0].value}
+        }).done(function (data) {
+            serviceSearch.input.html(data.message);
+            serviceSearch.input[0].value = serviceSearch.input[0][0].value;
+        });
+
+    },
+    searchService: function () {
+        $('#modalResult').modal({backdrop: false});
+        let grid = $("#result-search");
+        // настраиваем грид для результатов
+        // делаем это здесь что бы ширина соотвествала экрану
+        if (!this.gridCreate) {
+            grid.jqGrid({
+                colModel: [
+                    {label: 'Row', name: 'Row', key: true, width: 20},
+                    {label: 'ID_Firm', name: 'ID_Firm', width: 25},
+                    {label: 'Comment', name: 'Comment', width: 150},
+                    {label: 'CarList', name: 'CarList', width: 150},
+                    {label: 'District', name: 'District', width: 150},
+                    {label: 'Coast', name: 'Coast', width: 150}
+                ],
+                viewrecords: true, // show the current page, data rang and total records on the toolbar
+                autowidth: true,
+                height: $('#modalResult').height() - 200,
+                rowNum: 5000,
+                datatype: 'local',
+                pager: "#jqGridPager",
+                styleUI: 'Bootstrap',
+                responsive: true,
+                cmTemplate: {sortable: false,},
+
+            });
+
+            grid.jqGrid('bindKeys', {
+                "onEnter": function (id) {
+                    openFirmInPats(grid.getCell(id, 'ID_Firm'));
+                }
+            });
+            this.gridCreate = true; // для того что бы делать это единожды
+        }
+
+        grid.jqGrid("clearGridData");
+        grid[0].grid.beginReq();
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site%2Fservice-search",
+            data: {id: this.input[0].value}
+        }).done(function (data) {
+            grid.jqGrid('setGridParam', {data: data.rows});
+            // hide the show message
+            grid[0].grid.endReq();
+            // refresh the grid
+            grid.trigger('reloadGrid');
+            grid.setSelection(1, true);
+            grid.focus();
+        });
+    },
+    renderGroups: function () {
+        this.input.html(this.groupList);
+    },
+};
+
+
 function ready() {
     // Инициализация
     $($('#search-line').focus()).select();
@@ -418,7 +508,17 @@ function ready() {
     });
 
     $('#modalParts').on('hidden.bs.modal', function () {
-        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+        if(result.service) {
+            $("#result-search").focus();
+        } else if (result.parts) {
+            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+        }
+    });
+
+    $('#modalResult').on('hidden.bs.modal', function () {
+        if(result.service) {
+            $('#service').focus();
+        }
     });
 }
 

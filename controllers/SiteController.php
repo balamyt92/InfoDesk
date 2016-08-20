@@ -9,6 +9,7 @@ use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
 use app\models\CarPresenceEN;
 use app\models\Firms;
+use app\models\Services;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -302,5 +303,50 @@ class SiteController extends Controller
         $link = implode(',', $tmp);
 
         return $link;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     */
+    public function actionGetServiceGroup($id)
+    {
+        $services = Services::find()->where(['=', 'ID_Parent', $id])->orderBy(['Name' => SORT_ASC])->all();
+
+        $html = '';
+        foreach ($services as $value) {
+            $html .= '<option style="border-bottom: solid 1px;" value="'.$value['id'].'">'.$value['Name'].'</option>';
+        }
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'success' => true,
+            'message' => $html,
+        ];
+    }
+
+    public function actionServiceSearch($id)
+    {
+        $rows = [];
+
+
+        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM 
+                  (SELECT @rn := 0) as r, 
+                  (SELECT A.ID_Firm, A.Comment, A.CarList, A.Coast, Firms.District 
+                    FROM ServicePresence as A 
+                    LEFT JOIN Firms ON (A.ID_Firm=Firms.id) 
+                    WHERE A.ID_Service={$id} 
+                    ORDER BY Firms.Priority) as d";
+
+        $command = \Yii::$app->getDb()->createCommand($sql);
+        $rows = $command->queryAll();
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'rows' => $rows,
+        ];
     }
 }
