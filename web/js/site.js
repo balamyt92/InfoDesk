@@ -268,74 +268,6 @@ var searchParts = {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    // подгрузка следующей страницы
-    if (((event.keyCode == 40 && result.index >= searchParts.limitResult)
-        || event.keyCode == 34) &&
-        result.paginate &&
-        result.parts && !result.loading) {
-        searchParts.idPage += 1;
-        result.toNext = true;
-        searchParts.search();
-    }
-    // подгрузка предидущей страницы
-    if (((event.keyCode == 38 && result.index < 2) || event.keyCode == 33) &&
-        result.parts &&
-        searchParts.idPage > 1 && !result.loading) {
-        searchParts.idPage -= 1;
-        result.toBack = true;
-        searchParts.search();
-    }
-
-    if (event.keyCode == 40 && event.ctrlKey && result.index < result.row.length - 1) {
-        //40 низ
-        result.index = result.index + 1;
-        if (result.parts) {
-            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
-        } else {
-            if(result.openModelWindow) {
-                $($($(result.row[result.index]).children()[0]).children()[0]).click();
-            } else {
-                $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-            }
-        }
-        $(result.row[result.index]).addClass("hover");
-        if (result.index > 1)
-            $(result.row[result.index - 1]).removeClass("hover");
-
-    } else if (event.keyCode == 38 && event.ctrlKey && result.index > 1) {
-        //38 верх
-        result.index = result.index - 1;
-        if (result.parts) {
-            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
-        } else {
-            if(result.openModelWindow) {
-                $($($(result.row[result.index]).children()[0]).children()[0]).click();
-            } else {
-                $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-            }
-        }
-        $(result.row[result.index]).addClass("hover");
-        $(result.row[result.index + 1]).removeClass("hover");
-
-    }
-
-    // в результатах по Esc скролим наверх если не открыто модальное окно
-    if (event.keyCode == 27 && result.index > 0) {
-        if (!result.openModelWindow) {
-            if (result.parts) {
-                $(searchParts.currentSelect).select2('open').select2('close');
-            }
-            if (result.firms) {
-                $($('#search-line').focus()).select();
-            }
-            window.scrollTo(0, 0);
-            $(result.row[result.index]).removeClass("hover");
-            result.index = 0;
-        } else {
-            result.openModelWindow = false;
-        }
-    }
-
     // для того что бы работол поиск по энетеру в запчастях
     if (event.keyCode != 13) {
         searchParts.submitForm = false;
@@ -559,12 +491,10 @@ function ready() {
         if(result.service) {
             $('#service').focus();
             $('#gbox_service-result-search').hide();
-            result.service = false;
         }
         if(result.firms) {
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
-            result.firms = false;
         }
     });
 }
