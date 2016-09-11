@@ -73,10 +73,13 @@ info "Enabling site configuration"
 ln -s /app/vagrant/nginx/app.conf /etc/nginx/sites-enabled/app.conf
 echo "Done!"
 
+info "Install composer"
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+info "Restart MySQL"
+service mysql restart
+
 info "Initailize databases for MySQL"
 mysql -uroot <<< "CREATE DATABASE app_base"
 mysql -uroot <<< "CREATE DATABASE app_base_test"
 echo "Done!"
-
-info "Install composer"
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
