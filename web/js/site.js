@@ -66,7 +66,6 @@ var searcherFirms = {
                 height: $('#modalResult').height() - 100,
                 rowNum: 50000,
                 datatype: 'local',
-                pager: "#firm-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
