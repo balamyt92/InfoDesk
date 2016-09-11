@@ -141,6 +141,16 @@ var searchParts = {
     },
 
     search : function() {
+        if(!this.idBody
+            && !this.idDetail
+            && !this.idEngine
+            && !this.idMark
+            && !this.idModel) {
+            alert('Заполните один из парамтеров');
+            return false;
+        }
+
+        $('#gbox_part-result-search').show();
         this.modalWindow.modal({backdrop: false});
         let grid = this.grid;
 
