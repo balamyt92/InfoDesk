@@ -93,8 +93,19 @@ pre {
 }
 
 .ui-jqgrid .ui-jqgrid-view {
-    font-size: 17px;
+    font-size: 15px;
 }
 #modalParts {
     z-index: 1250;
+}
+
+/*
+    Для строк по высоте в таблице результатов
+*/
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+    overflow: hidden;
+    white-space: pre-wrap;
+    padding-right: 2px;
+    word-wrap: normal;
+    overflow-wrap: normal;
 }

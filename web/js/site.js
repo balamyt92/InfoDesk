@@ -105,7 +105,7 @@ var searchParts = {
             result.paginate = data.message.length >= searchParts.limitResult;
             data.message.forEach( function (item, i, arr){
                 resultData +=  '<tr><td>' + item.ID_Firm + '</td><td>'+ item.Priority +'</td>' +
-                                       '<td><a href="javascript:void(0);" onclick=\'openFirmInPats('+
+                                       '<td><a href="javascript:void(0);" onclick=\'openFirmInParts('+
                                         JSON.stringify(item.ID_Firm) +');\'>'+
                                         item.DetailName + '</a></td><td>' +
                                         item.MarkName + '</td><td>' +
@@ -381,7 +381,7 @@ function openFirm(data) {
     result.openModelWindow = true;
 }
 
-function openFirmInPats(id) {
+function openFirmInParts(id) {
     $.ajax({
         method: "GET",
         url: "index.php?r=site%2Fget-firm",
@@ -410,6 +410,8 @@ var serviceSearch = {
     lastGroupId: $('#service')[0][0].value,
     gridCreate: false,
     inCategory: false,
+    modalWindow: $('#modalResult'),
+    grid: $("#result-search"),
     open: function (event) {
         if (event.keyCode == 13 && (!this.inCategory)) {
             this.openCategory();
@@ -439,24 +441,24 @@ var serviceSearch = {
 
     },
     searchService: function () {
-        $('#modalResult').modal({backdrop: false});
-        let grid = $("#result-search");
+        this.modalWindow.modal({backdrop: false});
+        let grid = this.grid;
         // настраиваем грид для результатов
         // делаем это здесь что бы ширина соотвествала экрану
         if (!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: 20},
-                    {label: 'ID_Firm', name: 'ID_Firm', width: 25},
-                    {label: 'Comment', name: 'Comment', width: 150},
-                    {label: 'CarList', name: 'CarList', width: 150},
-                    {label: 'District', name: 'District', width: 150},
-                    {label: 'Coast', name: 'Coast', width: 150}
+                    {label: 'Row', name: 'Row', key: true, width: -1},
+                    {label: 'ID_Firm', name: 'ID_Firm', width: -1},
+                    {label: 'Фирма', name: 'Name', width: 150},
+                    {label: 'Район', name: 'District', width: 150},
+                    {label: 'Коментарий', name: 'Comment', width: 150},
+                    {label: 'Список авто', name: 'CarList', width: 150},
                 ],
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
-                height: $('#modalResult').height() - 200,
-                rowNum: 5000,
+                height: $('#modalResult').height() - 100,
+                rowNum: 50000,
                 datatype: 'local',
                 pager: "#jqGridPager",
                 styleUI: 'Bootstrap',
@@ -467,7 +469,7 @@ var serviceSearch = {
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirmInPats(grid.getCell(id, 'ID_Firm'));
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
                 }
             });
             this.gridCreate = true; // для того что бы делать это единожды
@@ -487,6 +489,7 @@ var serviceSearch = {
             grid.trigger('reloadGrid');
             grid.setSelection(1, true);
             grid.focus();
+            result.service = true;
         });
     },
     renderGroups: function () {
@@ -518,6 +521,7 @@ function ready() {
     $('#modalResult').on('hidden.bs.modal', function () {
         if(result.service) {
             $('#service').focus();
+            result.service = false;
         }
     });
 }
