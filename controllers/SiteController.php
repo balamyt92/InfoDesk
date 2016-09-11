@@ -36,8 +36,8 @@ class SiteController extends Controller
     public function actionSearch($str)
     {
         $search_array = explode('+', $str);
-        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM ".
-                "(SELECT @rn := 0) as r, ".
+        $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM '.
+                '(SELECT @rn := 0) as r, '.
                 "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
                     "OR Comment LIKE '%{$search_array[0]}%' ".
                     "OR Address LIKE '%{$search_array[0]}%' ".
