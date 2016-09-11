@@ -256,14 +256,13 @@ class SiteController extends Controller
             }
         }
 
-
         // поиск по номеру
         if (!empty($number)) {
             $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
         }
 
         // сортировка
-        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName';
+        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName LIMIT 100000';
 
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
