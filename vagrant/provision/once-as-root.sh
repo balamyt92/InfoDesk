@@ -62,7 +62,7 @@ info "Configure PHP-FPM"
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
 sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/7.0/fpm/pool.d/www.conf
-sed -i 's/memory_limit = 128MB/memory_limit = -1/g' /etc/php/7.0/fpm/php.ini
+sed -i 's/memory_limit = 128M/memory_limit = -1/g' /etc/php/7.0/fpm/php.ini
 echo "Done!"
 
 info "Configure NGINX"
@@ -73,10 +73,13 @@ info "Enabling site configuration"
 ln -s /app/vagrant/nginx/app.conf /etc/nginx/sites-enabled/app.conf
 echo "Done!"
 
+info "Install composer"
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+info "Restart MySQL"
+service mysql restart
+
 info "Initailize databases for MySQL"
 mysql -uroot <<< "CREATE DATABASE app_base"
 mysql -uroot <<< "CREATE DATABASE app_base_test"
 echo "Done!"
-
-info "Install composer"
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

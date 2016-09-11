@@ -106,7 +106,8 @@ class LegacyImportController extends Controller
             }
         }
         fclose($handle);
-        //unlink($filename . '.new');
+        unlink($filename.'.new');
+
         return $result;
     }
 

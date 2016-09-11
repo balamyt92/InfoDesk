@@ -36,8 +36,8 @@ class SiteController extends Controller
     public function actionSearch($str)
     {
         $search_array = explode('+', $str);
-        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM ".
-                "(SELECT @rn := 0) as r, ".
+        $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM '.
+                '(SELECT @rn := 0) as r, '.
                 "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
                     "OR Comment LIKE '%{$search_array[0]}%' ".
                     "OR Address LIKE '%{$search_array[0]}%' ".
@@ -162,7 +162,7 @@ class SiteController extends Controller
      *
      * @return array возвращаем JSON
      */
-    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit, $number)
+    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $number)
     {
         $connection = \Yii::$app->getDb();
         $detail_search = $detail_id;
@@ -256,25 +256,13 @@ class SiteController extends Controller
             }
         }
 
-
         // поиск по номеру
         if (!empty($number)) {
-            //            $number_search = str_replace('-', '%', $number);
-//            $number_search = str_replace('?', '_', $number_search);
-//            $sql .= " AND (A.Comment LIKE '%{$number_search}%' OR A.Catalog_Number LIKE '%{$number_search}%') ";
-//
             $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
         }
 
         // сортировка
-        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName';
-
-        // пагинация
-        $sql .= " LIMIT {$limit}";
-        if ($page > 1) {
-            $fin = ((int) $page - 1) * (int) $limit;
-            $sql .= " OFFSET {$fin}";
-        }
+        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName LIMIT 100000';
 
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();

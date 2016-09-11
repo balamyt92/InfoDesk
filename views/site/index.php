@@ -370,7 +370,6 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             </div>
             <div class="modal-body">
                 <table id="firm-result-search"></table>
-                <div id="firm-pager"></div>
                 <table id="part-result-search"></table>
                 <div id="part-pager"></div>
                 <table id="service-result-search"></table>
