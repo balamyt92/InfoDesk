@@ -19,61 +19,92 @@ var result = {
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
 var searcherFirms = {
+    input : $('#search-line'),
     submitForm : false,
+    gridCreate : false,
+    modalWindow: $('#modalResult'),
+    grid: $("#firm-result-search"),
     render : function(data) {
-        let resultData = `<table class='table table-hover'>
-                            <thead>
-                                <tr><th style="width:25%;">Название<br>Телефон</th><th style="width:25%;">Адрес<br>Район</th>
-                                <th>Профиль деятельсности</th><th style="width:20%;">Режим работы<br>Коментарий</th></tr>
-                            </thead>
-                          <tbody>`;
-        let renderLayout = $("#search-result");
+        let grid = this.grid;
 
-        if(data.message.length > 0){
-            data.message.forEach( function (item, i, arr){
-                resultData +=  '<tr><td><a href="javascript:void(0);" onclick=\'openFirm('+
-                                        JSON.stringify(item) +');\'>'+
-                                        item.Name + '</a><br><br>' + item.Phone + '</td><td>' +
-                                        item.Address + '<br><br>' + item.District + '</td><td>' +
-                                        item.ActivityType + '</td><td><pre>' +
-                                        item.OperatingMode + '</pre><br>' + item.Comment + '</td></tr>';
-                if(i + 1 == arr.length) {
-                    resultData += "</tbody></table>";
-                    renderLayout.html(resultData);
-                    result.index = 0;
-                    result.row = renderLayout.children().children().children();
-                    $('#loader').hide();
-                }
-            });
-        } else {
-            resultData = "<h3>Нет таких фирм</h3>";
-            renderLayout.html(resultData);
-            $("#loader").hide();
-        }
-        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено фирм - " + data.message.length);
+        grid.jqGrid('setGridParam', {data: data});
+        // hide the show message
+        grid[0].grid.endReq();
+        // refresh the grid
+        grid.trigger('reloadGrid');
+        grid.setSelection(1, true);
+        grid.focus();
+
         result.firms = true;
         result.parts = false;
         result.service = false;
-        result.paginate = false;
-
     },
     search : function() {
-        let str = document.getElementById('search-line').value;
+        this.modalWindow.modal({backdrop: false});
+        let str = document.getElementById('search-line').value.toString().trim();
+
         if(str == '') {
             alert("Введите искомую строку");
             return false;
         }
 
-        $('#loader').show();
-        $('#search-result').html('');
+        let grid = this.grid;
+        $('#gbox_firm-result-search').show();
+        if(!this.gridCreate) {
+            grid.jqGrid({
+                colModel: [
+                    {label: 'Row', name: 'Row', key: true, width: -1},
+                    {label: 'ID', name: 'id', width: -1},
+                    {label: 'Фирма', name: 'Name', width: 250},
+                    {label: 'Телефон', name: 'Phone', width: 250},
+                    {label: 'Адерс', name: 'Address', width: 250},
+                    {label: 'Район', name: 'District', width: 250},
+                    {label: 'Коментарий', name: 'Comment', width: 250},
+                ],
+                viewrecords: true, // show the current page, data rang and total records on the toolbar
+                autowidth: true,
+                height: $('#modalResult').height() - 100,
+                rowNum: 50000,
+                emptyrecords: 'Scroll to bottom to retrieve new page',
+                datatype: 'local',
+                pager: "#firm-pager",
+                styleUI: 'Bootstrap',
+                responsive: true,
+                cmTemplate: {sortable: false,},
+
+            });
+
+            grid.jqGrid('bindKeys', {
+                "onEnter": function (id) {
+                    openFirm(grid.getCell(id, 'id'));
+                }
+            });
+            this.gridCreate = true;
+        }
+
+        grid.jqGrid("clearGridData");
+        grid[0].grid.beginReq();
+
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fsearch",
+            url: "index.php?r=site/search",
             data: {str: str}
         }).done(function(data){
-            searcherFirms.render(data);
+            searcherFirms.render(data.message);
         });
     },
+
+
+    /**
+     * По энтеру в поле запускаем поиск фирм
+     */
+    runSearch: function(e) {
+        if (e.keyCode == 13) {
+            this.search();
+            $($('#search-line').focus()).select();
+            return false;
+        }
+    }
 };
 
 /**
@@ -155,7 +186,7 @@ var searchParts = {
         $('#search-result').html('');
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fsearch-parts",
+            url: "index.php?r=site/search-parts",
             data: {
                 detail_id : searchParts.idDetail,
                 mark_id   : searchParts.idMark,
@@ -174,7 +205,7 @@ var searchParts = {
     getModels : function() {
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fget-models",
+            url: "index.php?r=site/get-models",
             data: {id: searchParts.idMark}
         }).done(function(data){
             // рисуем модели
@@ -193,7 +224,7 @@ var searchParts = {
     getBodys : function() {
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fget-bodys",
+            url: "index.php?r=site/get-bodys",
             data: {id: searchParts.idModel}
         }).done(function(data){
             // рисуем кузова
@@ -212,7 +243,7 @@ var searchParts = {
     getEngine : function() {
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fget-engine",
+            url: "index.php?r=site/get-engine",
             data: {
                 mark_id: searchParts.idMark,
                 model_id: searchParts.idModel,
@@ -232,17 +263,6 @@ var searchParts = {
         });
     },
 };
-
-/**
- * По энтеру в поле запускаем поиск фирм
- */
-function runSearch(e) {
-    if (e.keyCode == 13) {
-        searcherFirms.search();
-        $($('#search-line').focus()).select();
-        return false;
-    }
-}
 
 /**
  * Функция обработки хоткеев навигации
@@ -356,35 +376,40 @@ function keyNavigate(event) {
 
 /**
  * Функция открытия карточки фирмы в результатах поиска
- * @param data
+ * @param id
  */
-function openFirm(data) {
-    // мапим данные
-    $('#firmName').html(data.Name);
-    $('#firmOrganizationType').html(data.OrganizationType);
-    $('#firmActivityType').html(data.ActivityType);
-    $('#firmDistrict').html(data.District);
-    $('#firmAddress').html(data.Address);
-    $('#firmPhone').html(data.Phone);
-    $('#firmFax').html(data.Fax);
-    $('#firmEmail').html(data.Email);
-    $('#firmURL').html(data.URL);
-    $('#firmOperatingMode').html(data.OperatingMode);
-    $('#firmComment').html(data.Comment);
+function openFirm(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data) {
+        // мапим данные
+        $('#firmName').html(data.message[0].Name);
+        $('#firmOrganizationType').html(data.message[0].OrganizationType);
+        $('#firmActivityType').html(data.message[0].ActivityType);
+        $('#firmDistrict').html(data.message[0].District);
+        $('#firmAddress').html(data.message[0].Address);
+        $('#firmPhone').html(data.message[0].Phone);
+        $('#firmFax').html(data.message[0].Fax);
+        $('#firmEmail').html(data.message[0].Email);
+        $('#firmURL').html(data.message[0].URL);
+        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmComment').html(data.message[0].Comment);
 
-    // открываем окно
-    $('#modalFirm').draggable({
-        handle: ".modal-dialog"
-    }).modal({backdrop : false});
-
-    $($($(result.row[result.index]).children()[0]).children()[0]).focus();
-    result.openModelWindow = true;
+        // открываем окно
+        $('#modalFirm').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop: false});
+    });
 }
 
 function openFirmInParts(id) {
     $.ajax({
         method: "GET",
-        url: "index.php?r=site%2Fget-firm",
+        url: "index.php?r=site/get-firm",
         data: {
             firm_id : id,
         }
@@ -411,7 +436,7 @@ var serviceSearch = {
     gridCreate: false,
     inCategory: false,
     modalWindow: $('#modalResult'),
-    grid: $("#result-search"),
+    grid: $("#service-result-search"),
     open: function (event) {
         if (event.keyCode == 13 && (!this.inCategory)) {
             this.openCategory();
@@ -443,6 +468,7 @@ var serviceSearch = {
     searchService: function () {
         this.modalWindow.modal({backdrop: false});
         let grid = this.grid;
+        $('#gbox_service-result-search').show();
         // настраиваем грид для результатов
         // делаем это здесь что бы ширина соотвествала экрану
         if (!this.gridCreate) {
@@ -458,9 +484,9 @@ var serviceSearch = {
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 50000,
+                rowNum: 100,
                 datatype: 'local',
-                pager: "#jqGridPager",
+                pager: "#service-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
@@ -472,6 +498,7 @@ var serviceSearch = {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
                 }
             });
+
             this.gridCreate = true; // для того что бы делать это единожды
         }
 
@@ -479,7 +506,7 @@ var serviceSearch = {
         grid[0].grid.beginReq();
         $.ajax({
             method: "GET",
-            url: "index.php?r=site%2Fservice-search",
+            url: "index.php?r=site/service-search",
             data: {id: this.input[0].value}
         }).done(function (data) {
             grid.jqGrid('setGridParam', {data: data.rows});
@@ -490,6 +517,8 @@ var serviceSearch = {
             grid.setSelection(1, true);
             grid.focus();
             result.service = true;
+            result.firms = false;
+            result.parts = false;
         });
     },
     renderGroups: function () {
@@ -500,19 +529,27 @@ var serviceSearch = {
 
 function ready() {
     // Инициализация
-    $($('#search-line').focus()).select();
+
+    let search = $('#search-line');
+    $(search.focus()).select();
+    search.keypress(function(e) { searcherFirms.runSearch(e) });
+    $('#search-firm-button').on( "click", function () {
+        console.log( $( this ).text() );
+        searcherFirms.search();
+    });
+
     result.firms = true;
     result.parts = false;
     result.service = false;
     searchParts.currentSelect = $('#w0');
 
     $('#modalFirm').on('hidden.bs.modal', function () {
-        $($($(result.row[result.index]).children()[0]).children()[0]).focus();
+        $("#firm-result-search").focus();
     });
 
     $('#modalParts').on('hidden.bs.modal', function () {
         if(result.service) {
-            $("#result-search").focus();
+            $("#service-result-search").focus();
         } else if (result.parts) {
             $($($(result.row[result.index]).children()[2]).children()[0]).focus();
         }
@@ -521,7 +558,13 @@ function ready() {
     $('#modalResult').on('hidden.bs.modal', function () {
         if(result.service) {
             $('#service').focus();
+            $('#gbox_service-result-search').hide();
             result.service = false;
+        }
+        if(result.firms) {
+            $('#search-line').focus();
+            $('#gbox_firm-result-search').hide();
+            result.firms = false;
         }
     });
 }

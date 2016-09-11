@@ -24,8 +24,8 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
         <h3>Поиск фирм</h3>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group">
-                <input id="search-line" type="text" class="form-control" onkeypress="return runSearch(event)" title="firm-search">
-                <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="searcherFirms.search();" value="default action"><i class="fa">Поиск</i></button></span>
+                <input id="search-line" type="text" class="form-control" title="firm-search">
+                <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
         </div>
     </div>
@@ -300,7 +300,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 <?php \yii\jui\Draggable::end(); ?>
 
 <?php \yii\jui\Draggable::begin([]); ?>
-<div class="modal" id="modalFirm" tabindex="-1" role="dialog">
+<div class="modal" id="modalFirm" tabindex="-1" role="dialog" style="">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -369,8 +369,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 <h4 class="modal-title">Результаты</h4>
             </div>
             <div class="modal-body">
-                <table id="result-search"></table>
-                <div id="jqGridPager"></div>
+                <table id="firm-result-search"></table>
+                <div id="firm-pager"></div>
+                <table id="part-result-search"></table>
+                <div id="part-pager"></div>
+                <table id="service-result-search"></table>
+                <div id="service-pager"></div>
             </div>
             <div class="modal-footer" style="display: none">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
@@ -378,15 +382,3 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-<div class="col-md-12" style="padding-top: 20px;">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title" data-select-like-a-boss="1">Рузультаты поиска</h3>
-        </div>
-        <div id="search-result" class="panel-body">
-            рузельтаты
-        </div>
-        <div id="loader" class="loader panel-body"></div>
-    </div>
-</div>

@@ -95,7 +95,7 @@ pre {
 .ui-jqgrid .ui-jqgrid-view {
     font-size: 15px;
 }
-#modalParts {
+#modalParts, #modalFirm {
     z-index: 1250;
 }
 

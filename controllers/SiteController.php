@@ -36,17 +36,19 @@ class SiteController extends Controller
     public function actionSearch($str)
     {
         $search_array = explode('+', $str);
-        $sql = "SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
-                "OR Comment LIKE '%{$search_array[0]}%' ".
-                "OR Address LIKE '%{$search_array[0]}%' ".
-                "OR Phone LIKE '%{$search_array[0]}%' ".
-                "OR ActivityType LIKE '%{$search_array[0]}%' ".
-                "OR OrganizationType LIKE '%{$search_array[0]}%' ".
-                "OR District LIKE '%{$search_array[0]}%' ".
-                "OR Fax LIKE '%{$search_array[0]}%' ".
-                "OR Email LIKE '%{$search_array[0]}%' ".
-                "OR URL LIKE '%{$search_array[0]}%' ".
-                "OR OperatingMode LIKE '%{$search_array[0]}%')";
+        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM ".
+                "(SELECT @rn := 0) as r, ".
+                "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
+                    "OR Comment LIKE '%{$search_array[0]}%' ".
+                    "OR Address LIKE '%{$search_array[0]}%' ".
+                    "OR Phone LIKE '%{$search_array[0]}%' ".
+                    "OR ActivityType LIKE '%{$search_array[0]}%' ".
+                    "OR OrganizationType LIKE '%{$search_array[0]}%' ".
+                    "OR District LIKE '%{$search_array[0]}%' ".
+                    "OR Fax LIKE '%{$search_array[0]}%' ".
+                    "OR Email LIKE '%{$search_array[0]}%' ".
+                    "OR URL LIKE '%{$search_array[0]}%' ".
+                    "OR OperatingMode LIKE '%{$search_array[0]}%')";
 
         if (count($search_array) > 1) {
             $options = explode(' ', $search_array[1]);
@@ -64,7 +66,7 @@ class SiteController extends Controller
                 "OR OperatingMode LIKE '%{$value}%')";
             }
         }
-        $sql .= ' ORDER BY Name, Address';
+        $sql .= ' ORDER BY Name, Address) as d';
 
         $firms = Firms::findBySql($sql)->all();
 
