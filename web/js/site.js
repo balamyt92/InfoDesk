@@ -65,7 +65,6 @@ var searcherFirms = {
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
                 rowNum: 50000,
-                emptyrecords: 'Scroll to bottom to retrieve new page',
                 datatype: 'local',
                 pager: "#firm-pager",
                 styleUI: 'Bootstrap',
@@ -117,73 +116,73 @@ var searchParts = {
     idBody   : false,
     idEngine : false,
     idNumber : false,
-    idPage      : 1,
-    limitResult : 50,
     currentSelect : false,
+    gridCreate: false,
+    modalWindow: $('#modalResult'),
+    grid: $("#part-result-search"),
 
     // функция вывода результата запроса
     render : function(data) {
-        let resultData = `<table class='table table-hover'>
-                            <thead>
-                                <tr><th>ID Фирмы</th><th>Приоритет</th><th>Наименование</th><th>Марка</th><th>Модель</th>
-                                <th>Кузов</th><th>Двигатель</th><th>Год</th><th>Цена</th>
-                                <th>Примечание</th><th>Номер</th></tr>
-                            </thead>
-                          <tbody>`;
-        let renderLayout = $("#search-result");
+        let grid = this.grid;
 
-        if(data.message.length > 0){
-            result.paginate = data.message.length >= searchParts.limitResult;
-            data.message.forEach( function (item, i, arr){
-                resultData +=  '<tr><td>' + item.ID_Firm + '</td><td>'+ item.Priority +'</td>' +
-                                       '<td><a href="javascript:void(0);" onclick=\'openFirmInParts('+
-                                        JSON.stringify(item.ID_Firm) +');\'>'+
-                                        item.DetailName + '</a></td><td>' +
-                                        item.MarkName + '</td><td>' +
-                                        item.ModelName + '</td><td>' +
-                                        item.BodyName + '</td><td>' +
-                                        item.EngineName + '</td><td>' +
-                                        item.CarYear + '</td><td>' +
-                                        item.Cost + '</td><td>' +
-                                        item.Comment + '</td><td>' +
-                                        item.Catalog_Number + '</td></tr>';
-                if(i + 1 == arr.length) {
-                    resultData += "</tbody></table>";
-                    renderLayout.html(resultData);
-                    result.index = 0;
-                    result.row = renderLayout.children().children().children();
-                    $("#loader").hide();
-                }
-            });
-        } else {
-            resultData = "<h3>Нет запчастей</h3>";
-            renderLayout.html(resultData);
-            $("#loader").hide();
-        }
-        $($(renderLayout.siblings()[0]).children()[0]).html("Найдено запчастей - " + data.message.length +
-                                                            " (Старница " + searchParts.idPage + ")");
+        grid.jqGrid('setGridParam', {data: data});
+        // hide the show message
+        grid[0].grid.endReq();
+        // refresh the grid
+        grid.trigger('reloadGrid');
+        grid.setSelection(1, true);
+        grid.focus();
+
         result.firms = false;
         result.parts = true;
         result.service = false;
-        result.loading = false;
 
-        // если возвращаемся назат то нашинаем с конца списка
-        if(result.toBack) {
-            result.toBack = false;
-            result.index = data.message.length;
-            $(result.row[result.index]).addClass("hover");
-        }
-        if(result.toNext) {
-            result.toNext = false;
-            result.index = 1;
-            $(result.row[result.index]).addClass("hover");
-        }
+        console.log(data);
     },
 
     search : function() {
-        result.loading = true;
-        $('#loader').show();
-        $('#search-result').html('');
+        this.modalWindow.modal({backdrop: false});
+        let grid = this.grid;
+
+        if(!this.gridCreate) {
+            grid.jqGrid({
+                colModel: [
+                    {label: 'Row', name: 'Row', key: true, width: -1},
+                    {label: 'Приоритет', name: 'Priority', width: 10},
+                    {label: 'ID', name: 'ID_Firm', width: 10},
+                    {label: 'Марка', name: 'MarkName', width: 20},
+                    {label: 'Модель', name: 'ModelName', width: 20},
+                    {label: 'Деталь', name: 'DetailName', width: 50},
+                    {label: 'Коментарий', name: 'Comment', width: 50},
+                    {label: 'Кузов', name: 'BodyName', width: 50},
+                    {label: 'Двигатель', name: 'EngineName', width: 50},
+                    {label: 'Год', name: 'CarYear', width: 50},
+                    {label: 'Цена', name: 'Cost', width: 50},
+                    {label: 'Номер', name: 'Catalog_Number', width: 50},
+                ],
+                viewrecords: true, // show the current page, data rang and total records on the toolbar
+                autowidth: true,
+                height: $('#modalResult').height() - 100,
+                rowNum: 50000,
+                datatype: 'local',
+                pager: "#firm-pager",
+                styleUI: 'Bootstrap',
+                responsive: true,
+                cmTemplate: {sortable: false,},
+
+            });
+
+            grid.jqGrid('bindKeys', {
+                "onEnter": function (id) {
+                    openFirm(grid.getCell(id, 'ID_Firm'));
+                }
+            });
+            this.gridCreate = true;
+        }
+
+        grid.jqGrid("clearGridData");
+        grid[0].grid.beginReq();
+
         $.ajax({
             method: "GET",
             url: "index.php?r=site/search-parts",
@@ -193,12 +192,10 @@ var searchParts = {
                 model_id  : searchParts.idModel,
                 body_id   : searchParts.idBody,
                 engine_id : searchParts.idEngine,
-                page      : searchParts.idPage,
-                limit     : searchParts.limitResult,
                 number    : document.getElementById('number').value,
             }
         }).done(function(data){
-            searchParts.render(data);
+            searchParts.render(data.message);
         });
     },
 
@@ -495,6 +492,10 @@ function ready() {
         if(result.firms) {
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
+        }
+        if(result.parts) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            $('#gbox_part-result-search').hide();
         }
     });
 }

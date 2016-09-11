@@ -162,7 +162,7 @@ class SiteController extends Controller
      *
      * @return array возвращаем JSON
      */
-    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $page, $limit, $number)
+    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $number)
     {
         $connection = \Yii::$app->getDb();
         $detail_search = $detail_id;
@@ -259,22 +259,11 @@ class SiteController extends Controller
 
         // поиск по номеру
         if (!empty($number)) {
-            //            $number_search = str_replace('-', '%', $number);
-//            $number_search = str_replace('?', '_', $number_search);
-//            $sql .= " AND (A.Comment LIKE '%{$number_search}%' OR A.Catalog_Number LIKE '%{$number_search}%') ";
-//
             $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
         }
 
         // сортировка
         $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName';
-
-        // пагинация
-        $sql .= " LIMIT {$limit}";
-        if ($page > 1) {
-            $fin = ((int) $page - 1) * (int) $limit;
-            $sql .= " OFFSET {$fin}";
-        }
 
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
