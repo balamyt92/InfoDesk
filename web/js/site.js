@@ -116,6 +116,8 @@ var searchParts = {
     idEngine : false,
     idNumber : false,
     currentSelect : false,
+    pagerToNext : false,
+    pagerToBack : false,
     gridCreate: false,
     modalWindow: $('#modalResult'),
     grid: $("#part-result-search"),
@@ -135,8 +137,6 @@ var searchParts = {
         result.firms = false;
         result.parts = true;
         result.service = false;
-
-        console.log(data);
     },
 
     search : function() {
@@ -158,23 +158,23 @@ var searchParts = {
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1},
                     {label: 'Приоритет', name: 'Priority', width: 10},
-                    {label: 'ID', name: 'ID_Firm', width: 10},
-                    {label: 'Марка', name: 'MarkName', width: 20},
-                    {label: 'Модель', name: 'ModelName', width: 20},
+                    {label: 'ID', name: 'ID_Firm', width: 15},
+                    {label: 'Марка', name: 'MarkName', width: 30},
+                    {label: 'Модель', name: 'ModelName', width: 30},
                     {label: 'Деталь', name: 'DetailName', width: 50},
                     {label: 'Коментарий', name: 'Comment', width: 50},
                     {label: 'Кузов', name: 'BodyName', width: 50},
-                    {label: 'Двигатель', name: 'EngineName', width: 50},
-                    {label: 'Год', name: 'CarYear', width: 50},
-                    {label: 'Цена', name: 'Cost', width: 50},
-                    {label: 'Номер', name: 'Catalog_Number', width: 50},
+                    {label: 'Двигатель', name: 'EngineName', width: 30},
+                    {label: 'Год', name: 'CarYear', width: 20},
+                    {label: 'Цена', name: 'Cost', width: 20},
+                    {label: 'Номер', name: 'Catalog_Number', width: 20},
                 ],
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 50000,
+                rowNum: 100,
                 datatype: 'local',
-                pager: "#firm-pager",
+                pager: "#part-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
@@ -185,6 +185,27 @@ var searchParts = {
                 "onEnter": function (id) {
                     openFirm(grid.getCell(id, 'ID_Firm'));
                 }
+            });
+
+            grid.bind('keydown', function (e) {
+                let totalPages = grid.jqGrid('getGridParam','lastpage');
+                let currentPage = grid.jqGrid('getGridParam','page');
+                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+
+                // если вниз и последняя строка
+                if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
+                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
+                }
+                if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
+                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', 100, false);
+                    grid.focus();
+                }
+
+                currentRow == 100 ? this.pagerToNext = true : this.pagerToNext = false;
+                currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
             });
             this.gridCreate = true;
         }
@@ -472,7 +493,6 @@ function ready() {
     $(search.focus()).select();
     search.keypress(function(e) { searcherFirms.runSearch(e) });
     $('#search-firm-button').on( "click", function () {
-        console.log( $( this ).text() );
         searcherFirms.search();
     });
 
