@@ -361,17 +361,18 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 </div><!-- /.modal -->
 <?php \yii\jui\Draggable::end(); ?>
 
-<div class="modal" id="modalResult" tabindex="-1" role="dialog">
+<div class="modal" id="modalResult" tabindex="-1" role="dialog" style="padding-left: 0">
     <div class="modal-dialog modal-dialog-fullscreen">
         <div class="modal-content modal-content-fullscreen">
-            <div class="modal-header">
+            <div class="modal-header" style="display: none">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Результаты</h4>
             </div>
             <div class="modal-body">
                 <table id="result-search"></table>
+                <div id="jqGridPager"></div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="display: none">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div><!-- /.modal-content -->
