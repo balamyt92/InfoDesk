@@ -98,7 +98,7 @@ class LegacyImportController extends Controller
             $firm = fgetcsv($handle, 0, ';', '^');
             while (count($firm) < $column && !feof($handle)) {
                 $tmp = fgetcsv($handle, 0, ';', '^');
-                $tmp[0] = array_pop($firm).$tmp[0];
+                $tmp[0] = array_pop($firm)."\n".$tmp[0];
                 $firm = array_merge($firm, $tmp);
             }
             if ($firm != false) {
@@ -106,7 +106,8 @@ class LegacyImportController extends Controller
             }
         }
         fclose($handle);
-        //unlink($filename . '.new');
+        unlink($filename.'.new');
+
         return $result;
     }
 
@@ -137,7 +138,7 @@ class LegacyImportController extends Controller
                         return 0;
                     }
 
-                    return ($a[3] < $b[3]) ?  -1 : 1;
+                    return ($a[3] < $b[3]) ? -1 : 1;
                 });
                 break;
             case 'ServicePresence':
@@ -206,8 +207,21 @@ class LegacyImportController extends Controller
                 try {
                     $msg = $model->loadData($tmp);
                 } catch (IntegrityException $e) {
+                    // произошла ошибка записи, скорее всего из-за дублирования ключа
+                    // перезапускаем заливу но уже по одному элементу
+                    while ($tmp) {
+                        $once = array_pop($tmp);
+                        try {
+                            $msg = $model->loadData($once);
+                        } catch (IntegrityException $e) {
+                            // поймали гадину
+                            $this->log($e, 'err');
+                            $this->log($once, 'err');
+                        }
+                    }
+                } catch (\Error $e) {
+                    // все плохо
                     $this->log($e, 'err');
-                    $this->log($tmp, 'err');
                 }
                 if (count($msg) > 0) {
                     $this->log($msg, 'wrn');
