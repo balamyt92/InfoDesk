@@ -82,6 +82,7 @@ var searcherFirms = {
             });
 
             grid.bind('keydown', function (e) {
+                let rowInPage = grid.jqGrid('getGridParam','rowNum');
                 let totalPages = grid.jqGrid('getGridParam','lastpage');
                 let currentPage = grid.jqGrid('getGridParam','page');
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
@@ -92,13 +93,14 @@ var searcherFirms = {
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
+                // если вверх и первая строка
                 if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 100, false);
+                    grid.jqGrid('setSelection', rowInPage, false);
                     grid.focus();
                 }
 
-                currentRow == 100 ? this.pagerToNext = true : this.pagerToNext = false;
+                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
                 currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
             });
 
@@ -213,6 +215,7 @@ var searchParts = {
             });
 
             grid.bind('keydown', function (e) {
+                let rowInPage = grid.jqGrid('getGridParam','rowNum');
                 let totalPages = grid.jqGrid('getGridParam','lastpage');
                 let currentPage = grid.jqGrid('getGridParam','page');
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
@@ -225,11 +228,11 @@ var searchParts = {
                 }
                 if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 100, false);
+                    grid.jqGrid('setSelection', rowInPage, false);
                     grid.focus();
                 }
 
-                currentRow == 100 ? this.pagerToNext = true : this.pagerToNext = false;
+                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
                 currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
             });
             this.gridCreate = true;
