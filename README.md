@@ -8,8 +8,8 @@ issue-№ - ветка для конкретного issue
 
 ## Состав сборки
 1. Ubuntu LTS 14.04
-2. PHP 7
-3. MySQL 5.5
+2. PHP 7.0
+3. MySQL 5.7
 4. Nginx
 5. Yii2
 6. Codeception
@@ -33,7 +33,7 @@ issue-№ - ветка для конкретного issue
 5. Устанавливаем плагин и запускаем Vagrant
 
     ```bash
-    vagrant plugin install vagrant-hostmanager
+    vagrant plugin install vagrant-hostmanager // если плагин еще не установлен
     vagrant up
     ```
     
@@ -44,14 +44,3 @@ issue-№ - ветка для конкретного issue
 cd /app/tests
 cc run
 ```
-    
-## CHANGE LOG
-
-### CURRENT RELISE
-
-* Добавлена страница импорта и тест для неё
-* Добавлена главная страница и тест на неё
-* Реализовано меню навигации
-* Реализован раздел фирм (CRUD)
-* Реализован импорт из старой базы
-* Реализован раздел поиска по фирмам
