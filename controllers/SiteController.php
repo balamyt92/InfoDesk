@@ -262,7 +262,7 @@ class SiteController extends Controller
         }
 
         // сортировка
-        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName, MarkName, ModelName, BodyName, EngineName LIMIT 100000';
+        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName LIMIT 10000';
 
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
