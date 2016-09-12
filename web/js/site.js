@@ -22,6 +22,8 @@ var searcherFirms = {
     input : $('#search-line'),
     submitForm : false,
     gridCreate : false,
+    pagerToNext: false,
+    pagerToBack: false,
     modalWindow: $('#modalResult'),
     grid: $("#firm-result-search"),
     render : function(data) {
@@ -64,7 +66,8 @@ var searcherFirms = {
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 50000,
+                rowNum: 100,
+                pager: "#firm-pager",
                 datatype: 'local',
                 styleUI: 'Bootstrap',
                 responsive: true,
@@ -77,6 +80,28 @@ var searcherFirms = {
                     openFirm(grid.getCell(id, 'id'));
                 }
             });
+
+            grid.bind('keydown', function (e) {
+                let totalPages = grid.jqGrid('getGridParam','lastpage');
+                let currentPage = grid.jqGrid('getGridParam','page');
+                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+
+                // если вниз и последняя строка
+                if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
+                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
+                }
+                if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
+                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', 100, false);
+                    grid.focus();
+                }
+
+                currentRow == 100 ? this.pagerToNext = true : this.pagerToNext = false;
+                currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
+            });
+
             this.gridCreate = true;
         }
 
