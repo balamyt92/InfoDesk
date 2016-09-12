@@ -109,3 +109,11 @@ pre {
     word-wrap: normal;
     overflow-wrap: normal;
 }
+
+.table > tbody > tr.active > td {
+    background-color: #FFF;
+}
+
+.table > tbody > tr.success > td {
+    background-color: #dff0d8;
+}
