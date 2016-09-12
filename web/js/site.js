@@ -100,6 +100,14 @@ var searcherFirms = {
                     grid.focus();
                 }
 
+                // 33 - page UP
+                // 34 - page DOWN
+                if (e.keyCode == 34 || e.keyCode == 33) {
+                    setTimeout(function () {
+                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+                    }, 200);
+                }
+
                 currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
                 currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
             });
