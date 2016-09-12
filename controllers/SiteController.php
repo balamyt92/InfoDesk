@@ -324,7 +324,7 @@ class SiteController extends Controller
 
         $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM 
                   (SELECT @rn := 0) as r, 
-                  (SELECT A.ID_Firm, A.Comment, A.CarList, Firms.District, Firms.Name as Name
+                  (SELECT A.ID_Firm, Firms.Address, A.Comment, A.CarList, Firms.District, Firms.Name as Name
                     FROM ServicePresence as A 
                     LEFT JOIN Firms ON (A.ID_Firm=Firms.id) 
                     WHERE A.ID_Service={$id} 

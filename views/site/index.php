@@ -43,7 +43,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Деталь'],
+                'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
                 ],
@@ -75,7 +75,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Марка'],
+                'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
                 ],
@@ -133,7 +133,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Модель'],
+                'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
                 ],
@@ -183,7 +183,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Кузов'],
+                'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
                 ],
@@ -221,7 +221,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'disabled'      => true,
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'options'       => ['placeholder' => 'Двигатель'],
+                'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
                 ],
@@ -362,7 +362,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 <?php \yii\jui\Draggable::end(); ?>
 
 <div class="modal" id="modalResult" tabindex="-1" role="dialog" style="padding-left: 0">
-    <div class="modal-dialog modal-dialog-fullscreen">
+    <div class="modal-diДетальalog modal-dialog-fullscreen">
         <div class="modal-content modal-content-fullscreen">
             <div class="modal-header" style="display: none">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
