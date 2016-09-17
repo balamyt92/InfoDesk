@@ -580,7 +580,7 @@ function ready() {
         if(result.service) {
             $("#service-result-search").focus();
         } else if (result.parts) {
-            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+            $("#part-result-search").focus();
         }
     });
 
