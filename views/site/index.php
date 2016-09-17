@@ -71,16 +71,22 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.submitByBody = false;
                         searchParts.submitByEngine = false;
                         searchParts.currentSelect = this;
+                        searchParts.unselectElement = false;
                     }',
-                    'select2:unselect' => 'function() {
+                    'select2:unselect' => 'function(e) {
                         searchParts.idDetail = false;
                         searchParts.submitByDetail = false;
+
+                        searchParts.unselectElement = true;
                     }',
                     'select2:opening' => 'function() {
                         if(searchParts.submitByDetail && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitByDetail = false;
+                            return false;
+                        }
+                        if(searchParts.unselectElement) {
                             return false;
                         }
                     }',
@@ -133,12 +139,16 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.submitByBody = false;
                         searchParts.submitByEngine = false;
                         searchParts.currentSelect = this;
+
+                        searchParts.unselectElement = false;
                     }",
                     'select2:unselect' => "function() {
                         searchParts.idMark = false;
                         searchParts.idModel = false;
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
+
+                        searchParts.unselectElement = true;
 
                         $('#w2').prop(\"disabled\", true);
                         $('#w3').prop(\"disabled\", true);
@@ -154,6 +164,9 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitByMark = false;
+                            return false;
+                        }
+                        if(searchParts.unselectElement) {
                             return false;
                         }
                     }',
@@ -188,6 +201,8 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                     'select2:select' => "function(data) {
                         searchParts.idModel = data.params.data.id;
 
+                        searchParts.unselectElement = false;
+
                         $('#w3').select2(\"val\", \"\");
                         $('#w4').select2(\"val\", \"\");
 
@@ -214,12 +229,17 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idEngine = false;
                         searchParts.getEngine();
                         searchParts.submitByModel = false;
+
+                        searchParts.unselectElement = true;
                     }",
                     'select2:opening' => 'function() {
                         if(searchParts.submitByModel && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitByModel = false;
+                            return false;
+                        }
+                        if(searchParts.unselectElement) {
                             return false;
                         }
                     }',
@@ -262,6 +282,8 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.submitByEngine = false;
                         searchParts.idEngine = false;
                         searchParts.currentSelect = this;
+
+                        searchParts.unselectElement = false;
                     }",
                     'select2:unselect' => "function() {
                         searchParts.idBody = false;
@@ -269,12 +291,17 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
                         searchParts.submitByBody = false;
+
+                        searchParts.unselectElement = true;
                     }",
                     'select2:opening' => 'function() {
                         if(searchParts.submitByBody && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitByBody = false;
+                            return false;
+                        }
+                        if(searchParts.unselectElement) {
                             return false;
                         }
                     }',
@@ -313,16 +340,23 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.submitByBody = false;
                         searchParts.idEngine = data.params.data.id;
                         searchParts.currentSelect = this;
+
+                        searchParts.unselectElement = false;
                     }',
                     'select2:unselect' => 'function() {
                         searchParts.submitByEngine = false;
                         searchParts.idEngine = false;
+
+                        searchParts.unselectElement = true;
                     }',
                     'select2:opening' => 'function() {
                         if(searchParts.submitByEngine && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitByEngine = false;
+                            return false;
+                        }
+                        if(searchParts.unselectElement) {
                             return false;
                         }
                     }',

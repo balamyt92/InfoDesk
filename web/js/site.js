@@ -153,6 +153,7 @@ var searchParts = {
     idNumber : false,
 
     mouseClick : false,
+    unselectElement : false,
 
     submitByDetail : false,
     submitByMark : false,
@@ -189,6 +190,9 @@ var searchParts = {
             this.mouseClick = true;
         } else {
             this.mouseClick = false;
+        }
+        if(e.keyCode == 13 && this.unselectElement) {
+            this.search();
         }
     },
     search : function() {
@@ -594,6 +598,7 @@ function ready() {
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
+            searchParts.unselectElement = false;
             $(searchParts.currentSelect).select2('open').select2('close');
             $('#gbox_part-result-search').hide();
         }
