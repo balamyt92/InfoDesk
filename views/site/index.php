@@ -24,7 +24,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     <div class="col-md-3">
         <h3>Поиск фирм</h3>
         <div class="form-inline" style="margin-top: 35px;">
-            <div class="form-group input-group">
+            <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
                 <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
