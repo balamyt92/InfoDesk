@@ -253,7 +253,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
     <div class="col-md-5">
         <h3>Поиск сервисов</h3>
-        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);">
+        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
             <?php
                 $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
                 foreach ($services as $value) {

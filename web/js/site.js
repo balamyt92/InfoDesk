@@ -72,7 +72,9 @@ var searcherFirms = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirm(grid.getCell(id, 'id'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
@@ -213,12 +215,14 @@ var searchParts = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
@@ -441,11 +445,11 @@ var serviceSearch = {
     modalWindow: $('#modalResult'),
     grid: $("#service-result-search"),
     open: function (event) {
-        if (event.keyCode == 13 && (!this.inCategory)) {
+        if ((event.keyCode == 13 || event.type == "dblclick") && (!this.inCategory)) {
             this.openCategory();
             this.inCategory = true;
             return false;
-        } else if (event.keyCode == 13 && this.inCategory) {
+        } else if ((event.keyCode == 13 || event.type == "dblclick") && this.inCategory) {
             this.searchService();
             return false;
         }
@@ -494,7 +498,9 @@ var serviceSearch = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
