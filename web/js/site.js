@@ -20,7 +20,6 @@ var result = {
  */
 var searcherFirms = {
     input : $('#search-line'),
-    submitForm : false,
     gridCreate : false,
     pagerToNext: false,
     pagerToBack: false,
@@ -152,6 +151,15 @@ var searchParts = {
     idBody   : false,
     idEngine : false,
     idNumber : false,
+
+    mouseClick : false,
+
+    submitByDetail : false,
+    submitByMark : false,
+    submitByModel : false,
+    submitByBody : false,
+    submitByEngine : false,
+
     currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
@@ -176,6 +184,13 @@ var searchParts = {
         result.service = false;
     },
 
+    eventStatus : function(e) {
+        if(e.type == "click") {
+            this.mouseClick = true;
+        } else {
+            this.mouseClick = false;
+        }
+    },
     search : function() {
         if(!this.idBody
             && !this.idDetail
@@ -346,6 +361,11 @@ function keyNavigate(event) {
     // для того что бы работол поиск по энетеру в запчастях
     if (event.keyCode != 13) {
         searchParts.submitForm = false;
+        searchParts.submitByBody = false;
+        searchParts.submitByMark = false;
+        searchParts.submitByModel = false;
+        searchParts.submitByDetail = false;
+        searchParts.submitByEngine = false;
     }
 
     // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39

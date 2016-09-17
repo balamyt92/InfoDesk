@@ -32,7 +32,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     </div>
 
 
-    <div class="col-md-4" onmousedown="searchParts.submitForm = false;" onclick="searchParts.submitForm = false;">
+    <div class="col-md-4" onclick="searchParts.eventStatus(event);" onkeydown="searchParts.eventStatus(event);">
         <h3>Поиск запчастей</h3>
         <div>
             <label>Деталь</label>
@@ -65,18 +65,22 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginEvents' => [
                     'select2:select' => 'function(data) {
                         searchParts.idDetail = data.params.data.id;
-                        searchParts.submitForm = true;
+                        searchParts.submitByDetail = true;
+                        searchParts.submitByMark = false;
+                        searchParts.submitByModel = false;
+                        searchParts.submitByBody = false;
+                        searchParts.submitByEngine = false;
                         searchParts.currentSelect = this;
                     }',
                     'select2:unselect' => 'function() {
                         searchParts.idDetail = false;
-                        searchParts.submitForm = false;
+                        searchParts.submitByDetail = false;
                     }',
                     'select2:opening' => 'function() {
-                        if(searchParts.submitForm) {
+                        if(searchParts.submitByDetail && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
-                            searchParts.submitForm = false;
+                            searchParts.submitByDetail = false;
                             return false;
                         }
                     }',
@@ -123,7 +127,11 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
 
-                        searchParts.submitForm = true;
+                        searchParts.submitByDetail = true;
+                        searchParts.submitByMark = true;
+                        searchParts.submitByModel = false;
+                        searchParts.submitByBody = false;
+                        searchParts.submitByEngine = false;
                         searchParts.currentSelect = this;
                     }",
                     'select2:unselect' => "function() {
@@ -139,13 +147,13 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         $('#w2').select2(\"val\", \"\");
                         $('#w3').select2(\"val\", \"\");
                         $('#w4').select2(\"val\", \"\");
-                        searchParts.submitForm = false;
+                        searchParts.submitByMark = false;
                     }",
                     'select2:opening' => 'function() {
-                        if(searchParts.submitForm) {
+                        if(searchParts.submitByMark && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
-                            searchParts.submitForm = false;
+                            searchParts.submitByMark = false;
                             return false;
                         }
                     }',
@@ -186,7 +194,11 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         $('#w3').prop(\"disabled\", false);
                         searchParts.getBodys();
                         searchParts.getEngine();
-                        searchParts.submitForm = true;
+                        searchParts.submitByModel = true;
+                        searchParts.submitByDetail = false;
+                        searchParts.submitByMark = false;
+                        searchParts.submitByBody = false;
+                        searchParts.submitByEngine = false;
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
                         searchParts.currentSelect = this;
@@ -201,13 +213,13 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
                         searchParts.getEngine();
-                        searchParts.submitForm = false;
+                        searchParts.submitByModel = false;
                     }",
                     'select2:opening' => 'function() {
-                        if(searchParts.submitForm) {
+                        if(searchParts.submitByModel && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
-                            searchParts.submitForm = false;
+                            searchParts.submitByModel = false;
                             return false;
                         }
                     }',
@@ -243,7 +255,11 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idBody = data.params.data.id;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
-                        searchParts.submitForm = true;
+                        searchParts.submitByBody = true;
+                        searchParts.submitByDetail = false;
+                        searchParts.submitByMark = false;
+                        searchParts.submitByModel = false;
+                        searchParts.submitByEngine = false;
                         searchParts.idEngine = false;
                         searchParts.currentSelect = this;
                     }",
@@ -252,13 +268,13 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idEngine = false;
                         $('#w4').select2(\"val\", \"\");
                         searchParts.getEngine();
-                        searchParts.submitForm = false;
+                        searchParts.submitByBody = false;
                     }",
                     'select2:opening' => 'function() {
-                        if(searchParts.submitForm) {
+                        if(searchParts.submitByBody && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
-                            searchParts.submitForm = false;
+                            searchParts.submitByBody = false;
                             return false;
                         }
                     }',
@@ -290,19 +306,23 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 ],
                 'pluginEvents' => [
                     'select2:select' => 'function(data) {
-                        searchParts.submitForm = true;
+                        searchParts.submitByEngine = true;
+                        searchParts.submitByDetail = false;
+                        searchParts.submitByMark = false;
+                        searchParts.submitByModel = false;
+                        searchParts.submitByBody = false;
                         searchParts.idEngine = data.params.data.id;
                         searchParts.currentSelect = this;
                     }',
                     'select2:unselect' => 'function() {
-                        searchParts.submitForm = false;
+                        searchParts.submitByEngine = false;
                         searchParts.idEngine = false;
                     }',
                     'select2:opening' => 'function() {
-                        if(searchParts.submitForm) {
+                        if(searchParts.submitByEngine && !searchParts.mouseClick) {
                             searchParts.idPage = 1;
                             searchParts.search();
-                            searchParts.submitForm = false;
+                            searchParts.submitByEngine = false;
                             return false;
                         }
                     }',
