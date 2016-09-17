@@ -1,4 +1,5 @@
 <?php
+use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 
@@ -43,9 +44,23 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'pluginLoading' => false,
                 'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
                 'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => ''],
+                'options'       => [
+                    'placeholder' => '',
+                ],
                 'pluginOptions' => [
                     'allowClear' => true,
+                    'sorter' =>  new JsExpression('function(results) {
+                                    let query = $(".select2-search__field").val();
+                                    if(query.length > 0) {
+                                        query = query.toLowerCase();
+                                        return results.sort(function(a, b) {
+                                            return a.text.toLowerCase().indexOf(query) -
+                                            b.text.toLowerCase().indexOf(query);
+                                        });
+                                    } else {
+                                        return results;
+                                    }
+                                }'),
                 ],
                 'pluginEvents' => [
                     'select2:select' => 'function(data) {
@@ -78,6 +93,18 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
+                    'sorter' =>  new JsExpression('function(results) {
+                                    let query = $(".select2-search__field").val();
+                                    if(query.length > 0) {
+                                        query = query.toLowerCase();
+                                        return results.sort(function(a, b) {
+                                            return a.text.toLowerCase().indexOf(query) -
+                                            b.text.toLowerCase().indexOf(query);
+                                        });
+                                    } else {
+                                        return results;
+                                    }
+                                }'),
                 ],
                 'pluginEvents' => [
                     'select2:select' => "function(data) {
@@ -136,6 +163,18 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
+                    'sorter' =>  new JsExpression('function(results) {
+                                    let query = $(".select2-search__field").val();
+                                    if(query.length > 0) {
+                                        query = query.toLowerCase();
+                                        return results.sort(function(a, b) {
+                                            return a.text.toLowerCase().indexOf(query) -
+                                            b.text.toLowerCase().indexOf(query);
+                                        });
+                                    } else {
+                                        return results;
+                                    }
+                                }'),
                 ],
                 'pluginEvents' => [
                     'select2:select' => "function(data) {
@@ -186,6 +225,18 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
+                    'sorter' =>  new JsExpression('function(results) {
+                                    let query = $(".select2-search__field").val();
+                                    if(query.length > 0) {
+                                        query = query.toLowerCase();
+                                        return results.sort(function(a, b) {
+                                            return a.text.toLowerCase().indexOf(query) -
+                                            b.text.toLowerCase().indexOf(query);
+                                        });
+                                    } else {
+                                        return results;
+                                    }
+                                }'),
                 ],
                 'pluginEvents' => [
                     'select2:select' => "function(data) {
@@ -224,6 +275,18 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
+                    'sorter' =>  new JsExpression('function(results) {
+                                    let query = $(".select2-search__field").val();
+                                    if(query.length > 0) {
+                                        query = query.toLowerCase();
+                                        return results.sort(function(a, b) {
+                                            return a.text.toLowerCase().indexOf(query) -
+                                            b.text.toLowerCase().indexOf(query);
+                                        });
+                                    } else {
+                                        return results;
+                                    }
+                                }'),
                 ],
                 'pluginEvents' => [
                     'select2:select' => 'function(data) {
