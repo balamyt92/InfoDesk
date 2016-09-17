@@ -49,7 +49,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 ],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'sorter' =>  new JsExpression('function(results) {
+                    'sorter'     => new JsExpression('function(results) {
                                     let query = $(".select2-search__field").val();
                                     if(query != undefined && query.length > 0) {
                                         query = query.toLowerCase();
@@ -103,7 +103,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'sorter' =>  new JsExpression('function(results) {
+                    'sorter'     => new JsExpression('function(results) {
                                     let query = $(".select2-search__field").val();
                                     if(query != undefined && query.length > 0) {
                                         query = query.toLowerCase();
@@ -184,7 +184,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'sorter' =>  new JsExpression('function(results) {
+                    'sorter'     => new JsExpression('function(results) {
                                     let query = $(".select2-search__field").val();
                                     if(query != undefined && query.length > 0) {
                                         query = query.toLowerCase();
@@ -257,7 +257,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'sorter' =>  new JsExpression('function(results) {
+                    'sorter'     => new JsExpression('function(results) {
                                     let query = $(".select2-search__field").val();
                                     if(query != undefined && query.length > 0) {
                                         query = query.toLowerCase();
@@ -318,7 +318,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 'options'       => ['placeholder' => ''],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'sorter' =>  new JsExpression('function(results) {
+                    'sorter'     => new JsExpression('function(results) {
                                     let query = $(".select2-search__field").val();
                                     if(query != undefined && query.length > 0) {
                                         query = query.toLowerCase();
