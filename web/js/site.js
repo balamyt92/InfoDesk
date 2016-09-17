@@ -55,8 +55,8 @@ var searcherFirms = {
         if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
-                    {label: 'ID', name: 'id', width: -1},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
+                    {label: 'ID', name: 'id', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 250},
                     {label: 'Телефон', name: 'Phone', width: 250},
                     {label: 'Адерс', name: 'Address', width: 250},
@@ -191,7 +191,7 @@ var searchParts = {
         if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
                     {label: 'Приоритет', name: 'Priority', width: 10},
                     {label: 'ID', name: 'ID_Firm', width: 15},
                     {label: 'Марка', name: 'MarkName', width: 30},
@@ -477,8 +477,8 @@ var serviceSearch = {
         if (!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
-                    {label: 'ID_Firm', name: 'ID_Firm', width: -1},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
+                    {label: 'ID_Firm', name: 'ID_Firm', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 150},
                     {label: 'Улица', name: 'Address', width: 100},
                     {label: 'Коментарий', name: 'Comment', width: 100},
