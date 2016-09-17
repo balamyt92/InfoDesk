@@ -48,21 +48,21 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                     'allowClear' => true,
                 ],
                 'pluginEvents' => [
-                    'select2:select' => 'function(data) {  
-                        searchParts.idDetail = data.params.data.id; 
+                    'select2:select' => 'function(data) {
+                        searchParts.idDetail = data.params.data.id;
                         searchParts.submitForm = true;
                         searchParts.currentSelect = this;
                     }',
-                    'select2:unselect' => 'function() { 
+                    'select2:unselect' => 'function() {
                         searchParts.idDetail = false;
-                        searchParts.submitForm = false; 
+                        searchParts.submitForm = false;
                     }',
-                    'select2:opening' => 'function() { 
+                    'select2:opening' => 'function() {
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
-                            return false; 
+                            return false;
                         }
                     }',
                 ],
@@ -95,7 +95,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.idModel = false;
                         searchParts.idBody = false;
                         searchParts.idEngine = false;
-                        
+
                         searchParts.submitForm = true;
                         searchParts.currentSelect = this;
                     }",
@@ -114,12 +114,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         $('#w4').select2(\"val\", \"\");
                         searchParts.submitForm = false;
                     }",
-                    'select2:opening' => 'function() { 
+                    'select2:opening' => 'function() {
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
-                            return false; 
+                            return false;
                         }
                     }',
                 ],
@@ -164,12 +164,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    'select2:opening' => 'function() { 
+                    'select2:opening' => 'function() {
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
-                            return false; 
+                            return false;
                         }
                     }',
                 ],
@@ -203,12 +203,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.getEngine();
                         searchParts.submitForm = false;
                     }",
-                    'select2:opening' => 'function() { 
+                    'select2:opening' => 'function() {
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
-                            return false; 
+                            return false;
                         }
                     }',
                 ],
@@ -235,12 +235,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                         searchParts.submitForm = false;
                         searchParts.idEngine = false;
                     }',
-                    'select2:opening' => 'function() { 
+                    'select2:opening' => 'function() {
                         if(searchParts.submitForm) {
                             searchParts.idPage = 1;
                             searchParts.search();
                             searchParts.submitForm = false;
-                            return false; 
+                            return false;
                         }
                     }',
                 ],
@@ -273,25 +273,17 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 id="partsName" class="modal-title"></h4>
             </div>
-            <div class="modal-body">
-                <table class="table table-condensed">
-                    <tbody>
-                    <tr>
-                        <td><label>Телефон</label>
-                        <td><label>Адрес</label></td>
-                        <td><label>Район</label>
-                        <td><label>Режим работы</label></td>
-                    </tr>
-                    <tr>
-                        <td id="partsPhone"></td>
-                        <td id="partsAddress"></td>
-                        <td id="partsDistrict"></td>
-                        <td id="partsOperatingMode"></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="modal-body row">
+                <div class="col-md-8 nopadding">
+                    <label>Телефоны:&nbsp;</label><span id="partsPhone"></span><br>
+                    <label>Адрес:&nbsp</label><span id="partsAddress"></span><br>
+                    <label>Район:&nbsp</label><span id="partsDistrict"></span><br>
+                </div>
+                <div class="col-md-4 nopadding">
+                    <label>Режим работы:</label><pre id="partsOperatingMode"></pre>
+                </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="display: none">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div><!-- /.modal-content -->
