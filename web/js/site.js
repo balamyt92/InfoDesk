@@ -228,7 +228,7 @@ var searchParts = {
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 100,
+                rowNum: 5000,
                 datatype: 'local',
                 pager: "#part-pager",
                 styleUI: 'Bootstrap',

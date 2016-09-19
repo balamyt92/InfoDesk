@@ -198,7 +198,7 @@ class SiteController extends Controller
 
         if (!($mark_id === 'false')) {
             // ищем связанные марки
-            $link_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION 
+            $link_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION
                             (SELECT id FROM CarMarksEN WHERE Name = '***')";
             $link = $this->getLinkedString($link_mar_sql, 'ID_Group');
             if ($link) {
@@ -211,7 +211,7 @@ class SiteController extends Controller
 
         if (!($model_id === 'false')) {
             // ищем связанные модели
-            $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION 
+            $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION
                               (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark = {$mark_id})";
             $link = $this->getLinkedString($link_model_sql, 'ID_Group');
             if ($link) {
@@ -224,13 +224,13 @@ class SiteController extends Controller
 
         if (!($body_id === 'false')) {
             // ищем связанные кузова
-            $link_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN 
-                                WHERE ID_BodyModel = {$body_id} AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search})) 
-                              UNION 
-                              (SELECT id FROM CarBodyModelsEN 
+            $link_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN
+                                WHERE ID_BodyModel = {$body_id} AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))
+                              UNION
+                              (SELECT id FROM CarBodyModelsEN
                                 WHERE Name = '***' AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))
-                              UNION 
-                              (SELECT ID_BodyModel FROM CarBodyModelGroupsEN 
+                              UNION
+                              (SELECT ID_BodyModel FROM CarBodyModelGroupsEN
                                 WHERE ID_BodyGroup IN (
                                         SELECT id FROM CarBodyModelsEN WHERE Name LIKE CONCAT('',(SELECT Name FROM CarBodyModelsEN WHERE id = {$body_id}),'')
                                 ) AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))";
@@ -243,7 +243,7 @@ class SiteController extends Controller
             }
         }
         if (!($engine_id === 'false')) {
-            $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN 
+            $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN
                                   WHERE ID_EngineGroup={$engine_id})
                                 UNION
                                 (SELECT id FROM CarEngineModelsEN WHERE Name='***' AND ID_Mark={$mark_id})";
@@ -260,6 +260,9 @@ class SiteController extends Controller
         if (!empty($number)) {
             $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
         }
+
+        // убираем дубои от JOIN-ов
+        $sql .=' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
 
         // сортировка
         $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName LIMIT 10000';
@@ -322,12 +325,12 @@ class SiteController extends Controller
         $rows = [];
 
 
-        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM 
-                  (SELECT @rn := 0) as r, 
+        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM
+                  (SELECT @rn := 0) as r,
                   (SELECT A.ID_Firm, Firms.Address, A.Comment, A.CarList, Firms.District, Firms.Name as Name
-                    FROM ServicePresence as A 
-                    LEFT JOIN Firms ON (A.ID_Firm=Firms.id) 
-                    WHERE A.ID_Service={$id} 
+                    FROM ServicePresence as A
+                    LEFT JOIN Firms ON (A.ID_Firm=Firms.id)
+                    WHERE A.ID_Service={$id}
                     ORDER BY Firms.Priority) as d";
 
         $command = \Yii::$app->getDb()->createCommand($sql);
