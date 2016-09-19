@@ -1,18 +1,11 @@
 "use strict";
 /**
- * Объект хранящий рузультаты поиска по фирмам
+ * Объект хранящий в результатах какого поиска мы находимся
  */
 var result = {
-    index : 0,
-    row : {},
-    openModelWindow : false,
-    paginate : false,
     firms : false,
     parts : false,
     service : false,
-    loading : false,
-    toBack : false,
-    toNext : true,
 };
 
 /**
@@ -366,109 +359,9 @@ var searchParts = {
         });
     },
 };
-
 /**
- * Функция обработки хоткеев навигации
+ * Объект отвечает за работу с поиском сервисов
  */
-function keyNavigate(event) {
-    // для того что бы работол поиск по энетеру в запчастях
-    if (event.keyCode != 13) {
-        searchParts.submitForm = false;
-        searchParts.submitByBody = false;
-        searchParts.submitByMark = false;
-        searchParts.submitByModel = false;
-        searchParts.submitByDetail = false;
-        searchParts.submitByEngine = false;
-    }
-
-    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
-    if (event.keyCode == 39 && event.ctrlKey) {
-        if (result.firms) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $('#service').focus();
-            result.service = true;
-            result.parts = false;
-        } else if (result.service) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.service = false;
-        }
-    }
-    if (event.keyCode == 37 && event.ctrlKey) {
-        if (result.firms) {
-            $('#service').focus();
-            result.service = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.parts = false;
-        } else if (result.service) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.service = false;
-        }
-    }
-}
-
-/**
- * Функция открытия карточки фирмы в результатах поиска
- * @param id
- */
-function openFirm(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data) {
-        // мапим данные
-        $('#firmName').html(data.message[0].Name);
-        $('#firmOrganizationType').html(data.message[0].OrganizationType);
-        $('#firmActivityType').html(data.message[0].ActivityType);
-        $('#firmDistrict').html(data.message[0].District);
-        $('#firmAddress').html(data.message[0].Address);
-        $('#firmPhone').html(data.message[0].Phone);
-        $('#firmFax').html(data.message[0].Fax);
-        $('#firmEmail').html(data.message[0].Email);
-        $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html(data.message[0].OperatingMode);
-        $('#firmComment').html(data.message[0].Comment);
-
-        // открываем окно
-        $('#modalFirm').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop: false});
-    });
-}
-
-function openFirmInParts(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data){
-        $('#partsName').html(data.message[0].Name);
-        $('#partsDistrict').html(data.message[0].District);
-        $('#partsAddress').html(data.message[0].Address);
-        $('#partsPhone').html(data.message[0].Phone);
-        $('#partsOperatingMode').html(data.message[0].OperatingMode);
-
-        $('#modalParts').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop : false});
-
-        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
-        result.openModelWindow = true;
-    });
-}
-
 var serviceSearch = {
     input: $('#service'),
     groupList: $('#service')[0].innerHTML,
@@ -568,6 +461,109 @@ var serviceSearch = {
         this.input.html(this.groupList);
     },
 };
+
+/**
+ * Функция открытия карточки фирмы в результатах поиска фирм
+ * @param id
+ */
+function openFirm(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data) {
+        // мапим данные
+        $('#firmName').html(data.message[0].Name);
+        $('#firmOrganizationType').html(data.message[0].OrganizationType);
+        $('#firmActivityType').html(data.message[0].ActivityType);
+        $('#firmDistrict').html(data.message[0].District);
+        $('#firmAddress').html(data.message[0].Address);
+        $('#firmPhone').html(data.message[0].Phone);
+        $('#firmFax').html(data.message[0].Fax);
+        $('#firmEmail').html(data.message[0].Email);
+        $('#firmURL').html(data.message[0].URL);
+        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmComment').html(data.message[0].Comment);
+
+        // открываем окно
+        $('#modalFirm').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop: false});
+    });
+}
+
+/**
+ * функция открытия "урезаной" карточки фирмы в результатах поиска запчастей и сервисов
+ * @param id
+ */
+function openFirmInParts(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data){
+        $('#partsName').html(data.message[0].Name);
+        $('#partsDistrict').html(data.message[0].District);
+        $('#partsAddress').html(data.message[0].Address);
+        $('#partsPhone').html(data.message[0].Phone);
+        $('#partsOperatingMode').html(data.message[0].OperatingMode);
+
+        $('#modalParts').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop : false});
+    });
+}
+
+/**
+ * Функция обработки хоткеев навигации
+ */
+function keyNavigate(event) {
+    // для того что бы работол поиск по энетеру в запчастях
+    if (event.keyCode != 13) {
+        searchParts.submitForm = false;
+        searchParts.submitByBody = false;
+        searchParts.submitByMark = false;
+        searchParts.submitByModel = false;
+        searchParts.submitByDetail = false;
+        searchParts.submitByEngine = false;
+    }
+
+    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
+    if (event.keyCode == 39 && event.ctrlKey) {
+        if (result.firms) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $('#service').focus();
+            result.service = true;
+            result.parts = false;
+        } else if (result.service) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.service = false;
+        }
+    }
+    if (event.keyCode == 37 && event.ctrlKey) {
+        if (result.firms) {
+            $('#service').focus();
+            result.service = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.parts = false;
+        } else if (result.service) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.service = false;
+        }
+    }
+}
 
 
 function ready() {
