@@ -213,8 +213,8 @@ var searchParts = {
             grid.jqGrid({
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'Приоритет', name: 'Priority', width: 10},
-                    {label: 'ID', name: 'ID_Firm', width: 15},
+                    {label: 'Приоритет', name: 'Priority', width: 5},
+                    {label: 'ID', name: 'ID_Firm', width: 10},
                     {label: 'Марка', name: 'MarkName', width: 30},
                     {label: 'Модель', name: 'ModelName', width: 30},
                     {label: 'Деталь', name: 'DetailName', width: 50},
@@ -269,6 +269,15 @@ var searchParts = {
                     setTimeout(function () {
                         document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
                     }, 200);
+                }
+
+                // 36 - Home
+                if(e.keyCode == 36) {
+                    if(currentPage > 1) {
+                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+                    }
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
                 }
 
                 currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
