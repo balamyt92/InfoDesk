@@ -15,12 +15,12 @@ class AppAsset extends AssetBundle
         'css/site.css',
         'css/select2.css',
         'css/select2-bootstrap.css',
-        'css/select2-bootstrap.min.css'
+        'css/select2-bootstrap.min.css',
     ];
     public $js = [
         'js/site.js',
         'js/select2.js',
-        'js/select2_locale_ru.js'
+        'js/select2_locale_ru.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
