@@ -712,6 +712,7 @@ function ready() {
         searchParts.idModel = e.choice.id;
         $('#body-select').select2("enable", true);
         searchParts.getBodys();
+        searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idModel = false;
         $('#body-select').select2("enable", false);
