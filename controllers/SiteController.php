@@ -81,12 +81,14 @@ class SiteController extends Controller
     public function actionGetDetailsName()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
+
         return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
     }
 
     public function actionGetMarks()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
+
         return \app\models\CarMarksEN::find()->orderBy('Name')->all();
     }
 
@@ -274,7 +276,7 @@ class SiteController extends Controller
         }
 
         // убираем дубои от JOIN-ов
-        $sql .=' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
+        $sql .= ' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
 
         // сортировка
         $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName LIMIT 10000';
