@@ -123,3 +123,10 @@ pre {
     margin: 0px;
     height: auto;
 }
+/*
+    что бы текущая строка не теряла цвет при "зебре"
+    грязно и иначе ни как пока
+*/
+.table > tbody > tr.success > td {
+    background-color: #dff0d8 !important;
+}
