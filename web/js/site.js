@@ -243,6 +243,7 @@ var searchParts = {
            this.lastQuery.idMark    == this.idMark      &&
            this.lastQuery.idEngine  == this.idEngine    &&
            this.lastQuery.idNumber  == this.idNumber    && this.gridCreate) {
+            this.grid.focus();
             return false;
         }
         this.lastQuery.idBody    = this.idBody;
