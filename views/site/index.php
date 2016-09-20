@@ -73,17 +73,17 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 <div class="modal" id="modalParts" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="padding: 6px">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 id="partsName" class="modal-title"></h4>
             </div>
-            <div class="modal-body row">
-                <div class="col-md-8 nopadding">
+            <div class="modal-body row" style="padding: 4px">
+                <div class="col-md-8">
                     <label>Телефоны:&nbsp;</label><span id="partsPhone"></span><br>
                     <label>Адрес:&nbsp</label><span id="partsAddress"></span><br>
                     <label>Район:&nbsp</label><span id="partsDistrict"></span><br>
                 </div>
-                <div class="col-md-4 nopadding">
+                <div class="col-md-4">
                     <label>Режим работы:</label><pre id="partsOperatingMode"></pre>
                 </div>
             </div>
