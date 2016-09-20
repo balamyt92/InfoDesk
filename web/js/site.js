@@ -628,20 +628,11 @@ function openFirmInParts(id) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    // для того что бы работол поиск по энетеру в запчастях
-    if (event.keyCode != 13) {
-        searchParts.submitForm = false;
-        searchParts.submitByBody = false;
-        searchParts.submitByMark = false;
-        searchParts.submitByModel = false;
-        searchParts.submitByDetail = false;
-        searchParts.submitByEngine = false;
-    }
-
     // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
     if (event.keyCode == 39 && event.ctrlKey) {
         if (result.firms) {
-            $(searchParts.currentSelect).select2('open').select2('close');
+            $(searchParts.currentSelect).select2("open");
+            $(searchParts.currentSelect).select2("close");
             result.parts = true;
             result.firms = false;
         } else if (result.parts) {
@@ -664,7 +655,8 @@ function keyNavigate(event) {
             result.firms = true;
             result.parts = false;
         } else if (result.service) {
-            $(searchParts.currentSelect).select2('open').select2('close');
+            $(searchParts.currentSelect).select2("open");
+            $(searchParts.currentSelect).select2("close");
             result.parts = true;
             result.service = false;
         }
