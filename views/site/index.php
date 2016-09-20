@@ -17,13 +17,18 @@ $this->registerJsFile($url.'/js/jquery.jqGrid.min.js', ['depends' => [
 $this->registerCssFile($url.'/css/ui.jqgrid.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
+
+// list(, $select2Css) = Yii::$app->assetManager->publish('@vendor/silverfire/select2-bootstrap3-css');
+// $this->registerCssFile($select2Css.'/select2-bootstrap.min.css', ['depends' => [
+//     'app\assets\AppAsset'],
+// ]);
 ?>
 
 <div class="row">
     <div class="col-md-3">
         <h3>Поиск фирм</h3>
         <div class="form-inline" style="margin-top: 35px;">
-            <div class="form-group input-group">
+            <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
                 <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
@@ -31,220 +36,19 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     </div>
 
 
-    <div class="col-md-4" onmousedown="searchParts.submitForm = false;" onclick="searchParts.submitForm = false;">
+    <div class="col-md-4" onkeydown="searchParts.eventStatus(event);">
         <h3>Поиск запчастей</h3>
         <div>
             <label>Деталь</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'details',
-                'value'         => '',
-                'readonly'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Деталь'],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-                'pluginEvents' => [
-                    'select2:select' => 'function(data) {  
-                        searchParts.idDetail = data.params.data.id; 
-                        searchParts.submitForm = true;
-                        searchParts.currentSelect = this;
-                    }',
-                    'select2:unselect' => 'function() { 
-                        searchParts.idDetail = false;
-                        searchParts.submitForm = false; 
-                    }',
-                    'select2:opening' => 'function() { 
-                        if(searchParts.submitForm) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitForm = false;
-                            return false; 
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="detail-select" style="width: 100%"/>
             <label>Марка</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'marks',
-                'value'         => '',
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Марка'],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idMark = data.params.data.id;
-                        $('#w2').select2(\"val\", \"\");
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        $('#w2').prop(\"disabled\", false);
-                        $('#w3').prop(\"disabled\", true);
-                        $('#w4').prop(\"disabled\", false);
-
-                        searchParts.getModels();
-                        searchParts.getEngine();
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        
-                        searchParts.submitForm = true;
-                        searchParts.currentSelect = this;
-                    }",
-                    'select2:unselect' => "function() {
-                        searchParts.idMark = false;
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-
-                        $('#w2').prop(\"disabled\", true);
-                        $('#w3').prop(\"disabled\", true);
-                        $('#w4').prop(\"disabled\", true);
-
-                        $('#w2').select2(\"val\", \"\");
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.submitForm = false;
-                    }",
-                    'select2:opening' => 'function() { 
-                        if(searchParts.submitForm) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitForm = false;
-                            return false; 
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="mark-select" style="width: 100%"/>
             <label>Модель</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Модель'],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idModel = data.params.data.id;
-
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        $('#w3').prop(\"disabled\", false);
-                        searchParts.getBodys();
-                        searchParts.getEngine();
-                        searchParts.submitForm = true;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        searchParts.currentSelect = this;
-                    }",
-                    'select2:unselect' => "function() {
-                        $('#w3').prop(\"disabled\", true);
-
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        searchParts.getEngine();
-                        searchParts.submitForm = false;
-                    }",
-                    'select2:opening' => 'function() { 
-                        if(searchParts.submitForm) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitForm = false;
-                            return false; 
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="model-select" style="width: 100%"/>
             <label>Кузов</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => 'Кузов'],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idBody = data.params.data.id;
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.getEngine();
-                        searchParts.submitForm = true;
-                        searchParts.idEngine = false;
-                        searchParts.currentSelect = this;
-                    }",
-                    'select2:unselect' => "function() {
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.getEngine();
-                        searchParts.submitForm = false;
-                    }",
-                    'select2:opening' => 'function() { 
-                        if(searchParts.submitForm) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitForm = false;
-                            return false; 
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="body-select" style="width: 100%"/>
             <label>Двигатель</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'options'       => ['placeholder' => 'Двигатель'],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-                'pluginEvents' => [
-                    'select2:select' => 'function(data) {
-                        searchParts.submitForm = true;
-                        searchParts.idEngine = data.params.data.id;
-                        searchParts.currentSelect = this;
-                    }',
-                    'select2:unselect' => 'function() {
-                        searchParts.submitForm = false;
-                        searchParts.idEngine = false;
-                    }',
-                    'select2:opening' => 'function() { 
-                        if(searchParts.submitForm) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitForm = false;
-                            return false; 
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="engine-select" style="width: 100%"/>
             <label>Номер</label>
             <input type="text" class="form-control" id="number">
         </div>
@@ -253,7 +57,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
     <div class="col-md-5">
         <h3>Поиск сервисов</h3>
-        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);">
+        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
             <?php
                 $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
                 foreach ($services as $value) {
@@ -273,25 +77,17 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 id="partsName" class="modal-title"></h4>
             </div>
-            <div class="modal-body">
-                <table class="table table-condensed">
-                    <tbody>
-                    <tr>
-                        <td><label>Телефон</label>
-                        <td><label>Адрес</label></td>
-                        <td><label>Район</label>
-                        <td><label>Режим работы</label></td>
-                    </tr>
-                    <tr>
-                        <td id="partsPhone"></td>
-                        <td id="partsAddress"></td>
-                        <td id="partsDistrict"></td>
-                        <td id="partsOperatingMode"></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="modal-body row">
+                <div class="col-md-8 nopadding">
+                    <label>Телефоны:&nbsp;</label><span id="partsPhone"></span><br>
+                    <label>Адрес:&nbsp</label><span id="partsAddress"></span><br>
+                    <label>Район:&nbsp</label><span id="partsDistrict"></span><br>
+                </div>
+                <div class="col-md-4 nopadding">
+                    <label>Режим работы:</label><pre id="partsOperatingMode"></pre>
+                </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="display: none">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             </div>
         </div><!-- /.modal-content -->
@@ -370,6 +166,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             </div>
             <div class="modal-body">
                 <table id="firm-result-search"></table>
+                <div id="firm-pager"></div>
                 <table id="part-result-search"></table>
                 <div id="part-pager"></div>
                 <table id="service-result-search"></table>

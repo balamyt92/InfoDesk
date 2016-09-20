@@ -1,18 +1,11 @@
 "use strict";
 /**
- * Объект хранящий рузультаты поиска по фирмам
+ * Объект хранящий в результатах какого поиска мы находимся
  */
 var result = {
-    index : 0,
-    row : {},
-    openModelWindow : false,
-    paginate : false,
     firms : false,
     parts : false,
     service : false,
-    loading : false,
-    toBack : false,
-    toNext : true,
 };
 
 /**
@@ -20,8 +13,9 @@ var result = {
  */
 var searcherFirms = {
     input : $('#search-line'),
-    submitForm : false,
     gridCreate : false,
+    pagerToNext: false,
+    pagerToBack: false,
     modalWindow: $('#modalResult'),
     grid: $("#firm-result-search"),
     render : function(data) {
@@ -53,23 +47,26 @@ var searcherFirms = {
         if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
-                    {label: 'ID', name: 'id', width: -1},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
+                    {label: 'ID', name: 'id', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 250},
                     {label: 'Телефон', name: 'Phone', width: 250},
                     {label: 'Адерс', name: 'Address', width: 250},
                     {label: 'Район', name: 'District', width: 250},
-                    {label: 'Коментарий', name: 'Comment', width: 250},
+                    {label: 'Примечание', name: 'Comment', width: 250},
                 ],
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 50000,
+                rowNum: 100,
+                pager: "#firm-pager",
                 datatype: 'local',
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirm(grid.getCell(id, 'id'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
@@ -77,6 +74,38 @@ var searcherFirms = {
                     openFirm(grid.getCell(id, 'id'));
                 }
             });
+
+            grid.bind('keydown', function (e) {
+                let rowInPage = grid.jqGrid('getGridParam','rowNum');
+                let totalPages = grid.jqGrid('getGridParam','lastpage');
+                let currentPage = grid.jqGrid('getGridParam','page');
+                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+
+                // если вниз и последняя строка
+                if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
+                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
+                }
+                // если вверх и первая строка
+                if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
+                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
+                    grid.jqGrid('setSelection', rowInPage, false);
+                    grid.focus();
+                }
+
+                // 33 - page UP
+                // 34 - page DOWN
+                if (e.keyCode == 34 || e.keyCode == 33) {
+                    setTimeout(function () {
+                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+                    }, 200);
+                }
+
+                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
+                currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
+            });
+
             this.gridCreate = true;
         }
 
@@ -115,6 +144,7 @@ var searchParts = {
     idBody   : false,
     idEngine : false,
     idNumber : false,
+
     currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
@@ -139,13 +169,18 @@ var searchParts = {
         result.service = false;
     },
 
+    eventStatus : function(e) {
+        if(e.keyCode == 13) {
+            this.search();
+        }
+    },
     search : function() {
         if(!this.idBody
             && !this.idDetail
             && !this.idEngine
             && !this.idMark
             && !this.idModel) {
-            alert('Заполните один из парамтеров');
+            console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
 
@@ -156,38 +191,41 @@ var searchParts = {
         if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
-                    {label: 'Приоритет', name: 'Priority', width: 10},
-                    {label: 'ID', name: 'ID_Firm', width: 15},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
+                    {label: 'Приоритет', name: 'Priority', width: 5},
+                    {label: 'ID', name: 'ID_Firm', width: 10},
                     {label: 'Марка', name: 'MarkName', width: 30},
                     {label: 'Модель', name: 'ModelName', width: 30},
                     {label: 'Деталь', name: 'DetailName', width: 50},
-                    {label: 'Коментарий', name: 'Comment', width: 50},
+                    {label: 'Год', name: 'CarYear', width: 20},
                     {label: 'Кузов', name: 'BodyName', width: 50},
                     {label: 'Двигатель', name: 'EngineName', width: 30},
-                    {label: 'Год', name: 'CarYear', width: 20},
+                    {label: 'Коментарий', name: 'Comment', width: 50},
                     {label: 'Цена', name: 'Cost', width: 20},
                     {label: 'Номер', name: 'Catalog_Number', width: 20},
                 ],
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 100,
+                rowNum: 5000,
                 datatype: 'local',
                 pager: "#part-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
             grid.bind('keydown', function (e) {
+                let rowInPage = grid.jqGrid('getGridParam','rowNum');
                 let totalPages = grid.jqGrid('getGridParam','lastpage');
                 let currentPage = grid.jqGrid('getGridParam','page');
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
@@ -200,11 +238,28 @@ var searchParts = {
                 }
                 if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 100, false);
+                    grid.jqGrid('setSelection', rowInPage, false);
                     grid.focus();
                 }
 
-                currentRow == 100 ? this.pagerToNext = true : this.pagerToNext = false;
+                // 33 - page UP
+                // 34 - page DOWN
+                if (e.keyCode == 34 || e.keyCode == 33) {
+                    setTimeout(function () {
+                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+                    }, 200);
+                }
+
+                // 36 - Home
+                if(e.keyCode == 36) {
+                    if(currentPage > 1) {
+                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+                    }
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
+                }
+
+                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
                 currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
             });
             this.gridCreate = true;
@@ -229,22 +284,100 @@ var searchParts = {
         });
     },
 
+    getDetails :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-details-name",
+            data: {}
+        }).done(function(data){
+            $('#detail-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
+                searchParts.idDetail = e.choice.id;
+            }).on("select2-removed", function(e) {
+                searchParts.idDetail = false;
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
+            });
+        });
+    },
+
+    getMarks :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-marks",
+            data: {}
+        }).done(function(data){
+            $('#mark-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
+                $('#model-select').select2("enable", true);
+                $('#engine-select').select2("enable", true);
+                searchParts.idMark = e.choice.id;
+                searchParts.getModels();
+                searchParts.getEngine();
+            }).on("select2-removed", function(e) {
+                searchParts.idMark = false;
+                $('#model-select').select2("enable", false);
+                $('#body-select').select2("enable", false);
+                $('#engine-select').select2("enable", false);
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
+            });
+        });
+    },
+
     getModels : function() {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-models",
-            data: {id: searchParts.idMark}
+            data: {id : searchParts.idMark}
         }).done(function(data){
-            // рисуем модели
-            let list = '<option value="">Модель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w2').html(list);
+            $('#model-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -252,18 +385,25 @@ var searchParts = {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-bodys",
-            data: {id: searchParts.idModel}
+            data: {id : searchParts.idModel}
         }).done(function(data){
-            // рисуем кузова
-            let list = '<option value="">Кузов</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i, arr) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w3').html(list);
+            $('#body-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -277,117 +417,29 @@ var searchParts = {
                 body_id: searchParts.idBody,
             }
         }).done(function(data){
-            // рисуем двигателя
-            let list = '<option value="">Двигатель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w4').html(list);
+            $('#engine-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 };
-
 /**
- * Функция обработки хоткеев навигации
+ * Объект отвечает за работу с поиском сервисов
  */
-function keyNavigate(event) {
-    // для того что бы работол поиск по энетеру в запчастях
-    if (event.keyCode != 13) {
-        searchParts.submitForm = false;
-    }
-
-    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
-    if (event.keyCode == 39 && event.ctrlKey) {
-        if (result.firms) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $('#service').focus();
-            result.service = true;
-            result.parts = false;
-        } else if (result.service) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.service = false;
-        }
-    }
-    if (event.keyCode == 37 && event.ctrlKey) {
-        if (result.firms) {
-            $('#service').focus();
-            result.service = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.parts = false;
-        } else if (result.service) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.service = false;
-        }
-    }
-}
-
-/**
- * Функция открытия карточки фирмы в результатах поиска
- * @param id
- */
-function openFirm(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data) {
-        // мапим данные
-        $('#firmName').html(data.message[0].Name);
-        $('#firmOrganizationType').html(data.message[0].OrganizationType);
-        $('#firmActivityType').html(data.message[0].ActivityType);
-        $('#firmDistrict').html(data.message[0].District);
-        $('#firmAddress').html(data.message[0].Address);
-        $('#firmPhone').html(data.message[0].Phone);
-        $('#firmFax').html(data.message[0].Fax);
-        $('#firmEmail').html(data.message[0].Email);
-        $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html(data.message[0].OperatingMode);
-        $('#firmComment').html(data.message[0].Comment);
-
-        // открываем окно
-        $('#modalFirm').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop: false});
-    });
-}
-
-function openFirmInParts(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data){
-        $('#partsName').html(data.message[0].Name);
-        $('#partsDistrict').html(data.message[0].District);
-        $('#partsAddress').html(data.message[0].Address);
-        $('#partsPhone').html(data.message[0].Phone);
-        $('#partsOperatingMode').html(data.message[0].OperatingMode);
-
-        $('#modalParts').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop : false});
-
-        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
-        result.openModelWindow = true;
-    });
-}
-
 var serviceSearch = {
     input: $('#service'),
     groupList: $('#service')[0].innerHTML,
@@ -397,11 +449,11 @@ var serviceSearch = {
     modalWindow: $('#modalResult'),
     grid: $("#service-result-search"),
     open: function (event) {
-        if (event.keyCode == 13 && (!this.inCategory)) {
+        if ((event.keyCode == 13 || event.type == "dblclick") && (!this.inCategory)) {
             this.openCategory();
             this.inCategory = true;
             return false;
-        } else if (event.keyCode == 13 && this.inCategory) {
+        } else if ((event.keyCode == 13 || event.type == "dblclick") && this.inCategory) {
             this.searchService();
             return false;
         }
@@ -433,12 +485,13 @@ var serviceSearch = {
         if (!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1},
-                    {label: 'ID_Firm', name: 'ID_Firm', width: -1},
+                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
+                    {label: 'ID_Firm', name: 'ID_Firm', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 150},
-                    {label: 'Район', name: 'District', width: 150},
-                    {label: 'Коментарий', name: 'Comment', width: 150},
+                    {label: 'Улица', name: 'Address', width: 100},
+                    {label: 'Коментарий', name: 'Comment', width: 100},
                     {label: 'Список авто', name: 'CarList', width: 150},
+                    {label: 'Район', name: 'District', width: 50},
                 ],
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
@@ -449,7 +502,9 @@ var serviceSearch = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-
+                ondblClickRow: function(id) {
+                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                },
             });
 
             grid.jqGrid('bindKeys', {
@@ -485,9 +540,114 @@ var serviceSearch = {
     },
 };
 
+/**
+ * Функция открытия карточки фирмы в результатах поиска фирм
+ * @param id
+ */
+function openFirm(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data) {
+        // мапим данные
+        $('#firmName').html(data.message[0].Name);
+        $('#firmOrganizationType').html(data.message[0].OrganizationType);
+        $('#firmActivityType').html(data.message[0].ActivityType);
+        $('#firmDistrict').html(data.message[0].District);
+        $('#firmAddress').html(data.message[0].Address);
+        $('#firmPhone').html(data.message[0].Phone);
+        $('#firmFax').html(data.message[0].Fax);
+        $('#firmEmail').html(data.message[0].Email);
+        $('#firmURL').html(data.message[0].URL);
+        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmComment').html(data.message[0].Comment);
+
+        // открываем окно
+        $('#modalFirm').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop: false});
+    });
+}
+
+/**
+ * функция открытия "урезаной" карточки фирмы в результатах поиска запчастей и сервисов
+ * @param id
+ */
+function openFirmInParts(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data){
+        $('#partsName').html(data.message[0].Name);
+        $('#partsDistrict').html(data.message[0].District);
+        $('#partsAddress').html(data.message[0].Address);
+        $('#partsPhone').html(data.message[0].Phone);
+        $('#partsOperatingMode').html(data.message[0].OperatingMode);
+
+        $('#modalParts').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop : false});
+    });
+}
+
+/**
+ * Функция обработки хоткеев навигации
+ */
+function keyNavigate(event) {
+    // для того что бы работол поиск по энетеру в запчастях
+    if (event.keyCode != 13) {
+        searchParts.submitForm = false;
+        searchParts.submitByBody = false;
+        searchParts.submitByMark = false;
+        searchParts.submitByModel = false;
+        searchParts.submitByDetail = false;
+        searchParts.submitByEngine = false;
+    }
+
+    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
+    if (event.keyCode == 39 && event.ctrlKey) {
+        if (result.firms) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $('#service').focus();
+            result.service = true;
+            result.parts = false;
+        } else if (result.service) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.service = false;
+        }
+    }
+    if (event.keyCode == 37 && event.ctrlKey) {
+        if (result.firms) {
+            $('#service').focus();
+            result.service = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.parts = false;
+        } else if (result.service) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.service = false;
+        }
+    }
+}
+
 
 function ready() {
     // Инициализация
+    
+    $('body').on("keydown", keyNavigate);
 
     let search = $('#search-line');
     $(search.focus()).select();
@@ -499,7 +659,6 @@ function ready() {
     result.firms = true;
     result.parts = false;
     result.service = false;
-    searchParts.currentSelect = $('#w0');
 
     $('#modalFirm').on('hidden.bs.modal', function () {
         $("#firm-result-search").focus();
@@ -509,7 +668,7 @@ function ready() {
         if(result.service) {
             $("#service-result-search").focus();
         } else if (result.parts) {
-            $($($(result.row[result.index]).children()[2]).children()[0]).focus();
+            $("#part-result-search").focus();
         }
     });
 
@@ -523,11 +682,98 @@ function ready() {
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
-            $(searchParts.currentSelect).select2('open').select2('close');
             $('#gbox_part-result-search').hide();
+            $(searchParts.currentSelect).select2("open");
+            $(searchParts.currentSelect).select2("close");
         }
     });
+
+    searchParts.getDetails();
+    searchParts.getMarks();
+
+
+    $('#model-select').select2({
+        data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idModel = e.choice.id;
+        $('#body-select').select2("enable", true);
+        searchParts.getBodys();
+    }).on("select2-removed", function(e) {
+        searchParts.idModel = false;
+        $('#body-select').select2("enable", false);
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+
+    $('#body-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idBody = e.choice.id;
+        searchParts.getEngine();
+    }).on("select2-removed", function(e) {
+        searchParts.idBody = false;
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+    $('#engine-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idEngine = e.choice.id;
+    }).on("select2-removed", function(e) {
+        searchParts.idEngine = false;
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+    $('#model-select').select2("enable", false);
+    $('#body-select').select2("enable", false);
+    $('#engine-select').select2("enable", false);
 }
 
 document.addEventListener("DOMContentLoaded", ready);
-

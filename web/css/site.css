@@ -93,7 +93,7 @@ pre {
 }
 
 .ui-jqgrid .ui-jqgrid-view {
-    font-size: 15px;
+    font-size: 14px;
 }
 #modalParts, #modalFirm {
     z-index: 1250;
@@ -108,4 +108,18 @@ pre {
     padding-right: 2px;
     word-wrap: normal;
     overflow-wrap: normal;
+}
+
+.table > tbody > tr.active > td {
+    background-color: #FFF;
+}
+
+.table > tbody > tr.success > td {
+    background-color: #dff0d8;
+}
+
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+    padding: 0px;
+    margin: 0px;
+    height: auto;
 }
