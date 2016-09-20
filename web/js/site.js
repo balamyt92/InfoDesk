@@ -144,6 +144,15 @@ var searchParts = {
     idBody   : false,
     idEngine : false,
     idNumber : false,
+    lastQuery : {
+        idDetail : false,
+        idMark   : false,
+        idModel  : false,
+        idBody   : false,
+        idEngine : false,
+        idNumber : false,
+    },
+
 
     currentSelect : false,
     pagerToNext : false,
@@ -186,6 +195,23 @@ var searchParts = {
 
         $('#gbox_part-result-search').show();
         this.modalWindow.modal({backdrop: false});
+
+        // "кешируем" запрос
+        if(this.lastQuery.idBody    == this.idBody      &&
+           this.lastQuery.idDetail  == this.idDetail    &&
+           this.lastQuery.idModel   == this.idModel     &&
+           this.lastQuery.idMark    == this.idMark      &&
+           this.lastQuery.idEngine  == this.idEngine    &&
+           this.lastQuery.idNumber  == this.idNumber    && this.gridCreate) {
+            return false;
+        }
+        this.lastQuery.idBody    = this.idBody;
+        this.lastQuery.idDetail  = this.idDetail;
+        this.lastQuery.idModel   = this.idModel;
+        this.lastQuery.idMark    = this.idMark;
+        this.lastQuery.idEngine  = this.idEngine;
+        this.lastQuery.idNumber  = this.idNumber;
+
         let grid = this.grid;
 
         if(!this.gridCreate) {
