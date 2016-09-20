@@ -18,6 +18,21 @@ $this->registerJsFile($url.'/js/jquery.jqGrid.min.js', ['depends' => [
 $this->registerCssFile($url.'/css/ui.jqgrid.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
+
+
+list(, $select2) = Yii::$app->assetManager->publish('@bower/select2');
+$this->registerJsFile($select2.'/select2.min.js', ['depends' => [
+    'yii\web\YiiAsset',
+    'yii\bootstrap\BootstrapAsset', ],
+]);
+$this->registerJsFile($select2.'/select2_locale_ru.js', ['depends' => [
+    'yii\web\YiiAsset',
+    'yii\bootstrap\BootstrapAsset', ],
+]);
+$this->registerCssFile($select2.'/select2.css');
+
+list(, $select2Css) = Yii::$app->assetManager->publish('@vendor/silverfire/select2-bootstrap3-css');
+$this->registerCssFile($select2Css.'/select2-bootstrap.min.css');
 ?>
 
 <div class="row">
@@ -32,336 +47,19 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     </div>
 
 
-    <div class="col-md-4" onclick="searchParts.eventStatus(event);" onkeydown="searchParts.eventStatus(event);">
+    <div class="col-md-4" onkeydown="searchParts.eventStatus(event);">
         <h3>Поиск запчастей</h3>
         <div>
             <label>Деталь</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'details',
-                'value'         => '',
-                'readonly'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarENDetailNames::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => [
-                    'placeholder' => '',
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'sorter'     => new JsExpression('function(results) {
-                                    let query = $(".select2-search__field").val();
-                                    if(query != undefined && query.length > 0) {
-                                        query = query.toLowerCase();
-                                        return results.sort(function(a, b) {
-                                            return a.text.toLowerCase().indexOf(query) -
-                                            b.text.toLowerCase().indexOf(query);
-                                        });
-                                    } else {
-                                        return results;
-                                    }
-                                }'),
-                ],
-                'pluginEvents' => [
-                    'select2:select' => 'function(data) {
-                        searchParts.idDetail = data.params.data.id;
-                        searchParts.submitByDetail = true;
-                        searchParts.submitByMark = false;
-                        searchParts.submitByModel = false;
-                        searchParts.submitByBody = false;
-                        searchParts.submitByEngine = false;
-                        searchParts.currentSelect = this;
-                        searchParts.unselectElement = false;
-                    }',
-                    'select2:unselect' => 'function(e) {
-                        searchParts.idDetail = false;
-                        searchParts.submitByDetail = false;
-
-                        searchParts.unselectElement = true;
-                    }',
-                    'select2:opening' => 'function() {
-                        if(searchParts.submitByDetail && !searchParts.mouseClick) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitByDetail = false;
-                            return false;
-                        }
-                        if(searchParts.unselectElement) {
-                            return false;
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="detail-select" style="width: 100%"/>
             <label>Марка</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'marks',
-                'value'         => '',
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'data'          => \yii\helpers\ArrayHelper::map(\app\models\CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => ''],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'sorter'     => new JsExpression('function(results) {
-                                    let query = $(".select2-search__field").val();
-                                    if(query != undefined && query.length > 0) {
-                                        query = query.toLowerCase();
-                                        return results.sort(function(a, b) {
-                                            return a.text.toLowerCase().indexOf(query) -
-                                            b.text.toLowerCase().indexOf(query);
-                                        });
-                                    } else {
-                                        return results;
-                                    }
-                                }'),
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idMark = data.params.data.id;
-                        $('#w2').select2(\"val\", \"\");
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        $('#w2').prop(\"disabled\", false);
-                        $('#w3').prop(\"disabled\", true);
-                        $('#w4').prop(\"disabled\", false);
-
-                        searchParts.getModels();
-                        searchParts.getEngine();
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-
-                        searchParts.submitByDetail = true;
-                        searchParts.submitByMark = true;
-                        searchParts.submitByModel = false;
-                        searchParts.submitByBody = false;
-                        searchParts.submitByEngine = false;
-                        searchParts.currentSelect = this;
-
-                        searchParts.unselectElement = false;
-                    }",
-                    'select2:unselect' => "function() {
-                        searchParts.idMark = false;
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-
-                        searchParts.unselectElement = true;
-
-                        $('#w2').prop(\"disabled\", true);
-                        $('#w3').prop(\"disabled\", true);
-                        $('#w4').prop(\"disabled\", true);
-
-                        $('#w2').select2(\"val\", \"\");
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.submitByMark = false;
-                    }",
-                    'select2:opening' => 'function() {
-                        if(searchParts.submitByMark && !searchParts.mouseClick) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitByMark = false;
-                            return false;
-                        }
-                        if(searchParts.unselectElement) {
-                            return false;
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="mark-select" style="width: 100%"/>
             <label>Модель</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => ''],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'sorter'     => new JsExpression('function(results) {
-                                    let query = $(".select2-search__field").val();
-                                    if(query != undefined && query.length > 0) {
-                                        query = query.toLowerCase();
-                                        return results.sort(function(a, b) {
-                                            return a.text.toLowerCase().indexOf(query) -
-                                            b.text.toLowerCase().indexOf(query);
-                                        });
-                                    } else {
-                                        return results;
-                                    }
-                                }'),
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idModel = data.params.data.id;
-
-                        searchParts.unselectElement = false;
-
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        $('#w3').prop(\"disabled\", false);
-                        searchParts.getBodys();
-                        searchParts.getEngine();
-                        searchParts.submitByModel = true;
-                        searchParts.submitByDetail = false;
-                        searchParts.submitByMark = false;
-                        searchParts.submitByBody = false;
-                        searchParts.submitByEngine = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        searchParts.currentSelect = this;
-                    }",
-                    'select2:unselect' => "function() {
-                        $('#w3').prop(\"disabled\", true);
-
-                        $('#w3').select2(\"val\", \"\");
-                        $('#w4').select2(\"val\", \"\");
-
-                        searchParts.idModel = false;
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        searchParts.getEngine();
-                        searchParts.submitByModel = false;
-
-                        searchParts.unselectElement = true;
-                    }",
-                    'select2:opening' => 'function() {
-                        if(searchParts.submitByModel && !searchParts.mouseClick) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitByModel = false;
-                            return false;
-                        }
-                        if(searchParts.unselectElement) {
-                            return false;
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="model-select" style="width: 100%"/>
             <label>Кузов</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                // 'data' => \yii\helpers\ArrayHelper::map(\app\models\CarBodyModelsEN::find()->orderBy("Name")->all(), 'id', 'Name'),
-                'options'       => ['placeholder' => ''],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'sorter'     => new JsExpression('function(results) {
-                                    let query = $(".select2-search__field").val();
-                                    if(query != undefined && query.length > 0) {
-                                        query = query.toLowerCase();
-                                        return results.sort(function(a, b) {
-                                            return a.text.toLowerCase().indexOf(query) -
-                                            b.text.toLowerCase().indexOf(query);
-                                        });
-                                    } else {
-                                        return results;
-                                    }
-                                }'),
-                ],
-                'pluginEvents' => [
-                    'select2:select' => "function(data) {
-                        searchParts.idBody = data.params.data.id;
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.getEngine();
-                        searchParts.submitByBody = true;
-                        searchParts.submitByDetail = false;
-                        searchParts.submitByMark = false;
-                        searchParts.submitByModel = false;
-                        searchParts.submitByEngine = false;
-                        searchParts.idEngine = false;
-                        searchParts.currentSelect = this;
-
-                        searchParts.unselectElement = false;
-                    }",
-                    'select2:unselect' => "function() {
-                        searchParts.idBody = false;
-                        searchParts.idEngine = false;
-                        $('#w4').select2(\"val\", \"\");
-                        searchParts.getEngine();
-                        searchParts.submitByBody = false;
-
-                        searchParts.unselectElement = true;
-                    }",
-                    'select2:opening' => 'function() {
-                        if(searchParts.submitByBody && !searchParts.mouseClick) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitByBody = false;
-                            return false;
-                        }
-                        if(searchParts.unselectElement) {
-                            return false;
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="body-select" style="width: 100%"/>
             <label>Двигатель</label>
-            <?php
-            echo \kartik\select2\Select2::widget([
-                'name'          => 'models',
-                'value'         => '',
-                'disabled'      => true,
-                'pluginLoading' => false,
-                'theme'         => \kartik\select2\Select2::THEME_BOOTSTRAP,
-                'options'       => ['placeholder' => ''],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'sorter'     => new JsExpression('function(results) {
-                                    let query = $(".select2-search__field").val();
-                                    if(query != undefined && query.length > 0) {
-                                        query = query.toLowerCase();
-                                        return results.sort(function(a, b) {
-                                            return a.text.toLowerCase().indexOf(query) -
-                                            b.text.toLowerCase().indexOf(query);
-                                        });
-                                    } else {
-                                        return results;
-                                    }
-                                }'),
-                ],
-                'pluginEvents' => [
-                    'select2:select' => 'function(data) {
-                        searchParts.submitByEngine = true;
-                        searchParts.submitByDetail = false;
-                        searchParts.submitByMark = false;
-                        searchParts.submitByModel = false;
-                        searchParts.submitByBody = false;
-                        searchParts.idEngine = data.params.data.id;
-                        searchParts.currentSelect = this;
-
-                        searchParts.unselectElement = false;
-                    }',
-                    'select2:unselect' => 'function() {
-                        searchParts.submitByEngine = false;
-                        searchParts.idEngine = false;
-
-                        searchParts.unselectElement = true;
-                    }',
-                    'select2:opening' => 'function() {
-                        if(searchParts.submitByEngine && !searchParts.mouseClick) {
-                            searchParts.idPage = 1;
-                            searchParts.search();
-                            searchParts.submitByEngine = false;
-                            return false;
-                        }
-                        if(searchParts.unselectElement) {
-                            return false;
-                        }
-                    }',
-                ],
-            ]); ?>
+            <input type="text" id="engine-select" style="width: 100%"/>
             <label>Номер</label>
             <input type="text" class="form-control" id="number">
         </div>

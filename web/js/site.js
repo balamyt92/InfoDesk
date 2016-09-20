@@ -145,15 +145,6 @@ var searchParts = {
     idEngine : false,
     idNumber : false,
 
-    mouseClick : false,
-    unselectElement : false,
-
-    submitByDetail : false,
-    submitByMark : false,
-    submitByModel : false,
-    submitByBody : false,
-    submitByEngine : false,
-
     currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
@@ -179,12 +170,8 @@ var searchParts = {
     },
 
     eventStatus : function(e) {
-        if(e.type == "click") {
-            this.mouseClick = true;
-        } else {
-            this.mouseClick = false;
-        }
-        if(e.keyCode == 13 && this.unselectElement) {
+        console.log(e);
+        if(e.keyCode == 13) {
             this.search();
         }
     },
@@ -295,6 +282,65 @@ var searchParts = {
             }
         }).done(function(data){
             searchParts.render(data.message);
+        });
+    },
+
+    getDetails :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-details-name",
+            data: {}
+        }).done(function(data){
+            $('#detail-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
+                searchParts.idDetail = e.choice.id;
+            }).on("select2-removed", function(e) {
+                searchParts.idDetail = false;
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
+            }).on("select2-opening", function (e) {
+                console.log(e);
+            });
+        });
+    },
+
+    getMarks :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-marks",
+            data: {}
+        }).done(function(data){
+            $('#mark-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -579,7 +625,6 @@ function ready() {
     result.firms = true;
     result.parts = false;
     result.service = false;
-    searchParts.currentSelect = $('#w0');
 
     $('#modalFirm').on('hidden.bs.modal', function () {
         $("#firm-result-search").focus();
@@ -603,11 +648,73 @@ function ready() {
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
-            searchParts.unselectElement = false;
             $(searchParts.currentSelect).select2('open').select2('close');
             $('#gbox_part-result-search').hide();
         }
     });
+
+    searchParts.getDetails();
+    searchParts.getMarks();
+
+
+    $('#model-select').select2({
+        data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    });
+
+
+    $('#body-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    });
+
+    $('#engine-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    });
+
+    $('#model-select').select2("enable", false);
+    $('#body-select').select2("enable", false);
+    $('#engine-select').select2("enable", false);
 }
 
 document.addEventListener("DOMContentLoaded", ready);

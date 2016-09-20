@@ -78,6 +78,18 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionGetDetailsName()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
+    }
+
+    public function actionGetMarks()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return \app\models\CarMarksEN::find()->orderBy('Name')->all();
+    }
+
     public function actionGetModels($id)
     {
         $carModels = CarModelsEN::find()->where(['=', 'ID_Mark', $id])->
