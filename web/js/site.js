@@ -298,6 +298,35 @@ var searchParts = {
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
                 let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
+                if(e.ctrlKey && (e.keyCode == 40 || e.keyCode == 38)){
+                    let i = currentRow;
+                    let oldID = grid.getCell(i, 'ID_Firm');
+                    let newID = oldID;
+
+                    if(e.keyCode == 40 && e.ctrlKey)
+                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+                    else
+                        newID = grid.getCell( Math.abs(i - 2), 'ID_Firm');
+
+                    console.log(newID);
+                    console.log(oldID);
+                    console.log(i);
+                    console.log(realRowInPage);
+                    console.log('--------');
+                    while(newID == oldID && i < realRowInPage && i > 0){
+                        if(e.keyCode == 40 && e.ctrlKey)
+                            i++;
+                        else
+                            i--;
+                        newID = grid.getCell(i, 'ID_Firm');
+                    }
+                    if(e.keyCode == 40 && e.ctrlKey)
+                        grid.jqGrid('setSelection', i, false);
+                    else
+                        grid.jqGrid('setSelection', i, false);
+                    grid.focus();
+                }
+
                 // если вниз и последняя строка
                 if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
