@@ -614,6 +614,8 @@ function keyNavigate(event) {
 
 function ready() {
     // Инициализация
+    
+    $('body').on("keydown", keyNavigate);
 
     let search = $('#search-line');
     $(search.focus()).select();
