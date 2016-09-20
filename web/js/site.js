@@ -171,6 +171,34 @@ var searchParts = {
     modalWindow: $('#modalResult'),
     grid: $("#part-result-search"),
 
+    highlightRow : function () {
+        let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
+        let totalPages = this.grid.jqGrid('getGridParam','lastpage');
+        let realRowInPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+        let firmID = this.grid.getCell(1, 'ID_Firm');
+        let color = false;
+        for(let i = 2; i < realRowInPage - 1; i++) {
+            let newId = this.grid.getCell(i, 'ID_Firm');
+            if (firmID != newId) {
+                firmID = newId;
+                color = !color;
+            }
+            if(color) {
+                this.grid.setCell(i,1,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,2,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,3,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,4,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,5,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,6,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,7,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,8,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,9,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,10,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,11,'',{ background:'#d8cfcf'});
+            }
+        }
+    },
+
     // функция вывода результата запроса
     render : function(data) {
         let grid = this.grid;
@@ -182,6 +210,8 @@ var searchParts = {
         grid.trigger('reloadGrid');
         grid.setSelection(1, true);
         grid.focus();
+
+        this.highlightRow();
 
         result.firms = false;
         result.parts = true;
@@ -271,17 +301,20 @@ var searchParts = {
                 if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
+                    this.highlightRow();
                     grid.focus();
                 }
                 // если вниз и последняя строка последней страницы
-                if(e.keyCode == 40 && totalPages == currentPage && this.pagerLastRow){
+                if(e.keyCode == 40 && totalPages == currentPage && this.pagerLastRow && totalPages > 1){
                     grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
+                    this.highlightRow();
                     grid.focus();
                 }
                 if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', rowInPage, false);
+                    this.highlightRow();
                     grid.focus();
                 }
 
@@ -297,6 +330,7 @@ var searchParts = {
                 if(e.keyCode == 36) {
                     if(currentPage > 1) {
                         grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+                        this.highlightRow();
                     }
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
