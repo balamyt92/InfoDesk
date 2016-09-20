@@ -346,6 +346,8 @@ var searchParts = {
                 searchParts.getEngine();
             }).on("select2-removed", function(e) {
                 searchParts.idMark = false;
+                searchParts.idModel = false;
+                searchParts.idBody = false;
                 $('#model-select').select2("enable", false);
                 $('#body-select').select2("enable", false);
                 $('#engine-select').select2("enable", false);
@@ -715,6 +717,7 @@ function ready() {
         searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idModel = false;
+        searchParts.idBody = false;
         $('#body-select').select2("enable", false);
         searchParts.getEngine();
     }).on("select2-focus", function (e) {
