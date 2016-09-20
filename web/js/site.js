@@ -1,18 +1,11 @@
 "use strict";
 /**
- * Объект хранящий рузультаты поиска по фирмам
+ * Объект хранящий в результатах какого поиска мы находимся
  */
 var result = {
-    index : 0,
-    row : {},
-    openModelWindow : false,
-    paginate : false,
     firms : false,
     parts : false,
     service : false,
-    loading : false,
-    toBack : false,
-    toNext : true,
 };
 
 /**
@@ -152,15 +145,6 @@ var searchParts = {
     idEngine : false,
     idNumber : false,
 
-    mouseClick : false,
-    unselectElement : false,
-
-    submitByDetail : false,
-    submitByMark : false,
-    submitByModel : false,
-    submitByBody : false,
-    submitByEngine : false,
-
     currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
@@ -186,12 +170,7 @@ var searchParts = {
     },
 
     eventStatus : function(e) {
-        if(e.type == "click") {
-            this.mouseClick = true;
-        } else {
-            this.mouseClick = false;
-        }
-        if(e.keyCode == 13 && this.unselectElement) {
+        if(e.keyCode == 13) {
             this.search();
         }
     },
@@ -201,7 +180,7 @@ var searchParts = {
             && !this.idEngine
             && !this.idMark
             && !this.idModel) {
-            alert('Заполните один из парамтеров');
+            console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
 
@@ -305,22 +284,100 @@ var searchParts = {
         });
     },
 
+    getDetails :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-details-name",
+            data: {}
+        }).done(function(data){
+            $('#detail-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
+                searchParts.idDetail = e.choice.id;
+            }).on("select2-removed", function(e) {
+                searchParts.idDetail = false;
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
+            });
+        });
+    },
+
+    getMarks :  function () {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/get-marks",
+            data: {}
+        }).done(function(data){
+            $('#mark-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
+                    }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
+                $('#model-select').select2("enable", true);
+                $('#engine-select').select2("enable", true);
+                searchParts.idMark = e.choice.id;
+                searchParts.getModels();
+                searchParts.getEngine();
+            }).on("select2-removed", function(e) {
+                searchParts.idMark = false;
+                $('#model-select').select2("enable", false);
+                $('#body-select').select2("enable", false);
+                $('#engine-select').select2("enable", false);
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
+            });
+        });
+    },
+
     getModels : function() {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-models",
-            data: {id: searchParts.idMark}
+            data: {id : searchParts.idMark}
         }).done(function(data){
-            // рисуем модели
-            let list = '<option value="">Модель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w2').html(list);
+            $('#model-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -328,18 +385,25 @@ var searchParts = {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-bodys",
-            data: {id: searchParts.idModel}
+            data: {id : searchParts.idModel}
         }).done(function(data){
-            // рисуем кузова
-            let list = '<option value="">Кузов</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i, arr) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w3').html(list);
+            $('#body-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -353,122 +417,29 @@ var searchParts = {
                 body_id: searchParts.idBody,
             }
         }).done(function(data){
-            // рисуем двигателя
-            let list = '<option value="">Двигатель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w4').html(list);
+            $('#engine-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 };
-
 /**
- * Функция обработки хоткеев навигации
+ * Объект отвечает за работу с поиском сервисов
  */
-function keyNavigate(event) {
-    // для того что бы работол поиск по энетеру в запчастях
-    if (event.keyCode != 13) {
-        searchParts.submitForm = false;
-        searchParts.submitByBody = false;
-        searchParts.submitByMark = false;
-        searchParts.submitByModel = false;
-        searchParts.submitByDetail = false;
-        searchParts.submitByEngine = false;
-    }
-
-    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
-    if (event.keyCode == 39 && event.ctrlKey) {
-        if (result.firms) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $('#service').focus();
-            result.service = true;
-            result.parts = false;
-        } else if (result.service) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.service = false;
-        }
-    }
-    if (event.keyCode == 37 && event.ctrlKey) {
-        if (result.firms) {
-            $('#service').focus();
-            result.service = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.parts = false;
-        } else if (result.service) {
-            $(searchParts.currentSelect).select2('open').select2('close');
-            result.parts = true;
-            result.service = false;
-        }
-    }
-}
-
-/**
- * Функция открытия карточки фирмы в результатах поиска
- * @param id
- */
-function openFirm(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data) {
-        // мапим данные
-        $('#firmName').html(data.message[0].Name);
-        $('#firmOrganizationType').html(data.message[0].OrganizationType);
-        $('#firmActivityType').html(data.message[0].ActivityType);
-        $('#firmDistrict').html(data.message[0].District);
-        $('#firmAddress').html(data.message[0].Address);
-        $('#firmPhone').html(data.message[0].Phone);
-        $('#firmFax').html(data.message[0].Fax);
-        $('#firmEmail').html(data.message[0].Email);
-        $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html(data.message[0].OperatingMode);
-        $('#firmComment').html(data.message[0].Comment);
-
-        // открываем окно
-        $('#modalFirm').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop: false});
-    });
-}
-
-function openFirmInParts(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data){
-        $('#partsName').html(data.message[0].Name);
-        $('#partsDistrict').html(data.message[0].District);
-        $('#partsAddress').html(data.message[0].Address);
-        $('#partsPhone').html(data.message[0].Phone);
-        $('#partsOperatingMode').html(data.message[0].OperatingMode);
-
-        $('#modalParts').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop : false});
-
-        $($($(result.row[result.index]).children()[2]).children()[0]).focus();
-        result.openModelWindow = true;
-    });
-}
-
 var serviceSearch = {
     input: $('#service'),
     groupList: $('#service')[0].innerHTML,
@@ -569,9 +540,114 @@ var serviceSearch = {
     },
 };
 
+/**
+ * Функция открытия карточки фирмы в результатах поиска фирм
+ * @param id
+ */
+function openFirm(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data) {
+        // мапим данные
+        $('#firmName').html(data.message[0].Name);
+        $('#firmOrganizationType').html(data.message[0].OrganizationType);
+        $('#firmActivityType').html(data.message[0].ActivityType);
+        $('#firmDistrict').html(data.message[0].District);
+        $('#firmAddress').html(data.message[0].Address);
+        $('#firmPhone').html(data.message[0].Phone);
+        $('#firmFax').html(data.message[0].Fax);
+        $('#firmEmail').html(data.message[0].Email);
+        $('#firmURL').html(data.message[0].URL);
+        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmComment').html(data.message[0].Comment);
+
+        // открываем окно
+        $('#modalFirm').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop: false});
+    });
+}
+
+/**
+ * функция открытия "урезаной" карточки фирмы в результатах поиска запчастей и сервисов
+ * @param id
+ */
+function openFirmInParts(id) {
+    $.ajax({
+        method: "GET",
+        url: "index.php?r=site/get-firm",
+        data: {
+            firm_id : id,
+        }
+    }).done(function(data){
+        $('#partsName').html(data.message[0].Name);
+        $('#partsDistrict').html(data.message[0].District);
+        $('#partsAddress').html(data.message[0].Address);
+        $('#partsPhone').html(data.message[0].Phone);
+        $('#partsOperatingMode').html(data.message[0].OperatingMode);
+
+        $('#modalParts').draggable({
+            handle: ".modal-dialog"
+        }).modal({backdrop : false});
+    });
+}
+
+/**
+ * Функция обработки хоткеев навигации
+ */
+function keyNavigate(event) {
+    // для того что бы работол поиск по энетеру в запчастях
+    if (event.keyCode != 13) {
+        searchParts.submitForm = false;
+        searchParts.submitByBody = false;
+        searchParts.submitByMark = false;
+        searchParts.submitByModel = false;
+        searchParts.submitByDetail = false;
+        searchParts.submitByEngine = false;
+    }
+
+    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
+    if (event.keyCode == 39 && event.ctrlKey) {
+        if (result.firms) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $('#service').focus();
+            result.service = true;
+            result.parts = false;
+        } else if (result.service) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.service = false;
+        }
+    }
+    if (event.keyCode == 37 && event.ctrlKey) {
+        if (result.firms) {
+            $('#service').focus();
+            result.service = true;
+            result.firms = false;
+        } else if (result.parts) {
+            $($('#search-line').focus()).select();
+            result.firms = true;
+            result.parts = false;
+        } else if (result.service) {
+            $(searchParts.currentSelect).select2('open').select2('close');
+            result.parts = true;
+            result.service = false;
+        }
+    }
+}
+
 
 function ready() {
     // Инициализация
+    
+    $('body').on("keydown", keyNavigate);
 
     let search = $('#search-line');
     $(search.focus()).select();
@@ -583,7 +659,6 @@ function ready() {
     result.firms = true;
     result.parts = false;
     result.service = false;
-    searchParts.currentSelect = $('#w0');
 
     $('#modalFirm').on('hidden.bs.modal', function () {
         $("#firm-result-search").focus();
@@ -607,11 +682,98 @@ function ready() {
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
-            searchParts.unselectElement = false;
-            $(searchParts.currentSelect).select2('open').select2('close');
             $('#gbox_part-result-search').hide();
+            $(searchParts.currentSelect).select2("open");
+            $(searchParts.currentSelect).select2("close");
         }
     });
+
+    searchParts.getDetails();
+    searchParts.getMarks();
+
+
+    $('#model-select').select2({
+        data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idModel = e.choice.id;
+        $('#body-select').select2("enable", true);
+        searchParts.getBodys();
+    }).on("select2-removed", function(e) {
+        searchParts.idModel = false;
+        $('#body-select').select2("enable", false);
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+
+    $('#body-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idBody = e.choice.id;
+        searchParts.getEngine();
+    }).on("select2-removed", function(e) {
+        searchParts.idBody = false;
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+    $('#engine-select').select2({
+        data : [],
+        sortResults : function(results, container, query) {
+            if(query.term != undefined && query.term.length > 0) {
+                return results.sort(function(a, b) {
+                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                    return index > 0 ? index : a.Name.length - b.Name.length;
+                });
+            } else {
+                return results;
+            }
+        },
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idEngine = e.choice.id;
+    }).on("select2-removed", function(e) {
+        searchParts.idEngine = false;
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
+    });
+
+    $('#model-select').select2("enable", false);
+    $('#body-select').select2("enable", false);
+    $('#engine-select').select2("enable", false);
 }
 
 document.addEventListener("DOMContentLoaded", ready);

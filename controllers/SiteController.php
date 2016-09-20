@@ -78,6 +78,20 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionGetDetailsName()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
+    }
+
+    public function actionGetMarks()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return \app\models\CarMarksEN::find()->orderBy('Name')->all();
+    }
+
     public function actionGetModels($id)
     {
         $carModels = CarModelsEN::find()->where(['=', 'ID_Mark', $id])->
@@ -86,10 +100,7 @@ class SiteController extends Controller
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return [
-            'success' => true,
-            'message' => $carModels,
-        ];
+        return $carModels;
     }
 
     public function actionGetBodys($id)
@@ -100,10 +111,7 @@ class SiteController extends Controller
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return [
-            'success' => true,
-            'message' => $carBodys,
-        ];
+        return $carBodys;
     }
 
     public function actionGetEngine($mark_id, $model_id, $body_id)
@@ -119,21 +127,18 @@ class SiteController extends Controller
                    'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
                    "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL ".
                    'ORDER BY Name';
-            $carEngine = CarEngineModelsEN::findBySql($sql)->all();
+            $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
         } else {
             $sql = 'SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A '.
                    'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
                    "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL ".
                    'ORDER BY Name';
-            $carEngine = CarEngineModelsEN::findBySql($sql)->all();
+            $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
         }
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return [
-            'success' => true,
-            'message' => $carEngine,
-        ];
+        return $carEngine;
     }
 
     public function actionGetFirm($firm_id)
@@ -262,7 +267,7 @@ class SiteController extends Controller
         }
 
         // убираем дубои от JOIN-ов
-        $sql .=' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
+        $sql .= ' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
 
         // сортировка
         $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName LIMIT 10000';
