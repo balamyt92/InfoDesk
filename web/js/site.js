@@ -170,7 +170,6 @@ var searchParts = {
     },
 
     eventStatus : function(e) {
-        console.log(e);
         if(e.keyCode == 13) {
             this.search();
         }
@@ -181,7 +180,7 @@ var searchParts = {
             && !this.idEngine
             && !this.idMark
             && !this.idModel) {
-            alert('Заполните один из парамтеров');
+            console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
 
@@ -296,8 +295,8 @@ var searchParts = {
                 sortResults : function(results, container, query) {
                     if(query.term != undefined && query.term.length > 0) {
                         return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
 
                             return index > 0 ? index : a.Name.length - b.Name.length;
                         });
@@ -313,8 +312,6 @@ var searchParts = {
                 searchParts.idDetail = false;
             }).on("select2-focus", function (e) {
                 searchParts.currentSelect = this;
-            }).on("select2-opening", function (e) {
-                console.log(e);
             });
         });
     },
@@ -341,6 +338,19 @@ var searchParts = {
                 },
                 openOnEnter : false,
                 allowClear : true,
+            }).on("select2-selecting", function(e) {
+                $('#model-select').select2("enable", true);
+                $('#engine-select').select2("enable", true);
+                searchParts.idMark = e.choice.id;
+                searchParts.getModels();
+                searchParts.getEngine();
+            }).on("select2-removed", function(e) {
+                searchParts.idMark = false;
+                $('#model-select').select2("enable", false);
+                $('#body-select').select2("enable", false);
+                $('#engine-select').select2("enable", false);
+            }).on("select2-focus", function (e) {
+                searchParts.currentSelect = this;
             });
         });
     },
@@ -349,18 +359,25 @@ var searchParts = {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-models",
-            data: {id: searchParts.idMark}
+            data: {id : searchParts.idMark}
         }).done(function(data){
-            // рисуем модели
-            let list = '<option value="">Модель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w2').html(list);
+            $('#model-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -368,18 +385,25 @@ var searchParts = {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-bodys",
-            data: {id: searchParts.idModel}
+            data: {id : searchParts.idModel}
         }).done(function(data){
-            // рисуем кузова
-            let list = '<option value="">Кузов</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i, arr) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w3').html(list);
+            $('#body-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 
@@ -393,16 +417,23 @@ var searchParts = {
                 body_id: searchParts.idBody,
             }
         }).done(function(data){
-            // рисуем двигателя
-            let list = '<option value="">Двигатель</option>';
-            if(data.message.length > 0){
-                data.message.forEach(function (item, i) {
-                    list += `<option value="${item.id}">${item.Name}</option>`;
-                    if(data.message.length == i+1) {
-                        $('#w4').html(list);
+            $('#engine-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : function(results, container, query) {
+                    if(query.term != undefined && query.term.length > 0) {
+                        return results.sort(function(a, b) {
+                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
+                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
+
+                            return index > 0 ? index : a.Name.length - b.Name.length;
+                        });
+                    } else {
+                        return results;
                     }
-                })
-            }
+                },
+                openOnEnter : false,
+                allowClear : true,
+            });
         });
     },
 };
@@ -651,8 +682,9 @@ function ready() {
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
-            $(searchParts.currentSelect).select2('open').select2('close');
             $('#gbox_part-result-search').hide();
+            $(searchParts.currentSelect).select2("open");
+            $(searchParts.currentSelect).select2("close");
         }
     });
 
@@ -676,6 +708,16 @@ function ready() {
         },
         openOnEnter : false,
         allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idModel = e.choice.id;
+        $('#body-select').select2("enable", true);
+        searchParts.getBodys();
+    }).on("select2-removed", function(e) {
+        searchParts.idModel = false;
+        $('#body-select').select2("enable", false);
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
     });
 
 
@@ -695,6 +737,14 @@ function ready() {
         },
         openOnEnter : false,
         allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idBody = e.choice.id;
+        searchParts.getEngine();
+    }).on("select2-removed", function(e) {
+        searchParts.idBody = false;
+        searchParts.getEngine();
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
     });
 
     $('#engine-select').select2({
@@ -713,6 +763,12 @@ function ready() {
         },
         openOnEnter : false,
         allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idEngine = e.choice.id;
+    }).on("select2-removed", function(e) {
+        searchParts.idEngine = false;
+    }).on("select2-focus", function (e) {
+        searchParts.currentSelect = this;
     });
 
     $('#model-select').select2("enable", false);
