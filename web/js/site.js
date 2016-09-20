@@ -305,6 +305,7 @@ var searchParts = {
                         return results;
                     }
                 },
+                openOnEnter : false,
                 allowClear : true,
             }).on("select2-selecting", function(e) {
                 searchParts.idDetail = e.choice.id;

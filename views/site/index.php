@@ -18,20 +18,10 @@ $this->registerCssFile($url.'/css/ui.jqgrid.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
-
-list(, $select2) = Yii::$app->assetManager->publish('@bower/select2');
-$this->registerJsFile($select2.'/select2.min.js', ['depends' => [
-    'yii\web\YiiAsset',
-    'yii\bootstrap\BootstrapAsset', ],
-]);
-$this->registerJsFile($select2.'/select2_locale_ru.js', ['depends' => [
-    'yii\web\YiiAsset',
-    'yii\bootstrap\BootstrapAsset', ],
-]);
-$this->registerCssFile($select2.'/select2.css');
-
-list(, $select2Css) = Yii::$app->assetManager->publish('@vendor/silverfire/select2-bootstrap3-css');
-$this->registerCssFile($select2Css.'/select2-bootstrap.min.css');
+// list(, $select2Css) = Yii::$app->assetManager->publish('@vendor/silverfire/select2-bootstrap3-css');
+// $this->registerCssFile($select2Css.'/select2-bootstrap.min.css', ['depends' => [
+//     'app\assets\AppAsset'],
+// ]);
 ?>
 
 <div class="row">

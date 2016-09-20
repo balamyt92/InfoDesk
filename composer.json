@@ -11,8 +11,6 @@
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-jui": "^2.0",
         "bower-asset/jqgrid": "*",
-        "bower-asset/select2": "=3.5.4",
-        "silverfire/select2-bootstrap3-css": "^1.5"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
