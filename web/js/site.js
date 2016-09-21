@@ -470,7 +470,10 @@ var searchParts = {
             }).on("select2-selecting", function(e) {
                 $('#model-select').select2("enable", true);
                 $('#engine-select').select2("enable", true);
+                $('#body-select').select2("enable", false);
                 searchParts.idMark = e.choice.id;
+                searchParts.idModel = false;
+                searchParts.idBody = false;
                 searchParts.getModels();
                 searchParts.getEngine();
             }).on("select2-removed", function(e) {
@@ -508,7 +511,7 @@ var searchParts = {
                 },
                 openOnEnter : false,
                 allowClear : true,
-            });
+            }).select2("val", "");
         });
     },
 
@@ -534,7 +537,7 @@ var searchParts = {
                 },
                 openOnEnter : false,
                 allowClear : true,
-            });
+            }).select2("val", "");
         });
     },
 
@@ -564,7 +567,7 @@ var searchParts = {
                 },
                 openOnEnter : false,
                 allowClear : true,
-            });
+            }).select2("val", "");
         });
     },
 };
