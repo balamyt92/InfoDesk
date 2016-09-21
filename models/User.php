@@ -7,35 +7,37 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+
 /**
- * User model
+ * User model.
  *
- * @property integer $id
+ * @property int $id
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $auth_key
- * @property integer $status
- * @property integer $type
- * @property integer $created_at
+ * @property int $status
+ * @property int $type
+ * @property int $created_at
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED    = 0;
-    const STATUS_ACTIVE     = 10;
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
 
-    const TYPE_OPERATOR     = 0;
-    const TYPE_ADMIN        = 10;
+    const TYPE_OPERATOR = 0;
+    const TYPE_ADMIN = 10;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
         return '{{%user}}';
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -43,8 +45,9 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::className(),
         ];
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -55,51 +58,60 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => [self::TYPE_OPERATOR, self::TYPE_ADMIN]],
         ];
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function findIdentity($id)
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
+
     /**
-     * Finds user by username
+     * Finds user by username.
      *
      * @param string $username
+     *
      * @return static|null
      */
     public static function findByUsername($username)
     {
         return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
     }
+
     /**
-     * Finds user by password reset token
+     * Finds user by password reset token.
      *
      * @param string $token password reset token
+     *
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
     {
         if (!static::isPasswordResetTokenValid($token)) {
-            return null;
+            return;
         }
+
         return static::findOne([
             'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
+            'status'               => self::STATUS_ACTIVE,
         ]);
     }
+
     /**
-     * Finds out if password reset token is valid
+     * Finds out if password reset token is valid.
      *
      * @param string $token password reset token
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isPasswordResetTokenValid($token)
     {
@@ -108,41 +120,48 @@ class User extends ActiveRecord implements IdentityInterface
         }
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+
         return $timestamp + $expire >= time();
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getId()
     {
         return $this->getPrimaryKey();
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAuthKey()
     {
         return $this->auth_key;
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateAuthKey($authKey)
     {
         return $this->getAuthKey() === $authKey;
     }
+
     /**
-     * Validates password
+     * Validates password.
      *
      * @param string $password password to validate
-     * @return boolean if password provided is valid for current user
+     *
+     * @return bool if password provided is valid for current user
      */
     public function validatePassword($password)
     {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
+
     /**
-     * Generates password hash from password and sets it to the model
+     * Generates password hash from password and sets it to the model.
      *
      * @param string $password
      */
@@ -150,22 +169,25 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
+
     /**
-     * Generates "remember me" authentication key
+     * Generates "remember me" authentication key.
      */
     public function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
+
     /**
-     * Generates new password reset token
+     * Generates new password reset token.
      */
     public function generatePasswordResetToken()
     {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+        $this->password_reset_token = Yii::$app->security->generateRandomString().'_'.time();
     }
+
     /**
-     * Removes password reset token
+     * Removes password reset token.
      */
     public function removePasswordResetToken()
     {
@@ -177,8 +199,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function isUserAdmin($username)
     {
-        if (static::findOne(['username' => $username, 'type' => self::TYPE_ADMIN]))
-        {
+        if (static::findOne(['username' => $username, 'type' => self::TYPE_ADMIN])) {
             return true;
         } else {
             return false;

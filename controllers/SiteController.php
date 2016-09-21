@@ -2,18 +2,17 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\CarBodyModelsEN;
 use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
 use app\models\Firms;
+use app\models\LoginForm;
 use app\models\Services;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
-
-use app\models\LoginForm;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
  * Class SiteController.
@@ -21,7 +20,7 @@ use yii\filters\AccessControl;
 class SiteController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -31,19 +30,19 @@ class SiteController extends Controller
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
-                        'allow' => true,
+                        'allow'   => true,
                     ],
                     [
                         'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
                                         'get-firm', 'get-models', 'get-bodys', 'get-engine',
-                                        'search-parts', 'get-service-group', 'service-search'],
+                                        'search-parts', 'get-service-group', 'service-search', ],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -52,7 +51,7 @@ class SiteController extends Controller
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function actions()
     {
@@ -82,6 +81,7 @@ class SiteController extends Controller
             ]);
         }
     }
+
     /**
      * Logout action.
      *
@@ -90,6 +90,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+
         return $this->goHome();
     }
 
