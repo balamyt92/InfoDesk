@@ -14,6 +14,27 @@ $config = [
         'assetManager' => [
             'appendTimestamp' => true,
         ],
+        'user' => [
+            'identityClass' => 'app\models\User',
+            'enableAutoLogin' => true,
+            'identityCookie' => ['name' => '_identity-info-desk', 'httpOnly' => true],
+        ],
+        'cache' => [
+            'class' => 'yii\caching\FileCache',
+        ],
+        'session' => [
+            // this is the name of the session cookie used for login
+            'name' => 'info-desk',
+        ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
     ],
 ];
 

@@ -2,22 +2,97 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\CarBodyModelsEN;
-use app\models\CarEngineAndBodyCorrespondencesEN;
-use app\models\CarEngineAndModelCorrespondencesEN;
 use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
-use app\models\CarPresenceEN;
 use app\models\Firms;
 use app\models\Services;
 use yii\web\Controller;
 use yii\web\Response;
+
+use app\models\LoginForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * Class SiteController.
  */
 class SiteController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
+                                        'get-firm', 'get-models', 'get-bodys', 'get-engine',
+                                        'search-parts', 'get-service-group', 'service-search'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+        ];
+    }
+
+    /**
+     * Login action.
+     *
+     * @return string
+     */
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        } else {
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
+    /**
+     * Logout action.
+     *
+     * @return string
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+        return $this->goHome();
+    }
+
     /**
      * Рендер главной.
      *

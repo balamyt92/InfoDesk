@@ -40,18 +40,18 @@ AppAsset::register($this);
         ['label' => 'Импорт', 'url' => ['/import/index']],
         ['label' => 'Фирмы', 'url' => ['/firms/index']],
     ];
-//    if (Yii::$app->user->isGuest) {
-//        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-//    } else {
-//        $menuItems[] = '<li>'
-//            . Html::beginForm(['/site/logout'], 'post')
-//            . Html::submitButton(
-//                'Logout (' . Yii::$app->user->identity->username . ')',
-//                ['class' => 'btn btn-link']
-//            )
-//            . Html::endForm()
-//            . '</li>';
-//    }
+    if (Yii::$app->user->isGuest) {
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    } else {
+        $menuItems[] = '<li>'
+            . Html::beginForm(['/site/logout'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link']
+            )
+            . Html::endForm()
+            . '</li>';
+    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav nav-pills'],
         'items'   => $menuItems,
