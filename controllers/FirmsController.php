@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Firms;
 use app\models\FirmsSearch;
+use app\models\User;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -33,6 +34,9 @@ class FirmsController extends Controller
                         'actions' => ['logout', 'index', 'update', 'delete', 'view', 'create'],
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return User::isUserAdmin(Yii::$app->user->identity->username);
+                        }
                     ],
                 ],
             ],

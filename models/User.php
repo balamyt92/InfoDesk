@@ -175,9 +175,10 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return bool
      */
-    public function isAdmin()
+    public static function isUserAdmin($username)
     {
-        if ($this->type == self::TYPE_ADMIN) {
+        if (static::findOne(['username' => $username, 'type' => self::TYPE_ADMIN]))
+        {
             return true;
         } else {
             return false;

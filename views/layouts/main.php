@@ -38,11 +38,14 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Call-center', 'url' => ['/site/index']],
         ['label' => 'Импорт', 'url' => ['/import/index']],
-        ['label' => 'Фирмы', 'url' => ['/firms/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
+        if (\app\models\User::isUserAdmin(Yii::$app->user->identity->username)) {
+            $menuItems[] = ['label' => 'Фирмы', 'url' => ['/firms/index']];
+        }
+
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
