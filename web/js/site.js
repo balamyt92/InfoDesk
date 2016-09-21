@@ -64,6 +64,7 @@ var searcherFirms = {
                 datatype: 'local',
                 styleUI: 'Bootstrap',
                 responsive: true,
+                loadonce: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'id'));
@@ -84,19 +85,19 @@ var searcherFirms = {
                 let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
                 // если вниз и последняя строка
-                if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
+                if (e.keyCode == 40 && totalPages != currentPage && searcherFirms.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
                 // если вниз и последняя строка последней страницы
-                if(e.keyCode == 40 && totalPages == currentPage && this.pagerLastRow){
+                if(e.keyCode == 40 && totalPages == currentPage && searcherFirms.pagerLastRow){
                     grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
                 // если вверх и первая строка
-                if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
+                if (e.keyCode == 38 && currentPage > 1 && searcherFirms.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', rowInPage, false);
                     grid.focus();
@@ -110,9 +111,14 @@ var searcherFirms = {
                     }, 200);
                 }
 
-                currentRow == realRowInPage ? this.pagerLastRow = true : this.pagerLastRow = false;
-                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
-                currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
+                currentRow == realRowInPage
+                ? searcherFirms.pagerLastRow = true : searcherFirms.pagerLastRow = false;
+
+                currentRow == rowInPage
+                ? searcherFirms.pagerToNext = true : searcherFirms.pagerToNext = false;
+
+                currentRow == 1
+                ? searcherFirms.pagerToBack = true : searcherFirms.pagerToBack = false;
             });
 
             this.gridCreate = true;
@@ -174,10 +180,11 @@ var searchParts = {
     highlightRow : function () {
         let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
         let totalPages = this.grid.jqGrid('getGridParam','lastpage');
-        let realRowInPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+        let currentPage = this.grid.jqGrid('getGridParam','page');
+        let realRowInLasPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
         let firmID = this.grid.getCell(1, 'ID_Firm');
         let color = false;
-        for(let i = 2; i < realRowInPage - 1; i++) {
+        for(let i = 2; currentPage < totalPages ? i < rowInPage : i < realRowInLasPage; i++) {
             let newId = this.grid.getCell(i, 'ID_Firm');
             if (firmID != newId) {
                 firmID = newId;
@@ -274,11 +281,12 @@ var searchParts = {
                 viewrecords: true, // show the current page, data rang and total records on the toolbar
                 autowidth: true,
                 height: $('#modalResult').height() - 100,
-                rowNum: 5000,
+                rowNum: 500,
                 datatype: 'local',
                 pager: "#part-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
+                loadonce: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
@@ -296,7 +304,7 @@ var searchParts = {
                 let totalPages = grid.jqGrid('getGridParam','lastpage');
                 let currentPage = grid.jqGrid('getGridParam','page');
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-                let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+                let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
                 if(e.ctrlKey && (e.keyCode == 40 || e.keyCode == 38)){
                     let i = currentRow;
@@ -306,14 +314,13 @@ var searchParts = {
                     if(e.keyCode == 40 && e.ctrlKey)
                         newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
                     else
-                        newID = grid.getCell( Math.abs(i - 2), 'ID_Firm');
+                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
 
                     console.log(newID);
                     console.log(oldID);
                     console.log(i);
-                    console.log(realRowInPage);
                     console.log('--------');
-                    while(newID == oldID && i < realRowInPage && i > 0){
+                    while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
                         if(e.keyCode == 40 && e.ctrlKey)
                             i++;
                         else
@@ -328,23 +335,23 @@ var searchParts = {
                 }
 
                 // если вниз и последняя строка
-                if (e.keyCode == 40 && totalPages != currentPage && this.pagerToNext) {
+                if (e.keyCode == 40 && totalPages != currentPage && searchParts.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
-                    this.highlightRow();
+                    searchParts.highlightRow();
                     grid.focus();
                 }
                 // если вниз и последняя строка последней страницы
-                if(e.keyCode == 40 && totalPages == currentPage && this.pagerLastRow && totalPages > 1){
+                if(e.keyCode == 40 && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
                     grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
-                    this.highlightRow();
+                    searchParts.highlightRow();
                     grid.focus();
                 }
-                if (e.keyCode == 38 && currentPage > 1 && this.pagerToBack) {
+                if (e.keyCode == 38 && currentPage > 1 && searchParts.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', rowInPage, false);
-                    this.highlightRow();
+                    searchParts.highlightRow();
                     grid.focus();
                 }
 
@@ -360,15 +367,20 @@ var searchParts = {
                 if(e.keyCode == 36) {
                     if(currentPage > 1) {
                         grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                        this.highlightRow();
+                        searchParts.highlightRow();
                     }
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
 
-                currentRow == realRowInPage ? this.pagerLastRow = true : this.pagerLastRow = false;
-                currentRow == rowInPage ? this.pagerToNext = true : this.pagerToNext = false;
-                currentRow == 1 ? this.pagerToBack = true : this.pagerToBack = false;
+                (currentRow == realRowInLasPage && currentPage == totalPages)
+                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
+
+                currentRow == rowInPage
+                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
+
+                currentRow == 1
+                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
             });
             this.gridCreate = true;
         }
