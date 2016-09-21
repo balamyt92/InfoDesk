@@ -335,8 +335,8 @@ class SiteController extends Controller
                   (SELECT A.ID_Firm, Firms.Address, A.Comment, A.CarList, Firms.District, Firms.Name as Name
                     FROM ServicePresence as A
                     LEFT JOIN Firms ON (A.ID_Firm=Firms.id)
-                    WHERE A.ID_Service={$id}
-                    ORDER BY Firms.Priority) as d";
+                    WHERE A.ID_Service={$id} AND Firms.Enabled=1 
+                    ORDER BY Firms.Name, Firms.Priority) as d";
 
         $command = \Yii::$app->getDb()->createCommand($sql);
         $rows = $command->queryAll();

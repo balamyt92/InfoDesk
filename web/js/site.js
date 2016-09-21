@@ -274,7 +274,7 @@ var searchParts = {
                     {label: 'Год', name: 'CarYear', width: 20},
                     {label: 'Кузов', name: 'BodyName', width: 50},
                     {label: 'Двигатель', name: 'EngineName', width: 30},
-                    {label: 'Коментарий', name: 'Comment', width: 50},
+                    {label: 'Комментарий', name: 'Comment', width: 50},
                     {label: 'Цена', name: 'Cost', width: 20},
                     {label: 'Номер', name: 'Catalog_Number', width: 20},
                 ],
@@ -286,7 +286,6 @@ var searchParts = {
                 pager: "#part-pager",
                 styleUI: 'Bootstrap',
                 responsive: true,
-                loadonce: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
@@ -610,8 +609,8 @@ var serviceSearch = {
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
                     {label: 'ID_Firm', name: 'ID_Firm', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 150},
-                    {label: 'Улица', name: 'Address', width: 100},
-                    {label: 'Коментарий', name: 'Comment', width: 100},
+                    {label: 'Адрес', name: 'Address', width: 100},
+                    {label: 'Комментарий', name: 'Comment', width: 100},
                     {label: 'Список авто', name: 'CarList', width: 150},
                     {label: 'Район', name: 'District', width: 50},
                 ],
