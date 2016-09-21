@@ -474,12 +474,14 @@ var searchParts = {
                 searchParts.idMark = e.choice.id;
                 searchParts.idModel = false;
                 searchParts.idBody = false;
+                searchParts.idEngine = false;
                 searchParts.getModels();
                 searchParts.getEngine();
             }).on("select2-removed", function(e) {
                 searchParts.idMark = false;
                 searchParts.idModel = false;
                 searchParts.idBody = false;
+                searchParts.idEngine = false;
                 $('#model-select').select2("enable", false);
                 $('#body-select').select2("enable", false);
                 $('#engine-select').select2("enable", false);
