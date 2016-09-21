@@ -481,6 +481,7 @@ var searchParts = {
                 $('#model-select').select2("enable", true);
                 $('#engine-select').select2("enable", true);
                 $('#body-select').select2("enable", false);
+                $('#body-select').select2("val", "");
                 searchParts.idMark = e.choice.id;
                 searchParts.idModel = false;
                 searchParts.idBody = false;
@@ -493,8 +494,11 @@ var searchParts = {
                 searchParts.idBody = false;
                 searchParts.idEngine = false;
                 $('#model-select').select2("enable", false);
+                $('#model-select').select2("val", "");
                 $('#body-select').select2("enable", false);
+                $('#body-select').select2("val", "");
                 $('#engine-select').select2("enable", false);
+                $('#engine-select').select2("val", "");
             }).on("select2-focus", function (e) {
                 searchParts.currentSelect = this;
             });
@@ -855,6 +859,7 @@ function ready() {
         searchParts.idModel = false;
         searchParts.idBody = false;
         $('#body-select').select2("enable", false);
+        $('#body-select').select2("val", "");
         searchParts.getEngine();
     }).on("select2-focus", function (e) {
         searchParts.currentSelect = this;
