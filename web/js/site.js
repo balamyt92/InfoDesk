@@ -315,10 +315,6 @@ var searchParts = {
                     else
                         newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
 
-                    console.log(newID);
-                    console.log(oldID);
-                    console.log(i);
-                    console.log('--------');
                     while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
                         if(e.keyCode == 40 && e.ctrlKey)
                             i++;
