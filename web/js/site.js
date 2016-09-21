@@ -8,6 +8,26 @@ var result = {
     service : false,
 };
 
+var KEY = {
+    TAB: 9,
+    ENTER: 13,
+    ESC: 27,
+    SPACE: 32,
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    SHIFT: 16,
+    CTRL: 17,
+    ALT: 18,
+    PAGE_UP: 33,
+    PAGE_DOWN: 34,
+    HOME: 36,
+    END: 35,
+    BACKSPACE: 8,
+    DELETE: 46,
+};
+
 /**
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
@@ -85,30 +105,28 @@ var searcherFirms = {
                 let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
                 // если вниз и последняя строка
-                if (e.keyCode == 40 && totalPages != currentPage && searcherFirms.pagerToNext) {
+                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searcherFirms.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
                 // если вниз и последняя строка последней страницы
-                if(e.keyCode == 40 && totalPages == currentPage && searcherFirms.pagerLastRow){
+                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searcherFirms.pagerLastRow){
                     grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     grid.focus();
                 }
                 // если вверх и первая строка
-                if (e.keyCode == 38 && currentPage > 1 && searcherFirms.pagerToBack) {
+                if (e.keyCode == KEY.UP && currentPage > 1 && searcherFirms.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', rowInPage, false);
                     grid.focus();
                 }
 
-                // 33 - page UP
-                // 34 - page DOWN
-                if (e.keyCode == 34 || e.keyCode == 33) {
+                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
                     setTimeout(function () {
                         document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 200);
+                    }, 500);
                 }
 
                 currentRow == realRowInPage
@@ -141,7 +159,7 @@ var searcherFirms = {
      * По энтеру в поле запускаем поиск фирм
      */
     runSearch: function(e) {
-        if (e.keyCode == 13) {
+        if (e.keyCode == KEY.ENTER) {
             this.search();
             $($('#search-line').focus()).select();
             return false;
@@ -169,7 +187,7 @@ var searchParts = {
     },
 
 
-    currentSelect : false,
+    currentSelect : $('#detail-select'),
     pagerToNext : false,
     pagerToBack : false,
     pagerLastRow : false,
@@ -226,7 +244,7 @@ var searchParts = {
     },
 
     eventStatus : function(e) {
-        if(e.keyCode == 13) {
+        if(e.keyCode == KEY.ENTER) {
             this.search();
         }
     },
@@ -305,24 +323,24 @@ var searchParts = {
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
                 let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
-                if(e.ctrlKey && (e.keyCode == 40 || e.keyCode == 38)){
+                if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
                     let i = currentRow;
                     let oldID = grid.getCell(i, 'ID_Firm');
                     let newID = oldID;
 
-                    if(e.keyCode == 40 && e.ctrlKey)
+                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
                         newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
                     else
                         newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
 
                     while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
-                        if(e.keyCode == 40 && e.ctrlKey)
+                        if(e.keyCode == KEY.DOWN && e.ctrlKey)
                             i++;
                         else
                             i--;
                         newID = grid.getCell(i, 'ID_Firm');
                     }
-                    if(e.keyCode == 40 && e.ctrlKey)
+                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
                         grid.jqGrid('setSelection', i, false);
                     else
                         grid.jqGrid('setSelection', i, false);
@@ -330,36 +348,33 @@ var searchParts = {
                 }
 
                 // если вниз и последняя строка
-                if (e.keyCode == 40 && totalPages != currentPage && searchParts.pagerToNext) {
+                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searchParts.pagerToNext) {
                     grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     searchParts.highlightRow();
                     grid.focus();
                 }
                 // если вниз и последняя строка последней страницы
-                if(e.keyCode == 40 && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
+                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
                     grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', 1, false);
                     searchParts.highlightRow();
                     grid.focus();
                 }
-                if (e.keyCode == 38 && currentPage > 1 && searchParts.pagerToBack) {
+                if (e.keyCode == KEY.UP && currentPage > 1 && searchParts.pagerToBack) {
                     grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
                     grid.jqGrid('setSelection', rowInPage, false);
                     searchParts.highlightRow();
                     grid.focus();
                 }
 
-                // 33 - page UP
-                // 34 - page DOWN
-                if (e.keyCode == 34 || e.keyCode == 33) {
+                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
                     setTimeout(function () {
-                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 200);
+                        document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+                    }, 500);
                 }
 
-                // 36 - Home
-                if(e.keyCode == 36) {
+                if(e.keyCode == KEY.HOME) {
                     if(currentPage > 1) {
                         grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
                         searchParts.highlightRow();
@@ -368,8 +383,7 @@ var searchParts = {
                     grid.focus();
                 }
 
-                // 35 - End
-                if(e.keyCode == 35) {
+                if(e.keyCode == KEY.END) {
                     if(currentPage == totalPages) {
                     	grid.jqGrid('setSelection', realRowInLasPage, false);
                     } else {
@@ -581,15 +595,15 @@ var serviceSearch = {
     modalWindow: $('#modalResult'),
     grid: $("#service-result-search"),
     open: function (event) {
-        if ((event.keyCode == 13 || event.type == "dblclick") && (!this.inCategory)) {
+        if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
             this.openCategory();
             this.inCategory = true;
             return false;
-        } else if ((event.keyCode == 13 || event.type == "dblclick") && this.inCategory) {
+        } else if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && this.inCategory) {
             this.searchService();
             return false;
         }
-        if (event.keyCode == 27 && this.inCategory) {
+        if (event.keyCode == KEY.ESC && this.inCategory) {
             this.renderGroups();
             this.inCategory = false;
             this.input[0].value = this.lastGroupId;
@@ -732,8 +746,8 @@ function openFirmInParts(id) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    // перемещение по фильтрам по Ctrl + left - 37 и Ctrl + Right - 39
-    if (event.keyCode == 39 && event.ctrlKey) {
+    // перемещение по фильтрам
+    if (event.keyCode == KEY.RIGHT && event.ctrlKey) {
         if (result.firms) {
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
@@ -749,7 +763,7 @@ function keyNavigate(event) {
             result.service = false;
         }
     }
-    if (event.keyCode == 37 && event.ctrlKey) {
+    if (event.keyCode == KEY.LEFT && event.ctrlKey) {
         if (result.firms) {
             $('#service').focus();
             result.service = true;
