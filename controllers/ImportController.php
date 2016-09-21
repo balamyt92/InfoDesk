@@ -3,9 +3,9 @@
 namespace app\controllers;
 
 use app\models\LegacyImportTable;
-use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * Class ImportController.
@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 class ImportController extends \yii\web\Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -23,17 +23,17 @@ class ImportController extends \yii\web\Controller
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
-                        'allow' => true,
+                        'allow'   => true,
                     ],
                     [
                         'actions' => ['logout', 'index', 'start-import'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['POST'],
                 ],
@@ -76,6 +76,7 @@ class ImportController extends \yii\web\Controller
         $status = LegacyImportTable::find()->where('id>:id', [':id' => $last_id])->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
-        return [ $last_id ];
+
+        return [$last_id];
     }
 }

@@ -15,9 +15,9 @@ $config = [
             'appendTimestamp' => true,
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass'   => 'app\models\User',
             'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-info-desk', 'httpOnly' => true],
+            'identityCookie'  => ['name' => '_identity-info-desk', 'httpOnly' => true],
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -28,9 +28,9 @@ $config = [
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
+            'targets'    => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class'  => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
             ],

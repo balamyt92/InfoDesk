@@ -6,11 +6,10 @@ use app\models\Firms;
 use app\models\FirmsSearch;
 use app\models\User;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-
-use yii\filters\AccessControl;
 
 /**
  * FirmsController implements the CRUD actions for Firms model.
@@ -18,7 +17,7 @@ use yii\filters\AccessControl;
 class FirmsController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -28,20 +27,20 @@ class FirmsController extends Controller
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
-                        'allow' => true,
+                        'allow'   => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'update', 'delete', 'view', 'create'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'actions'       => ['logout', 'index', 'update', 'delete', 'view', 'create'],
+                        'allow'         => true,
+                        'roles'         => ['@'],
                         'matchCallback' => function ($rule, $action) {
                             return User::isUserAdmin(Yii::$app->user->identity->username);
-                        }
+                        },
                     ],
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['POST'],
                 ],
@@ -50,7 +49,7 @@ class FirmsController extends Controller
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function actions()
     {
@@ -60,7 +59,6 @@ class FirmsController extends Controller
             ],
         ];
     }
-
 
     /**
      * Lists all Firms models.
