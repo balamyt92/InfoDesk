@@ -217,7 +217,7 @@ class SiteController extends Controller
         if (!($model_id === 'false')) {
             // ищем связанные модели
             $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION
-                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark = {$mark_id})";
+                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark IN ({$mark_search}))";
             $link = $this->getLinkedString($link_model_sql, 'ID_Group');
             if ($link) {
                 $model_search .= ','.$link;
