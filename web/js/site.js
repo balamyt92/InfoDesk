@@ -372,6 +372,16 @@ var searchParts = {
                     grid.focus();
                 }
 
+                // 35 - End
+                if(e.keyCode == 35) {
+                    if(currentPage == totalPages) {
+                    	grid.jqGrid('setSelection', realRowInLasPage, false);
+                    } else {
+                    	grid.jqGrid('setSelection', rowInPage, false);
+                    }
+                    grid.focus();
+                }
+
                 (currentRow == realRowInLasPage && currentPage == totalPages)
                 ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
 
