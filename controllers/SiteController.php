@@ -251,7 +251,7 @@ class SiteController extends Controller
             $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN
                                   WHERE ID_EngineGroup={$engine_id})
                                 UNION
-                                (SELECT id FROM CarEngineModelsEN WHERE Name='***' AND ID_Mark={$mark_id})";
+                                (SELECT id FROM CarEngineModelsEN WHERE Name='***')";
             $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
             if ($link) {
                 $engine_search .= ','.$link;
