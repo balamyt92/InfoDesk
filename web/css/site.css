@@ -105,7 +105,7 @@ pre {
 .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
     overflow: hidden;
     white-space: pre-wrap;
-    padding-right: 2px;
+    padding-right: 0px;
     word-wrap: normal;
     overflow-wrap: normal;
 }
@@ -122,4 +122,15 @@ pre {
     padding: 0px;
     margin: 0px;
     height: auto;
+}
+/*
+    что бы текущая строка не теряла цвет при "зебре"
+    грязно и иначе ни как пока
+*/
+.table > tbody > tr.success > td {
+    background-color: #dff0d8 !important;
+}
+
+.ui-jqgrid .ui-pg-button:hover {
+    padding: 0 5px;
 }
