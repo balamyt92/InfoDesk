@@ -20,7 +20,6 @@ class m160921_143217_create_user_table extends Migration
             'auth_key'             => $this->string(),
             'status'               => $this->integer(3),
             'type'                 => $this->integer(3),
-            'created_at'           => $this->timestamp(),
         ]);
 
         $this->insert('user', [
@@ -30,7 +29,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 10,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
         $this->insert('user', [
             'id'                   => 2,
@@ -39,7 +37,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 0,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
         $this->insert('user', [
             'id'                   => 3,
@@ -48,7 +45,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 0,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
         $this->insert('user', [
             'id'                   => 4,
@@ -57,7 +53,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 0,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
         $this->insert('user', [
             'id'                   => 5,
@@ -66,7 +61,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 0,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
         $this->insert('user', [
             'id'                   => 6,
@@ -75,7 +69,6 @@ class m160921_143217_create_user_table extends Migration
             'type'                 => 0,
             'password_reset_token' => Yii::$app->security->generateRandomString().'_'.time(),
             'status'               => 10,
-            'created_at'           => time(),
         ]);
     }
 
