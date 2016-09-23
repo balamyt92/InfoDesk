@@ -50,7 +50,7 @@ AppAsset::register($this);
             .Html::beginForm(['/site/logout'], 'post')
             .Html::submitButton(
                 'Logout ('.Yii::$app->user->identity->username.')',
-                ['class' => 'btn btn-link']
+                ['class' => 'btn btn-link', 'style' => 'height:50px']
             )
             .Html::endForm()
             .'</li>';
