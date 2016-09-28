@@ -71,7 +71,7 @@ var searcherFirms = {
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
                     {label: 'ID', name: 'id', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 250},
-                    {label: 'Телефон', name: 'Phone', width: 250},
+                    {label: 'Профиль деятельности', name: 'ActivityType', width: 250},
                     {label: 'Адерс', name: 'Address', width: 250},
                     {label: 'Район', name: 'District', width: 250},
                     {label: 'Примечание', name: 'Comment', width: 250},
