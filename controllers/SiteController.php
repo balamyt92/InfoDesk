@@ -8,6 +8,8 @@ use app\models\CarModelsEN;
 use app\models\Firms;
 use app\models\LoginForm;
 use app\models\Services;
+use app\models\StatPartsQuery;
+use app\models\StatPartsFirms;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -35,7 +37,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
                                         'get-firm', 'get-models', 'get-bodys', 'get-engine',
-                                        'search-parts', 'get-service-group', 'service-search', ],
+                                        'search-parts', 'get-service-group', 'service-search', 'statistic-open-firm'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -105,6 +107,7 @@ class SiteController extends Controller
     }
 
     /**
+     * Функция поиска по фирмам
      * @param string $str строка запроса
      *
      * @return string
@@ -154,6 +157,10 @@ class SiteController extends Controller
         ];
     }
 
+    /**
+     * Функция получения списка деталей
+     * @return array
+     */
     public function actionGetDetailsName()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -161,6 +168,10 @@ class SiteController extends Controller
         return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
     }
 
+    /**
+     * Функция получения списка марок
+     * @return array
+     */
     public function actionGetMarks()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -168,6 +179,11 @@ class SiteController extends Controller
         return \app\models\CarMarksEN::find()->orderBy('Name')->all();
     }
 
+    /**
+     * Функция получения списка моделей по параметрам
+     * @param  integer $id 
+     * @return array     
+     */
     public function actionGetModels($id)
     {
         $carModels = CarModelsEN::find()->where(['=', 'ID_Mark', $id])->
@@ -179,6 +195,11 @@ class SiteController extends Controller
         return $carModels;
     }
 
+    /**
+     * Функция получения списка кузовов по параметрам
+     * @param  integer $id 
+     * @return array
+     */
     public function actionGetBodys($id)
     {
         $carBodys = CarBodyModelsEN::find()->where(['=', 'ID_Model', $id])->
@@ -190,6 +211,14 @@ class SiteController extends Controller
         return $carBodys;
     }
 
+
+    /**
+     * Функция получения списка двигателей по параметрам
+     * @param  integer|string $mark_id  
+     * @param  integer|string $model_id 
+     * @param  integer|string $body_id  
+     * @return array           
+     */
     public function actionGetEngine($mark_id, $model_id, $body_id)
     {
         $carEngine = [];
@@ -217,6 +246,11 @@ class SiteController extends Controller
         return $carEngine;
     }
 
+    /**
+     * Функция получения карточки фирмы
+     * @param  integer $firm_id 
+     * @return array          
+     */
     public function actionGetFirm($firm_id)
     {
         $firm = Firms::find()->where(['=', 'id', $firm_id])->asArray()->all();
@@ -351,11 +385,39 @@ class SiteController extends Controller
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
 
-        \Yii::$app->response->format = Response::FORMAT_JSON;
+        // пишем статистику
+        $stat = new StatPartsQuery();
+        $stat->partStatistic($detail_id == "false" ? 0 : $detail_id,
+                             $mark_id   == "false" ? 0 : $mark_id,
+                             $model_id  == "false" ? 0 : $model_id,
+                             $body_id   == "false" ? 0 : $body_id,
+                             $engine_id == "false" ? 0 : $engine_id,
+                             $number    == "false" ? "": $number,
+                             \Yii::$app->user->identity->id);
 
+        // получаем Id запроса
+        $id = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatPartsFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($parts as $key => $value) {
+            if($last_id != $value['ID_Firm']) {
+                $last_id = $value['ID_Firm'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        Yii::info($firm_list);
+        $stat->partStatistic($firm_list, $id);
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
         return [
             'success' => true,
             'message' => $parts,
+            'query_id' => $id,
         ];
     }
 
@@ -422,5 +484,27 @@ class SiteController extends Controller
         return [
             'rows' => $rows,
         ];
+    }
+
+    public function actionStatisticOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatPartsFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm' => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_parts_firms: Фирма не открыта');
+            return [
+                'success' => false,
+            ];
+        }
     }
 }

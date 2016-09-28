@@ -183,7 +183,7 @@ var searcherFirms = {
             $($('#search-line').focus()).select();
             return false;
         }
-    }
+    },
 };
 
 /**
@@ -203,6 +203,7 @@ var searchParts = {
         idBody   : false,
         idEngine : false,
         idNumber : false,
+        response : false,
     },
 
 
@@ -272,7 +273,8 @@ var searchParts = {
             && !this.idDetail
             && !this.idEngine
             && !this.idMark
-            && !this.idModel) {
+            && !this.idModel 
+            && !this.idNumber) {
             console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
@@ -326,12 +328,14 @@ var searchParts = {
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
@@ -442,6 +446,7 @@ var searchParts = {
             }
         }).done(function(data){
             searchParts.render(data.message);
+            searchParts.lastQuery.response = data;
         });
     },
 
@@ -606,6 +611,23 @@ var searchParts = {
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
+        });
+    },
+    /**
+     * Функция записи статистики в запчастях что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/statistic-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        }).done(function(data){
+            
         });
     },
 };
