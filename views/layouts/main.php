@@ -44,6 +44,7 @@ AppAsset::register($this);
     } else {
         if (\app\models\User::isUserAdmin(Yii::$app->user->identity->username)) {
             $menuItems[] = ['label' => 'Фирмы', 'url' => ['/firms/index']];
+            $menuItems[] = ['label' => 'Статистика', 'url' => ['/statistic/index']];
         }
 
         $menuItems[] = '<li>'

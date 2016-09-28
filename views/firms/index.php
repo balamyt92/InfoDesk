@@ -25,12 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
+            'id',
             'Name',
             'Address:ntext',
             'Phone',
 //            'Comment:ntext',
-//            'Enabled',
+            'Enabled',
 //            'ActivityType:ntext',
 //            'OrganizationType',
 //            'District',
@@ -38,8 +38,8 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'Email:email',
 //            'URL:url',
 //            'OperatingMode:ntext',
-//            'Identifier',
-//            'Priority',
+            'Identifier',
+            'Priority',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
