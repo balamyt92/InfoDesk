@@ -8,25 +8,25 @@ use yii\db\Migration;
 class m160928_073012_create_stat_parts_query_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
         $this->createTable('stat_parts_query', [
-            'id' => $this->primaryKey(),
-            'date_time' => $this->timestamp(14),
+            'id'          => $this->primaryKey(),
+            'date_time'   => $this->timestamp(14),
             'id_operator' => $this->integer(4),
-            'detail_id' => $this->integer(8),
-            'mark_id' => $this->integer(8),
-            'model_id' => $this->integer(8),
-            'body_id' => $this->integer(8),
-            'engine_id' => $this->integer(8),
-            'number' => $this->char(255),
+            'detail_id'   => $this->integer(8),
+            'mark_id'     => $this->integer(8),
+            'model_id'    => $this->integer(8),
+            'body_id'     => $this->integer(8),
+            'engine_id'   => $this->integer(8),
+            'number'      => $this->char(255),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {

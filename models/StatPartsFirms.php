@@ -2,20 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "stat_parts_firms".
  *
- * @property integer $id_query
- * @property integer $id_firm
- * @property integer $position
- * @property integer $opened
+ * @property int $id_query
+ * @property int $id_firm
+ * @property int $position
+ * @property int $opened
  */
 class StatPartsFirms extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class StatPartsFirms extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,15 +31,15 @@ class StatPartsFirms extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'id_query' => 'Id Query',
-            'id_firm' => 'Id Firm',
+            'id_firm'  => 'Id Firm',
             'position' => 'Position',
-            'opened' => 'Opened',
+            'opened'   => 'Opened',
         ];
     }
 
@@ -50,11 +48,10 @@ class StatPartsFirms extends \yii\db\ActiveRecord
         foreach ($firm_list as $key => $value) {
             $this->setIsNewRecord(true);
             $this->id_query = $query_id;
-            $this->id_firm  = $value;
+            $this->id_firm = $value;
             $this->position = $key;
             $this->opened = 0;
-            if($this->validate())
-            {
+            if ($this->validate()) {
                 $this->save();
             } else {
                 \Yii::error('stat_parts_firms : Не прошла запись в базу статистики');
