@@ -10,6 +10,10 @@ use app\models\LoginForm;
 use app\models\Services;
 use app\models\StatPartsFirms;
 use app\models\StatPartsQuery;
+use app\models\StatServiceFirms;
+use app\models\StatServiceQuery;
+use app\models\StatFirmsFirms;
+use app\models\StatFirmsQuery;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -37,7 +41,9 @@ class SiteController extends Controller
                     [
                         'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
                                         'get-firm', 'get-models', 'get-bodys', 'get-engine',
-                                        'search-parts', 'get-service-group', 'service-search', 'statistic-open-firm', ],
+                                        'search-parts', 'get-service-group',
+                                        'service-search', 'stat-part-open-firm',
+                                        'stat-service-open-firm', 'stat-firm-open-firm',],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -150,11 +156,35 @@ class SiteController extends Controller
 
         $firms = Firms::findBySql($sql)->all();
 
+
+        // пишем статистику
+        $stat = new StatFirmsQuery();
+        $stat->firmStatistic($str, \Yii::$app->user->identity->id);
+
+        // получаем Id запроса
+        $id = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatFirmsFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($firms as $key => $value) {
+            if ($last_id != $value['id']) {
+                $last_id = $value['id'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        $stat->firmStatistic($firm_list, $id);
+
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
             'success' => true,
             'message' => $firms,
+            'query_id' => $id,
         ];
     }
 
@@ -420,7 +450,6 @@ class SiteController extends Controller
                 array_push($firm_list, $last_id);
             }
         }
-        Yii::info($firm_list);
         $stat->partStatistic($firm_list, $id);
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -490,14 +519,42 @@ class SiteController extends Controller
         $command = \Yii::$app->getDb()->createCommand($sql);
         $rows = $command->queryAll();
 
+        // пишем статистику
+        $stat = new StatServiceQuery();
+        $stat->serviceStatistic($id, \Yii::$app->user->identity->id);
+
+        // получаем Id запроса
+        $id_query = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatServiceFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($rows as $key => $value) {
+            if ($last_id != $value['ID_Firm']) {
+                $last_id = $value['ID_Firm'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        $stat->serviceStatistic($firm_list, $id_query);
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
             'rows' => $rows,
+            'query_id' => $id_query,
         ];
     }
 
-    public function actionStatisticOpenFirm($firm_id, $query_id)
+    /**
+     * Функция записи статистики открытых фирм
+     * @param  int $firm_id
+     * @param  int $query_id
+     * @return array
+     */
+    public function actionStatPartOpenFirm($firm_id, $query_id)
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -513,6 +570,64 @@ class SiteController extends Controller
             ];
         } else {
             Yii::error('stat_parts_firms: Фирма не открыта');
+
+            return [
+                'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     * @param  int $firm_id
+     * @param  int $query_id
+     * @return array
+     */
+    public function actionStatFirmOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatFirmsFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if ($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_firm_firms: Фирма не открыта');
+
+            return [
+                'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     * @param  int $firm_id
+     * @param  int $query_id
+     * @return array
+     */
+    public function actionStatServiceOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatServiceFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if ($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_service_firms: Фирма не открыта');
 
             return [
                 'success' => false,

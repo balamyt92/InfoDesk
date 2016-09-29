@@ -32,13 +32,16 @@ var KEY = {
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
 var searcherFirms = {
-    input : $('#search-line'),
+    input : false,
     gridCreate : false,
     pagerToNext: false,
     pagerToBack: false,
     pagerLastRow : false,
-    modalWindow: $('#modalResult'),
-    grid: $("#firm-result-search"),
+    modalWindow: false,
+    lastQuery : {
+        response : false,
+    },
+    grid: false,
     render : function(data) {
         let grid = this.grid;
 
@@ -88,12 +91,14 @@ var searcherFirms = {
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'id'));
+                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
                     openFirm(grid.getCell(id, 'id'));
+                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
                 }
             });
 
@@ -170,6 +175,7 @@ var searcherFirms = {
             data: {str: str}
         }).done(function(data){
             searcherFirms.render(data.message);
+            searcherFirms.lastQuery.response = data;
         });
     },
 
@@ -183,6 +189,22 @@ var searcherFirms = {
             $($('#search-line').focus()).select();
             return false;
         }
+    },
+
+    /**
+     * Функция записи статистики в поиске фирм что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/stat-firm-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        });
     },
 };
 
@@ -207,13 +229,13 @@ var searchParts = {
     },
 
 
-    currentSelect : $('#detail-select'),
+    currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
     pagerLastRow : false,
     gridCreate: false,
-    modalWindow: $('#modalResult'),
-    grid: $("#part-result-search"),
+    modalWindow: false,
+    grid: false,
 
     highlightRow : function () {
         let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
@@ -621,13 +643,11 @@ var searchParts = {
     statisticOpenFirm : function(id) {
         $.ajax({
             method: "GET",
-            url: "index.php?r=site/statistic-open-firm",
+            url: "index.php?r=site/stat-part-open-firm",
             data: {
                 firm_id  : id,
                 query_id : this.lastQuery.response.query_id,
             }
-        }).done(function(data){
-            
         });
     },
 };
@@ -635,12 +655,15 @@ var searchParts = {
  * Объект отвечает за работу с поиском сервисов
  */
 var serviceSearch = {
-    input: $('#service'),
-    groupList: $('#service')[0].innerHTML,
-    lastGroupId: $('#service')[0][0].value,
+    input: false,
+    groupList: false,
+    lastGroupId: false,
     gridCreate: false,
     inCategory: false,
-    modalWindow: $('#modalResult'),
+    modalWindow: false,
+    lastQuery : {
+        response : false,
+    },
     grid: $("#service-result-search"),
     open: function (event) {
         if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
@@ -698,12 +721,14 @@ var serviceSearch = {
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
                     openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
@@ -717,6 +742,7 @@ var serviceSearch = {
             url: "index.php?r=site/service-search",
             data: {id: this.input[0].value}
         }).done(function (data) {
+            serviceSearch.lastQuery.response = data;
             grid.jqGrid('setGridParam', {data: data.rows});
             // hide the show message
             grid[0].grid.endReq();
@@ -731,6 +757,22 @@ var serviceSearch = {
     },
     renderGroups: function () {
         this.input.html(this.groupList);
+    },
+
+    /**
+     * Функция записи статистики в поиске сервисов что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/stat-service-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        });
     },
 };
 
@@ -832,7 +874,19 @@ function keyNavigate(event) {
 
 function ready() {
     // Инициализация
-    
+    searcherFirms.input         = $('#search-line');
+    searcherFirms.modalWindow   = $('#modalResult');
+    searcherFirms.grid          = $("#firm-result-search");
+
+    searchParts.currentSelect   = $('#detail-select');
+    searchParts.modalWindow     = $('#modalResult');
+    searchParts.grid            = $("#part-result-search");
+
+    serviceSearch.input         = $('#service');
+    serviceSearch.groupList     = $('#service')[0].innerHTML;
+    serviceSearch.lastGroupId   = $('#service')[0][0].value;
+    serviceSearch.modalWindow   = $('#modalResult');
+
     $('body').on("keydown", keyNavigate);
 
     let search = $('#search-line');
