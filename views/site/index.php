@@ -97,11 +97,11 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 <div class="modal" id="modalFirm" tabindex="-1" role="dialog" style="">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="padding: 2px;">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 id="firmName" class="modal-title"></h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="padding: 2px;">
         <table class="table table-condensed">
             <tbody>
                 <tr>
@@ -147,7 +147,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             </tbody>
         </table>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: none;">
         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
       </div>
     </div><!-- /.modal-content -->

@@ -49,6 +49,10 @@ tr.hover {
     padding: 0px 1px;
 }
 
+.table > tbody > tr > td > label {
+    margin-bottom: 0px;
+}
+
 /*
     Для результатов поиска по фирмам (разъезжаеться блок с режимом работы)
 */

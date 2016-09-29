@@ -798,7 +798,7 @@ function openFirm(id) {
         $('#firmFax').html(data.message[0].Fax);
         $('#firmEmail').html(data.message[0].Email);
         $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmOperatingMode').html('<pre>' + data.message[0].OperatingMode + '</pre>');
         $('#firmComment').html(data.message[0].Comment);
 
         // открываем окно
