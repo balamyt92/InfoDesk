@@ -349,14 +349,14 @@ var searchParts = {
                 responsive: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
                     searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
                     searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
@@ -720,14 +720,14 @@ var serviceSearch = {
                 responsive: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
                     serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
                     serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
@@ -901,7 +901,13 @@ function ready() {
     result.service = false;
 
     $('#modalFirm').on('hidden.bs.modal', function () {
-        $("#firm-result-search").focus();
+        if(result.firms) {
+            $("#firm-result-search").focus();
+        } else if(result.service) {
+            $("#service-result-search").focus();
+        } else if (result.parts) {
+            $("#part-result-search").focus();
+        }
     });
 
     $('#modalParts').on('hidden.bs.modal', function () {
