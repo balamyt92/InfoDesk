@@ -1,9 +1,10 @@
 <?php
-
 /* @var $this yii\web\View */
 
-$this->title = 'InfoDesk';
+$this->title = 'Call-центр';
 
+use app\assets\CallCenterAsset;
+CallCenterAsset::register($this);
 
 list(, $url) = Yii::$app->assetManager->publish('@bower/jqgrid');
 $this->registerJsFile($url.'/js/i18n/grid.locale-ru.js', ['depends' => [
@@ -18,10 +19,6 @@ $this->registerCssFile($url.'/css/ui.jqgrid.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap.css');
 $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
-// list(, $select2Css) = Yii::$app->assetManager->publish('@vendor/silverfire/select2-bootstrap3-css');
-// $this->registerCssFile($select2Css.'/select2-bootstrap.min.css', ['depends' => [
-//     'app\assets\AppAsset'],
-// ]);
 ?>
 
 <div class="row">
