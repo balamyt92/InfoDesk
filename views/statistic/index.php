@@ -1,6 +1,8 @@
 <?php
 /* @var $this yii\web\View */
 
+$this->title = 'Статистика';
+
 use yii\data\SqlDataProvider;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
