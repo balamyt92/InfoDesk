@@ -2,20 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "stat_service_firms".
  *
- * @property integer $id_query
- * @property integer $id_firm
- * @property integer $position
- * @property integer $opened
+ * @property int $id_query
+ * @property int $id_firm
+ * @property int $position
+ * @property int $opened
  */
 class StatServiceFirms extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class StatServiceFirms extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,22 +32,24 @@ class StatServiceFirms extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'id_query' => 'Id Query',
-            'id_firm' => 'Id Firm',
+            'id_firm'  => 'Id Firm',
             'position' => 'Position',
-            'opened' => 'Opened',
+            'opened'   => 'Opened',
         ];
     }
 
     /**
-     * Запись списка фирм запроса для статистики
-     * @param  array    $firm_list 
-     * @param  int      $query_id
+     * Запись списка фирм запроса для статистики.
+     *
+     * @param array $firm_list
+     * @param int   $query_id
+     *
      * @return
      */
     public function serviceStatistic($firm_list, $query_id)

@@ -2,16 +2,16 @@
 /* @var $this yii\web\View */
 
 use yii\data\SqlDataProvider;
-use yii\widgets\Pjax;
 use yii\grid\GridView;
+use yii\widgets\Pjax;
 
 $countPartsQuery = Yii::$app->db->createCommand('
     SELECT count(*) FROM stat_parts_query
 ')->queryScalar();
 
 $providerPartsQuery = new SqlDataProvider([
-    'sql' => 'SELECT * FROM stat_parts_query',
-    'params' => [],
+    'sql'        => 'SELECT * FROM stat_parts_query',
+    'params'     => [],
     'totalCount' => $countPartsQuery,
     'pagination' => [
         'pageSize' => 10,
@@ -28,8 +28,8 @@ $countPartsFirms = Yii::$app->db->createCommand('
 ')->queryScalar();
 
 $providerPartsFirms = new SqlDataProvider([
-    'sql' => 'SELECT id_firm, SUM(opened) as total FROM stat_parts_firms GROUP BY id_firm',
-    'params' => [],
+    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_parts_firms GROUP BY id_firm',
+    'params'     => [],
     'totalCount' => $countPartsFirms,
     'pagination' => [
         'pageSize' => 10,
@@ -37,16 +37,16 @@ $providerPartsFirms = new SqlDataProvider([
     'sort' => [
         'attributes' => [
             'id_firm' => [
-                'asc' => ['id_firm' => SORT_ASC],
-                'desc' => ['id_firm' => SORT_DESC],
+                'asc'     => ['id_firm' => SORT_ASC],
+                'desc'    => ['id_firm' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Фирма',
+                'label'   => 'Фирма',
             ],
             'total' => [
-                'asc' => ['total' => SORT_ASC],
-                'desc' => ['total' => SORT_DESC],
+                'asc'     => ['total' => SORT_ASC],
+                'desc'    => ['total' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Названа раз',
+                'label'   => 'Названа раз',
             ],
         ],
         'defaultOrder' => ['id_firm' => SORT_ASC],
@@ -59,8 +59,8 @@ $countFirmsQuery = Yii::$app->db->createCommand('
 ')->queryScalar();
 
 $providerFirmsQuery = new SqlDataProvider([
-    'sql' => 'SELECT * FROM stat_firms_query',
-    'params' => [],
+    'sql'        => 'SELECT * FROM stat_firms_query',
+    'params'     => [],
     'totalCount' => $countFirmsQuery,
     'pagination' => [
         'pageSize' => 10,
@@ -77,8 +77,8 @@ $countFirmsFirms = Yii::$app->db->createCommand('
 ')->queryScalar();
 
 $providerFirmsFirms = new SqlDataProvider([
-    'sql' => 'SELECT id_firm, SUM(opened) as total FROM stat_firms_firms GROUP BY id_firm',
-    'params' => [],
+    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_firms_firms GROUP BY id_firm',
+    'params'     => [],
     'totalCount' => $countFirmsFirms,
     'pagination' => [
         'pageSize' => 10,
@@ -86,16 +86,16 @@ $providerFirmsFirms = new SqlDataProvider([
     'sort' => [
         'attributes' => [
             'id_firm' => [
-                'asc' => ['id_firm' => SORT_ASC],
-                'desc' => ['id_firm' => SORT_DESC],
+                'asc'     => ['id_firm' => SORT_ASC],
+                'desc'    => ['id_firm' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Фирма',
+                'label'   => 'Фирма',
             ],
             'total' => [
-                'asc' => ['total' => SORT_ASC],
-                'desc' => ['total' => SORT_DESC],
+                'asc'     => ['total' => SORT_ASC],
+                'desc'    => ['total' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Названа раз',
+                'label'   => 'Названа раз',
             ],
         ],
         'defaultOrder' => ['id_firm' => SORT_ASC],
@@ -107,8 +107,8 @@ $countServiceQuery = Yii::$app->db->createCommand('
 ')->queryScalar();
 
 $providerServiceQuery = new SqlDataProvider([
-    'sql' => 'SELECT * FROM stat_service_query',
-    'params' => [],
+    'sql'        => 'SELECT * FROM stat_service_query',
+    'params'     => [],
     'totalCount' => $countServiceQuery,
     'pagination' => [
         'pageSize' => 10,
@@ -125,8 +125,8 @@ $countServiceFirms = Yii::$app->db->createCommand('
 ')->queryScalar();
 
 $providerServiceFirms = new SqlDataProvider([
-    'sql' => 'SELECT id_firm, SUM(opened) as total FROM stat_service_firms GROUP BY id_firm',
-    'params' => [],
+    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_service_firms GROUP BY id_firm',
+    'params'     => [],
     'totalCount' => $countServiceFirms,
     'pagination' => [
         'pageSize' => 10,
@@ -134,16 +134,16 @@ $providerServiceFirms = new SqlDataProvider([
     'sort' => [
         'attributes' => [
             'id_firm' => [
-                'asc' => ['id_firm' => SORT_ASC],
-                'desc' => ['id_firm' => SORT_DESC],
+                'asc'     => ['id_firm' => SORT_ASC],
+                'desc'    => ['id_firm' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Фирма',
+                'label'   => 'Фирма',
             ],
             'total' => [
-                'asc' => ['total' => SORT_ASC],
-                'desc' => ['total' => SORT_DESC],
+                'asc'     => ['total' => SORT_ASC],
+                'desc'    => ['total' => SORT_DESC],
                 'default' => SORT_ASC,
-                'label' => 'Названа раз',
+                'label'   => 'Названа раз',
             ],
         ],
         'defaultOrder' => ['id_firm' => SORT_ASC],
@@ -166,7 +166,7 @@ $providerServiceFirms = new SqlDataProvider([
                 Pjax::begin();
                 echo GridView::widget([
                     'dataProvider' => $providerPartsFirms,
-                    'columns' => [
+                    'columns'      => [
                         ['class' => 'yii\grid\SerialColumn'],
 
                         'id_firm',
@@ -195,7 +195,7 @@ $providerServiceFirms = new SqlDataProvider([
                 Pjax::begin();
                 echo GridView::widget([
                     'dataProvider' => $providerFirmsFirms,
-                    'columns' => [
+                    'columns'      => [
                         ['class' => 'yii\grid\SerialColumn'],
 
                         'id_firm',
@@ -221,7 +221,7 @@ $providerServiceFirms = new SqlDataProvider([
                 Pjax::begin();
                 echo GridView::widget([
                     'dataProvider' => $providerServiceFirms,
-                    'columns' => [
+                    'columns'      => [
                         ['class' => 'yii\grid\SerialColumn'],
 
                         'id_firm',
