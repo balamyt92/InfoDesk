@@ -24,7 +24,7 @@ $providerPartsQuery = new SqlDataProvider([
 ]);
 
 $countPartsFirms = Yii::$app->db->createCommand('
-    SELECT count(*) FROM stat_parts_firms GROUP BY id_firm
+    SELECT count(*) FROM (SELECT id_firm, SUM(opened) as total FROM stat_parts_firms GROUP BY id_firm) cnt
 ')->queryScalar();
 
 $providerPartsFirms = new SqlDataProvider([
@@ -32,7 +32,7 @@ $providerPartsFirms = new SqlDataProvider([
     'params' => [],
     'totalCount' => $countPartsFirms,
     'pagination' => [
-        'pageSize' => 20,
+        'pageSize' => 10,
     ],
     'sort' => [
         'attributes' => [
