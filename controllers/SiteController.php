@@ -8,12 +8,12 @@ use app\models\CarModelsEN;
 use app\models\Firms;
 use app\models\LoginForm;
 use app\models\Services;
+use app\models\StatFirmsFirms;
+use app\models\StatFirmsQuery;
 use app\models\StatPartsFirms;
 use app\models\StatPartsQuery;
 use app\models\StatServiceFirms;
 use app\models\StatServiceQuery;
-use app\models\StatFirmsFirms;
-use app\models\StatFirmsQuery;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -43,7 +43,7 @@ class SiteController extends Controller
                                         'get-firm', 'get-models', 'get-bodys', 'get-engine',
                                         'search-parts', 'get-service-group',
                                         'service-search', 'stat-part-open-firm',
-                                        'stat-service-open-firm', 'stat-firm-open-firm',],
+                                        'stat-service-open-firm', 'stat-firm-open-firm', ],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -182,8 +182,8 @@ class SiteController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'success' => true,
-            'message' => $firms,
+            'success'  => true,
+            'message'  => $firms,
             'query_id' => $id,
         ];
     }
@@ -543,15 +543,17 @@ class SiteController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'rows' => $rows,
+            'rows'     => $rows,
             'query_id' => $id_query,
         ];
     }
 
     /**
      * Функция записи статистики открытых фирм
-     * @param  int $firm_id
-     * @param  int $query_id
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
      * @return array
      */
     public function actionStatPartOpenFirm($firm_id, $query_id)
@@ -579,8 +581,10 @@ class SiteController extends Controller
 
     /**
      * Функция записи статистики открытых фирм
-     * @param  int $firm_id
-     * @param  int $query_id
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
      * @return array
      */
     public function actionStatFirmOpenFirm($firm_id, $query_id)
@@ -608,8 +612,10 @@ class SiteController extends Controller
 
     /**
      * Функция записи статистики открытых фирм
-     * @param  int $firm_id
-     * @param  int $query_id
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
      * @return array
      */
     public function actionStatServiceOpenFirm($firm_id, $query_id)

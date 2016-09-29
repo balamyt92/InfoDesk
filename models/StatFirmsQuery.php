@@ -2,20 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "stat_firms_query".
  *
- * @property integer $id
+ * @property int $id
  * @property string $date_time
- * @property integer $id_operator
+ * @property int $id_operator
  * @property string $search
  */
 class StatFirmsQuery extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class StatFirmsQuery extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -35,27 +33,29 @@ class StatFirmsQuery extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'date_time' => 'Date Time',
+            'id'          => 'ID',
+            'date_time'   => 'Date Time',
             'id_operator' => 'Id Operator',
-            'search' => 'Search',
+            'search'      => 'Search',
         ];
     }
 
     /**
      * Функция записывает в базу данных запрос
-     * @param  string   $search      
-     * @param  int      $operator_id 
+     *
+     * @param string $search
+     * @param int    $operator_id
+     *
      * @return bool
      */
     public function firmStatistic($search, $operator_id)
     {
-        $this->search      = $search;
+        $this->search = $search;
         $this->id_operator = $operator_id;
 
         if ($this->validate()) {
