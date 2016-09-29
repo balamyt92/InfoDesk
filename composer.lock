@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d7b07096d1580292d2267e79e3d9c807",
-    "content-hash": "94136e5c14f4eb6c960d69329ef399cd",
+    "hash": "dc9499a0b73f4f1f80bdf66d23c33c4a",
+    "content-hash": "917a0901d6be2f26dc35ec0bfb996f83",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -84,7 +84,8 @@
             },
             "license": [
                 "CC-BY-NC-3.0"
-            ]
+            ],
+            "time": "2016-08-30 09:40:38"
         },
         {
             "name": "bower-asset/jquery",
@@ -217,34 +218,6 @@
             }
         },
         {
-            "name": "bower-asset/select2",
-            "version": "3.5.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/select2/select2.git",
-                "reference": "95a977f674b6938af55ec5f28b7772df93786c5c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/select2/select2/zipball/95a977f674b6938af55ec5f28b7772df93786c5c",
-                "reference": "95a977f674b6938af55ec5f28b7772df93786c5c",
-                "shasum": ""
-            },
-            "require": {
-                "bower-asset/jquery": ">=1.7.1"
-            },
-            "type": "bower-asset-library",
-            "extra": {
-                "bower-asset-main": [
-                    "select2.js",
-                    "select2.css",
-                    "select2.png",
-                    "select2x2.png",
-                    "select2-spinner.gif"
-                ]
-            }
-        },
-        {
             "name": "bower-asset/yii2-pjax",
             "version": "v2.0.6",
             "source": {
@@ -284,12 +257,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cebe/markdown.git",
-                "reference": "c30eb5e01fe021cc5bba2f9ee0eeef96d4931166"
+                "reference": "5ab31d5821e6fe52d121984488fb7457f4c5abf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cebe/markdown/zipball/c30eb5e01fe021cc5bba2f9ee0eeef96d4931166",
-                "reference": "c30eb5e01fe021cc5bba2f9ee0eeef96d4931166",
+                "url": "https://api.github.com/repos/cebe/markdown/zipball/5ab31d5821e6fe52d121984488fb7457f4c5abf1",
+                "reference": "5ab31d5821e6fe52d121984488fb7457f4c5abf1",
                 "shasum": ""
             },
             "require": {
@@ -336,7 +309,7 @@
                 "markdown",
                 "markdown-extra"
             ],
-            "time": "2016-09-14 20:40:20"
+            "time": "2016-09-26 08:34:32"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -381,31 +354,6 @@
                 "html"
             ],
             "time": "2016-07-16 12:58:58"
-        },
-        {
-            "name": "silverfire/select2-bootstrap3-css",
-            "version": "1.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SilverFire/select2-bootstrap3-css.git",
-                "reference": "77bf214ae0022265948bd2c52d739ea1c81853a3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SilverFire/select2-bootstrap3-css/zipball/77bf214ae0022265948bd2c52d739ea1c81853a3",
-                "reference": "77bf214ae0022265948bd2c52d739ea1c81853a3",
-                "shasum": ""
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "description": "Bootstrap3 theme for select2 plugin",
-            "homepage": "https://github.com/SilverFire/select2-bootstrap3-css",
-            "keywords": [
-                "bootstrap",
-                "select2",
-                "styles"
-            ],
-            "time": "2015-05-25 14:31:02"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -462,16 +410,16 @@
         },
         {
             "name": "yiisoft/yii2",
-            "version": "dev-master",
+            "version": "2.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "fa2bc223f9a4056bf74e785dad06b37adc5daf1e"
+                "reference": "2b75151ea60e1fd820046416eee2e89c3dda1133"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/fa2bc223f9a4056bf74e785dad06b37adc5daf1e",
-                "reference": "fa2bc223f9a4056bf74e785dad06b37adc5daf1e",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/2b75151ea60e1fd820046416eee2e89c3dda1133",
+                "reference": "2b75151ea60e1fd820046416eee2e89c3dda1133",
                 "shasum": ""
             },
             "require": {
@@ -552,7 +500,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2016-09-19 08:47:56"
+            "time": "2016-07-11 13:36:42"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
@@ -786,12 +734,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "4e81236d14da84c86f3e96561d689845bcf559ef"
+                "reference": "57d1666335f24fbf9c60c6f1bb75c8b2dbc17052"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/4e81236d14da84c86f3e96561d689845bcf559ef",
-                "reference": "4e81236d14da84c86f3e96561d689845bcf559ef",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/57d1666335f24fbf9c60c6f1bb75c8b2dbc17052",
+                "reference": "57d1666335f24fbf9c60c6f1bb75c8b2dbc17052",
                 "shasum": ""
             },
             "require": {
@@ -828,7 +776,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2016-09-13 12:22:34"
+            "time": "2016-09-20 07:47:47"
         },
         {
             "name": "phpspec/php-diff",

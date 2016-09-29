@@ -1,16 +1,16 @@
 {
-    "name": "php-yii2-box",
-    "description": "Yii 2 develop box",
+    "name": "InfoDesk",
+    "description": "",
     "type": "project",
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.8",
+        "yiisoft/yii2": "2.0.9",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-jui": "^2.0",
-        "bower-asset/jqgrid": "*",
+        "bower-asset/jqgrid": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

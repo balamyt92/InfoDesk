@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\models\Firms;
 use app\models\FirmsSearch;
+use app\models\User;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -20,11 +22,40 @@ class FirmsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow'   => true,
+                    ],
+                    [
+                        'actions'       => ['logout', 'index', 'update', 'delete', 'view', 'create'],
+                        'allow'         => true,
+                        'roles'         => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return User::isUserAdmin(Yii::$app->user->identity->username);
+                        },
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class'   => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'logout' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
             ],
         ];
     }

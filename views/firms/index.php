@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\FirmsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Firms';
+$this->title = 'Фирмы';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="firms-index">
@@ -25,12 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
+            'id',
             'Name',
             'Address:ntext',
             'Phone',
 //            'Comment:ntext',
-//            'Enabled',
+            'Enabled',
 //            'ActivityType:ntext',
 //            'OrganizationType',
 //            'District',
@@ -38,8 +38,8 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'Email:email',
 //            'URL:url',
 //            'OperatingMode:ntext',
-//            'Identifier',
-//            'Priority',
+            'Identifier',
+            'Priority',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

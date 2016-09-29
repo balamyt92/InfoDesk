@@ -1,6 +1,8 @@
 <?php
 /* @var $this yii\web\View */
 
+$this->title = 'Импорт';
+
 use yii\jui\ProgressBar;
 
 // Запуск проверки статауса импорта при переходе на страницу

@@ -32,13 +32,16 @@ var KEY = {
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
 var searcherFirms = {
-    input : $('#search-line'),
+    input : false,
     gridCreate : false,
     pagerToNext: false,
     pagerToBack: false,
     pagerLastRow : false,
-    modalWindow: $('#modalResult'),
-    grid: $("#firm-result-search"),
+    modalWindow: false,
+    lastQuery : {
+        response : false,
+    },
+    grid: false,
     render : function(data) {
         let grid = this.grid;
 
@@ -71,7 +74,7 @@ var searcherFirms = {
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
                     {label: 'ID', name: 'id', width: -1, hidden: true},
                     {label: 'Фирма', name: 'Name', width: 250},
-                    {label: 'Телефон', name: 'Phone', width: 250},
+                    {label: 'Профиль деятельности', name: 'ActivityType', width: 250},
                     {label: 'Адерс', name: 'Address', width: 250},
                     {label: 'Район', name: 'District', width: 250},
                     {label: 'Примечание', name: 'Comment', width: 250},
@@ -88,12 +91,14 @@ var searcherFirms = {
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'id'));
+                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
                     openFirm(grid.getCell(id, 'id'));
+                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
                 }
             });
 
@@ -129,6 +134,15 @@ var searcherFirms = {
                     }, 500);
                 }
 
+                if(e.keyCode == KEY.HOME) {
+                    if(currentPage > 1) {
+                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+                        searchParts.highlightRow();
+                    }
+                    grid.jqGrid('setSelection', 1, false);
+                    grid.focus();
+                }
+
                 currentRow == realRowInPage
                 ? searcherFirms.pagerLastRow = true : searcherFirms.pagerLastRow = false;
 
@@ -137,6 +151,16 @@ var searcherFirms = {
 
                 currentRow == 1
                 ? searcherFirms.pagerToBack = true : searcherFirms.pagerToBack = false;
+
+                if(e.keyCode == KEY.END) {
+                    if(currentPage == totalPages) {
+                        grid.jqGrid('setSelection', realRowInLasPage, false);
+                    } else {
+                        grid.jqGrid('setSelection', rowInPage, false);
+                    }
+                    grid.focus();
+                    searcherFirms.pagerToNext = true;
+                }
             });
 
             this.gridCreate = true;
@@ -151,6 +175,7 @@ var searcherFirms = {
             data: {str: str}
         }).done(function(data){
             searcherFirms.render(data.message);
+            searcherFirms.lastQuery.response = data;
         });
     },
 
@@ -164,7 +189,23 @@ var searcherFirms = {
             $($('#search-line').focus()).select();
             return false;
         }
-    }
+    },
+
+    /**
+     * Функция записи статистики в поиске фирм что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/stat-firm-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        });
+    },
 };
 
 /**
@@ -184,16 +225,17 @@ var searchParts = {
         idBody   : false,
         idEngine : false,
         idNumber : false,
+        response : false,
     },
 
 
-    currentSelect : $('#detail-select'),
+    currentSelect : false,
     pagerToNext : false,
     pagerToBack : false,
     pagerLastRow : false,
     gridCreate: false,
-    modalWindow: $('#modalResult'),
-    grid: $("#part-result-search"),
+    modalWindow: false,
+    grid: false,
 
     highlightRow : function () {
         let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
@@ -253,7 +295,8 @@ var searchParts = {
             && !this.idDetail
             && !this.idEngine
             && !this.idMark
-            && !this.idModel) {
+            && !this.idModel 
+            && !this.idNumber) {
             console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
@@ -306,13 +349,15 @@ var searchParts = {
                 responsive: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
@@ -322,6 +367,15 @@ var searchParts = {
                 let currentPage = grid.jqGrid('getGridParam','page');
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
                 let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+
+                (currentRow == realRowInLasPage && currentPage == totalPages)
+                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
+
+                currentRow == rowInPage
+                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
+
+                currentRow == 1
+                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
 
                 if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
                     let i = currentRow;
@@ -353,6 +407,7 @@ var searchParts = {
                     grid.jqGrid('setSelection', 1, false);
                     searchParts.highlightRow();
                     grid.focus();
+                    searchParts.pagerToBack = true;
                 }
                 // если вниз и последняя строка последней страницы
                 if(e.keyCode == KEY.DOWN && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
@@ -366,6 +421,7 @@ var searchParts = {
                     grid.jqGrid('setSelection', rowInPage, false);
                     searchParts.highlightRow();
                     grid.focus();
+                    searchParts.pagerToNext = true;
                 }
 
                 if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
@@ -385,21 +441,13 @@ var searchParts = {
 
                 if(e.keyCode == KEY.END) {
                     if(currentPage == totalPages) {
-                    	grid.jqGrid('setSelection', realRowInLasPage, false);
+                        grid.jqGrid('setSelection', realRowInLasPage, false);
                     } else {
-                    	grid.jqGrid('setSelection', rowInPage, false);
+                        grid.jqGrid('setSelection', rowInPage, false);
                     }
                     grid.focus();
+                    searchParts.pagerToNext = true;
                 }
-
-                (currentRow == realRowInLasPage && currentPage == totalPages)
-                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
-
-                currentRow == 1
-                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
             });
             this.gridCreate = true;
         }
@@ -420,6 +468,7 @@ var searchParts = {
             }
         }).done(function(data){
             searchParts.render(data.message);
+            searchParts.lastQuery.response = data;
         });
     },
 
@@ -481,6 +530,7 @@ var searchParts = {
                 $('#model-select').select2("enable", true);
                 $('#engine-select').select2("enable", true);
                 $('#body-select').select2("enable", false);
+                $('#body-select').select2("val", "");
                 searchParts.idMark = e.choice.id;
                 searchParts.idModel = false;
                 searchParts.idBody = false;
@@ -493,8 +543,11 @@ var searchParts = {
                 searchParts.idBody = false;
                 searchParts.idEngine = false;
                 $('#model-select').select2("enable", false);
+                $('#model-select').select2("val", "");
                 $('#body-select').select2("enable", false);
+                $('#body-select').select2("val", "");
                 $('#engine-select').select2("enable", false);
+                $('#engine-select').select2("val", "");
             }).on("select2-focus", function (e) {
                 searchParts.currentSelect = this;
             });
@@ -582,17 +635,35 @@ var searchParts = {
             }).select2("val", "");
         });
     },
+    /**
+     * Функция записи статистики в запчастях что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/stat-part-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        });
+    },
 };
 /**
  * Объект отвечает за работу с поиском сервисов
  */
 var serviceSearch = {
-    input: $('#service'),
-    groupList: $('#service')[0].innerHTML,
-    lastGroupId: $('#service')[0][0].value,
+    input: false,
+    groupList: false,
+    lastGroupId: false,
     gridCreate: false,
     inCategory: false,
-    modalWindow: $('#modalResult'),
+    modalWindow: false,
+    lastQuery : {
+        response : false,
+    },
     grid: $("#service-result-search"),
     open: function (event) {
         if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
@@ -649,13 +720,15 @@ var serviceSearch = {
                 responsive: true,
                 cmTemplate: {sortable: false,},
                 ondblClickRow: function(id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
             });
 
             grid.jqGrid('bindKeys', {
                 "onEnter": function (id) {
-                    openFirmInParts(grid.getCell(id, 'ID_Firm'));
+                    openFirm(grid.getCell(id, 'ID_Firm'));
+                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
             });
 
@@ -669,6 +742,7 @@ var serviceSearch = {
             url: "index.php?r=site/service-search",
             data: {id: this.input[0].value}
         }).done(function (data) {
+            serviceSearch.lastQuery.response = data;
             grid.jqGrid('setGridParam', {data: data.rows});
             // hide the show message
             grid[0].grid.endReq();
@@ -683,6 +757,22 @@ var serviceSearch = {
     },
     renderGroups: function () {
         this.input.html(this.groupList);
+    },
+
+    /**
+     * Функция записи статистики в поиске сервисов что фирма открыта
+     * @param  {integer} id фирмы
+     * @return {bool}
+     */
+    statisticOpenFirm : function(id) {
+        $.ajax({
+            method: "GET",
+            url: "index.php?r=site/stat-service-open-firm",
+            data: {
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
+            }
+        });
     },
 };
 
@@ -784,7 +874,19 @@ function keyNavigate(event) {
 
 function ready() {
     // Инициализация
-    
+    searcherFirms.input         = $('#search-line');
+    searcherFirms.modalWindow   = $('#modalResult');
+    searcherFirms.grid          = $("#firm-result-search");
+
+    searchParts.currentSelect   = $('#detail-select');
+    searchParts.modalWindow     = $('#modalResult');
+    searchParts.grid            = $("#part-result-search");
+
+    serviceSearch.input         = $('#service');
+    serviceSearch.groupList     = $('#service')[0].innerHTML;
+    serviceSearch.lastGroupId   = $('#service')[0][0].value;
+    serviceSearch.modalWindow   = $('#modalResult');
+
     $('body').on("keydown", keyNavigate);
 
     let search = $('#search-line');
@@ -799,7 +901,13 @@ function ready() {
     result.service = false;
 
     $('#modalFirm').on('hidden.bs.modal', function () {
-        $("#firm-result-search").focus();
+        if(result.firms) {
+            $("#firm-result-search").focus();
+        } else if(result.service) {
+            $("#service-result-search").focus();
+        } else if (result.parts) {
+            $("#part-result-search").focus();
+        }
     });
 
     $('#modalParts').on('hidden.bs.modal', function () {
@@ -855,6 +963,7 @@ function ready() {
         searchParts.idModel = false;
         searchParts.idBody = false;
         $('#body-select').select2("enable", false);
+        $('#body-select').select2("val", "");
         searchParts.getEngine();
     }).on("select2-focus", function (e) {
         searchParts.currentSelect = this;

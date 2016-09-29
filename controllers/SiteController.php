@@ -3,13 +3,20 @@
 namespace app\controllers;
 
 use app\models\CarBodyModelsEN;
-use app\models\CarEngineAndBodyCorrespondencesEN;
-use app\models\CarEngineAndModelCorrespondencesEN;
 use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
-use app\models\CarPresenceEN;
 use app\models\Firms;
+use app\models\LoginForm;
 use app\models\Services;
+use app\models\StatFirmsFirms;
+use app\models\StatFirmsQuery;
+use app\models\StatPartsFirms;
+use app\models\StatPartsQuery;
+use app\models\StatServiceFirms;
+use app\models\StatServiceQuery;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -18,6 +25,83 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow'   => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
+                                        'get-firm', 'get-models', 'get-bodys', 'get-engine',
+                                        'search-parts', 'get-service-group',
+                                        'service-search', 'stat-part-open-firm',
+                                        'stat-service-open-firm', 'stat-firm-open-firm', ],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class'   => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+        ];
+    }
+
+    /**
+     * Login action.
+     *
+     * @return string
+     */
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        } else {
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Logout action.
+     *
+     * @return string
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
     /**
      * Рендер главной.
      *
@@ -29,6 +113,8 @@ class SiteController extends Controller
     }
 
     /**
+     * Функция поиска по фирмам
+     *
      * @param string $str строка запроса
      *
      * @return string
@@ -70,14 +156,43 @@ class SiteController extends Controller
 
         $firms = Firms::findBySql($sql)->all();
 
+
+        // пишем статистику
+        $stat = new StatFirmsQuery();
+        $stat->firmStatistic($str, \Yii::$app->user->identity->id);
+
+        // получаем Id запроса
+        $id = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatFirmsFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($firms as $key => $value) {
+            if ($last_id != $value['id']) {
+                $last_id = $value['id'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        $stat->firmStatistic($firm_list, $id);
+
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'success' => true,
-            'message' => $firms,
+            'success'  => true,
+            'message'  => $firms,
+            'query_id' => $id,
         ];
     }
 
+    /**
+     * Функция получения списка деталей.
+     *
+     * @return array
+     */
     public function actionGetDetailsName()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -85,6 +200,11 @@ class SiteController extends Controller
         return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
     }
 
+    /**
+     * Функция получения списка марок.
+     *
+     * @return array
+     */
     public function actionGetMarks()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -92,6 +212,13 @@ class SiteController extends Controller
         return \app\models\CarMarksEN::find()->orderBy('Name')->all();
     }
 
+    /**
+     * Функция получения списка моделей по параметрам
+     *
+     * @param int $id
+     *
+     * @return array
+     */
     public function actionGetModels($id)
     {
         $carModels = CarModelsEN::find()->where(['=', 'ID_Mark', $id])->
@@ -103,6 +230,13 @@ class SiteController extends Controller
         return $carModels;
     }
 
+    /**
+     * Функция получения списка кузовов по параметрам
+     *
+     * @param int $id
+     *
+     * @return array
+     */
     public function actionGetBodys($id)
     {
         $carBodys = CarBodyModelsEN::find()->where(['=', 'ID_Model', $id])->
@@ -114,6 +248,15 @@ class SiteController extends Controller
         return $carBodys;
     }
 
+    /**
+     * Функция получения списка двигателей по параметрам
+     *
+     * @param int|string $mark_id
+     * @param int|string $model_id
+     * @param int|string $body_id
+     *
+     * @return array
+     */
     public function actionGetEngine($mark_id, $model_id, $body_id)
     {
         $carEngine = [];
@@ -141,6 +284,13 @@ class SiteController extends Controller
         return $carEngine;
     }
 
+    /**
+     * Функция получения карточки фирмы.
+     *
+     * @param int $firm_id
+     *
+     * @return array
+     */
     public function actionGetFirm($firm_id)
     {
         $firm = Firms::find()->where(['=', 'id', $firm_id])->asArray()->all();
@@ -217,7 +367,7 @@ class SiteController extends Controller
         if (!($model_id === 'false')) {
             // ищем связанные модели
             $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION
-                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark = {$mark_id})";
+                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark IN ({$mark_search}))";
             $link = $this->getLinkedString($link_model_sql, 'ID_Group');
             if ($link) {
                 $model_search .= ','.$link;
@@ -251,7 +401,7 @@ class SiteController extends Controller
             $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN
                                   WHERE ID_EngineGroup={$engine_id})
                                 UNION
-                                (SELECT id FROM CarEngineModelsEN WHERE Name='***' AND ID_Mark={$mark_id})";
+                                (SELECT id FROM CarEngineModelsEN WHERE Name='***')";
             $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
             if ($link) {
                 $engine_search .= ','.$link;
@@ -275,11 +425,39 @@ class SiteController extends Controller
         $command = $connection->createCommand($sql);
         $parts = $command->queryAll();
 
+        // пишем статистику
+        $stat = new StatPartsQuery();
+        $stat->partStatistic($detail_id == 'false' ? 0 : $detail_id,
+                             $mark_id == 'false' ? 0 : $mark_id,
+                             $model_id == 'false' ? 0 : $model_id,
+                             $body_id == 'false' ? 0 : $body_id,
+                             $engine_id == 'false' ? 0 : $engine_id,
+                             $number == 'false' ? '' : $number,
+                             \Yii::$app->user->identity->id);
+
+        // получаем Id запроса
+        $id = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatPartsFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($parts as $key => $value) {
+            if ($last_id != $value['ID_Firm']) {
+                $last_id = $value['ID_Firm'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        $stat->partStatistic($firm_list, $id);
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'success' => true,
-            'message' => $parts,
+            'success'  => true,
+            'message'  => $parts,
+            'query_id' => $id,
         ];
     }
 
@@ -341,10 +519,125 @@ class SiteController extends Controller
         $command = \Yii::$app->getDb()->createCommand($sql);
         $rows = $command->queryAll();
 
+        // пишем статистику
+        $stat = new StatServiceQuery();
+        $stat->serviceStatistic($id, \Yii::$app->user->identity->id);
+
+        // получаем Id запроса
+        $id_query = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
+
+        // формируем список фирм согласно их позиции
+        $stat = new StatServiceFirms();
+        $firm_list = [];
+        $last_id = 0;
+        foreach ($rows as $key => $value) {
+            if ($last_id != $value['ID_Firm']) {
+                $last_id = $value['ID_Firm'];
+                array_push($firm_list, $last_id);
+            }
+        }
+        $stat->serviceStatistic($firm_list, $id_query);
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'rows' => $rows,
+            'rows'     => $rows,
+            'query_id' => $id_query,
         ];
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
+     * @return array
+     */
+    public function actionStatPartOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatPartsFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if ($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_parts_firms: Фирма не открыта');
+
+            return [
+                'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
+     * @return array
+     */
+    public function actionStatFirmOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatFirmsFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if ($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_firm_firms: Фирма не открыта');
+
+            return [
+                'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     *
+     * @param int $firm_id
+     * @param int $query_id
+     *
+     * @return array
+     */
+    public function actionStatServiceOpenFirm($firm_id, $query_id)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $stat = StatServiceFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
+        $stat->opened = 1;
+
+        if ($stat->update()) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            Yii::error('stat_service_firms: Фирма не открыта');
+
+            return [
+                'success' => false,
+            ];
+        }
     }
 }
