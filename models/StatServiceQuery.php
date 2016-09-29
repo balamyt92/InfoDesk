@@ -2,20 +2,18 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "stat_service_query".
  *
- * @property integer $id
+ * @property int $id
  * @property string $date_time
- * @property integer $id_operator
- * @property integer $id_service
+ * @property int $id_operator
+ * @property int $id_service
  */
 class StatServiceQuery extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class StatServiceQuery extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,28 +32,29 @@ class StatServiceQuery extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'date_time' => 'Date Time',
+            'id'          => 'ID',
+            'date_time'   => 'Date Time',
             'id_operator' => 'Id Operator',
-            'id_service' => 'Id Service',
+            'id_service'  => 'Id Service',
         ];
     }
 
     /**
      * Функция записывает в базу данных запрос
-     * 
-     * @param  int $service_id  
-     * @param  int $operator_id 
-     * @return bool             
+     *
+     * @param int $service_id
+     * @param int $operator_id
+     *
+     * @return bool
      */
     public function serviceStatistic($service_id, $operator_id)
     {
-        $this->id_service  = $service_id;
+        $this->id_service = $service_id;
         $this->id_operator = $operator_id;
 
         if ($this->validate()) {

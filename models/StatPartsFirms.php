@@ -44,9 +44,11 @@ class StatPartsFirms extends \yii\db\ActiveRecord
     }
 
     /**
-     * Запись списка фирм запроса для статистики
-     * @param  array    $firm_list
-     * @param  int      $query_id
+     * Запись списка фирм запроса для статистики.
+     *
+     * @param array $firm_list
+     * @param int   $query_id
+     *
      * @return
      */
     public function partStatistic($firm_list, $query_id)

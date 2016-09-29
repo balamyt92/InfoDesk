@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\User;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -61,5 +61,4 @@ class StatisticController extends Controller
     {
         return $this->render('index');
     }
-
 }

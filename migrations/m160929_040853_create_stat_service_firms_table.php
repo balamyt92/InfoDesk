@@ -8,7 +8,7 @@ use yii\db\Migration;
 class m160929_040853_create_stat_service_firms_table extends Migration
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up()
     {
@@ -22,7 +22,7 @@ class m160929_040853_create_stat_service_firms_table extends Migration
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function down()
     {
