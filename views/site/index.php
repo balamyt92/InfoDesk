@@ -4,6 +4,7 @@
 $this->title = 'Call-центр';
 
 use app\assets\CallCenterAsset;
+
 CallCenterAsset::register($this);
 
 list(, $url) = Yii::$app->assetManager->publish('@bower/jqgrid');
