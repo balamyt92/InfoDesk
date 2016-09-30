@@ -345,18 +345,7 @@ var searchParts = {
         }).done(function(data){
             $('#detail-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).on("select2-selecting", function(e) {
@@ -377,18 +366,7 @@ var searchParts = {
         }).done(function(data){
             $('#mark-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).on("select2-selecting", function(e) {
@@ -427,18 +405,7 @@ var searchParts = {
         }).done(function(data){
             $('#model-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -453,18 +420,7 @@ var searchParts = {
         }).done(function(data){
             $('#body-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -483,18 +439,7 @@ var searchParts = {
         }).done(function(data){
             $('#engine-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -514,6 +459,23 @@ var searchParts = {
                 query_id : this.lastQuery.response.query_id,
             }
         });
+    },
+    filterSort : function(results, container, query) {
+        if(query.term != undefined && query.term.length > 0) {
+            return results.sort(function(a, b) {
+                let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+                let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+                if(indexA == indexB && indexA == 0) {
+                    return a.Name.length - b.Name.length;
+                } else {
+                    if(indexA == 0) return -100;
+                    if(indexB == 0) return 1;
+                    return a.Name > b.Name;
+                }
+            });
+        } else {
+            return results;
+        }
     },
 };
 /**
@@ -906,18 +868,7 @@ function ready() {
 
     $('#model-select').select2({
         data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {
@@ -938,18 +889,7 @@ function ready() {
 
     $('#body-select').select2({
         data : [],
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {
@@ -964,18 +904,7 @@ function ready() {
 
     $('#engine-select').select2({
         data : [],
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {
