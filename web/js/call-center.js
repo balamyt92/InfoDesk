@@ -26,6 +26,9 @@ var KEY = {
     END: 35,
     BACKSPACE: 8,
     DELETE: 46,
+    F1: 112,
+    F2: 113,
+    F3: 114,
 };
 
 /**
@@ -836,38 +839,29 @@ function openFirmInParts(id) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    // перемещение по фильтрам
-    if (event.keyCode == KEY.RIGHT && event.ctrlKey) {
-        if (result.firms) {
+    switch(event.keyCode) {
+        case KEY.F1 :
+            $($('#search-line').focus()).select();
+            result.firms   = true;
+            result.parts   = false;
+            result.service = false;
+            event.preventDefault();
+            break;
+        case KEY.F2 :
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
-            result.parts = true;
-            result.firms = false;
-        } else if (result.parts) {
+            result.firms   = false;
+            result.parts   = true;
+            result.service = false;
+            event.preventDefault();
+            break;
+        case KEY.F3 :
             $('#service').focus();
             result.service = true;
-            result.parts = false;
-        } else if (result.service) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.service = false;
-        }
-    }
-    if (event.keyCode == KEY.LEFT && event.ctrlKey) {
-        if (result.firms) {
-            $('#service').focus();
-            result.service = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.parts = false;
-        } else if (result.service) {
-            $(searchParts.currentSelect).select2("open");
-            $(searchParts.currentSelect).select2("close");
-            result.parts = true;
-            result.service = false;
-        }
+            result.firms   = false; 
+            result.parts   = false;
+            event.preventDefault();
+            break; 
     }
 }
 
