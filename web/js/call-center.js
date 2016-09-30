@@ -371,15 +371,6 @@ var searchParts = {
                 let currentRow = grid.jqGrid ('getGridParam', 'selrow');
                 let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
-                (currentRow == realRowInLasPage && currentPage == totalPages)
-                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
-
-                currentRow == 1
-                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
-
                 if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
                     let i = currentRow;
                     let oldID = grid.getCell(i, 'ID_Firm');
@@ -445,12 +436,23 @@ var searchParts = {
                 if(e.keyCode == KEY.END) {
                     if(currentPage == totalPages) {
                         grid.jqGrid('setSelection', realRowInLasPage, false);
+                        currentRow = realRowInLasPage;
                     } else {
                         grid.jqGrid('setSelection', rowInPage, false);
+                        currentRow = rowInPage;
                     }
                     grid.focus();
-                    searchParts.pagerToNext = true;
                 }
+
+
+                (currentRow == realRowInLasPage && currentPage == totalPages)
+                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
+
+                currentRow == rowInPage
+                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
+
+                currentRow == 1
+                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
             });
             this.gridCreate = true;
         }
