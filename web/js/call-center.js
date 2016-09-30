@@ -779,6 +779,8 @@ function gridKeyHandler(e, grid, obj) {
         obj.highlightRow();
         grid.focus();
         obj.pagerToBack = true;
+        currentPage = currentPage + 1;
+        currentRow = 1;
     }
     // если вниз и последняя строка последней страницы
     if(e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow && totalPages > 1){
@@ -793,6 +795,8 @@ function gridKeyHandler(e, grid, obj) {
         obj.highlightRow();
         grid.focus();
         obj.pagerToNext = true;
+        currentPage = currentPage - 1;
+        currentRow = rowInPage;
     }
 
     if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
@@ -819,6 +823,7 @@ function gridKeyHandler(e, grid, obj) {
             grid.jqGrid('setSelection', rowInPage, false);
             currentRow = rowInPage;
         }
+        obj.pagerToNext = true;
         grid.focus();
     }
 
