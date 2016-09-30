@@ -45,6 +45,10 @@ var searcherFirms = {
         response : false,
     },
     grid: false,
+
+    highlightRow: function () {
+        // заглушка
+    },
     render : function(data) {
         let grid = this.grid;
 
@@ -106,64 +110,7 @@ var searcherFirms = {
             });
 
             grid.bind('keydown', function (e) {
-                let rowInPage = grid.jqGrid('getGridParam','rowNum');
-                let totalPages = grid.jqGrid('getGridParam','lastpage');
-                let currentPage = grid.jqGrid('getGridParam','page');
-                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-                let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
-
-                // если вниз и последняя строка
-                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searcherFirms.pagerToNext) {
-                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-                // если вниз и последняя строка последней страницы
-                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searcherFirms.pagerLastRow){
-                    grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-                // если вверх и первая строка
-                if (e.keyCode == KEY.UP && currentPage > 1 && searcherFirms.pagerToBack) {
-                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', rowInPage, false);
-                    grid.focus();
-                }
-
-                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
-                    setTimeout(function () {
-                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 500);
-                }
-
-                if(e.keyCode == KEY.HOME) {
-                    if(currentPage > 1) {
-                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                        searchParts.highlightRow();
-                    }
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-
-                currentRow == realRowInPage
-                ? searcherFirms.pagerLastRow = true : searcherFirms.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searcherFirms.pagerToNext = true : searcherFirms.pagerToNext = false;
-
-                currentRow == 1
-                ? searcherFirms.pagerToBack = true : searcherFirms.pagerToBack = false;
-
-                if(e.keyCode == KEY.END) {
-                    if(currentPage == totalPages) {
-                        grid.jqGrid('setSelection', realRowInLasPage, false);
-                    } else {
-                        grid.jqGrid('setSelection', rowInPage, false);
-                    }
-                    grid.focus();
-                    searcherFirms.pagerToNext = true;
-                }
+                gridKeyHandler(e, grid, searcherFirms);
             });
 
             this.gridCreate = true;
@@ -365,94 +312,7 @@ var searchParts = {
             });
 
             grid.bind('keydown', function (e) {
-                let rowInPage = grid.jqGrid('getGridParam','rowNum');
-                let totalPages = grid.jqGrid('getGridParam','lastpage');
-                let currentPage = grid.jqGrid('getGridParam','page');
-                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-                let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
-
-                if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
-                    let i = currentRow;
-                    let oldID = grid.getCell(i, 'ID_Firm');
-                    let newID = oldID;
-
-                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
-                    else
-                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
-
-                    while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
-                        if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                            i++;
-                        else
-                            i--;
-                        newID = grid.getCell(i, 'ID_Firm');
-                    }
-                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                        grid.jqGrid('setSelection', i, false);
-                    else
-                        grid.jqGrid('setSelection', i, false);
-                    grid.focus();
-                }
-
-                // если вниз и последняя строка
-                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searchParts.pagerToNext) {
-                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                    searchParts.pagerToBack = true;
-                }
-                // если вниз и последняя строка последней страницы
-                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
-                    grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                }
-                if (e.keyCode == KEY.UP && currentPage > 1 && searchParts.pagerToBack) {
-                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', rowInPage, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                    searchParts.pagerToNext = true;
-                }
-
-                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
-                    setTimeout(function () {
-                        document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 500);
-                }
-
-                if(e.keyCode == KEY.HOME) {
-                    if(currentPage > 1) {
-                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                        searchParts.highlightRow();
-                    }
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-
-                if(e.keyCode == KEY.END) {
-                    if(currentPage == totalPages) {
-                        grid.jqGrid('setSelection', realRowInLasPage, false);
-                        currentRow = realRowInLasPage;
-                    } else {
-                        grid.jqGrid('setSelection', rowInPage, false);
-                        currentRow = rowInPage;
-                    }
-                    grid.focus();
-                }
-
-
-                (currentRow == realRowInLasPage && currentPage == totalPages)
-                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
-
-                currentRow == 1
-                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
+                gridKeyHandler(e, grid, searchParts);
             });
             this.gridCreate = true;
         }
@@ -670,6 +530,10 @@ var serviceSearch = {
         response : false,
     },
     grid: $("#service-result-search"),
+
+    highlightRow: function () {
+        // заглушка
+    },
     open: function (event) {
         if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
             this.openCategory();
@@ -735,6 +599,10 @@ var serviceSearch = {
                     openFirm(grid.getCell(id, 'ID_Firm'));
                     serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
+            });
+
+            grid.bind('keydown', function (e) {
+                gridKeyHandler(e, grid, serviceSearch);
             });
 
             this.gridCreate = true; // для того что бы делать это единожды
@@ -867,6 +735,103 @@ function keyNavigate(event) {
     }
 }
 
+/**
+ * Функция обработки хоткеев в грде резултатов поиска
+ * @param  {object} e    евент нажатия кнопки
+ * @param  {object} grid целевой грид
+ * @param  {object} obj  целевой объект
+ */
+function gridKeyHandler(e, grid, obj) {
+    let rowInPage = grid.jqGrid('getGridParam','rowNum');
+    let totalPages = grid.jqGrid('getGridParam','lastpage');
+    let currentPage = grid.jqGrid('getGridParam','page');
+    let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+    let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+
+    if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
+        let i = currentRow;
+        let oldID = grid.getCell(i, 'ID_Firm');
+        let newID = oldID;
+
+        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+        else
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+
+        while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
+            if(e.keyCode == KEY.DOWN && e.ctrlKey)
+                i++;
+            else
+                i--;
+            newID = grid.getCell(i, 'ID_Firm');
+        }
+        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+            grid.jqGrid('setSelection', i, false);
+        else
+            grid.jqGrid('setSelection', i, false);
+        grid.focus();
+    }
+
+    // если вниз и последняя строка
+    if (e.keyCode == KEY.DOWN && totalPages != currentPage && obj.pagerToNext) {
+        grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
+        grid.jqGrid('setSelection', 1, false);
+        obj.highlightRow();
+        grid.focus();
+        obj.pagerToBack = true;
+    }
+    // если вниз и последняя строка последней страницы
+    if(e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow && totalPages > 1){
+        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+        grid.jqGrid('setSelection', 1, false);
+        obj.highlightRow();
+        grid.focus();
+    }
+    if (e.keyCode == KEY.UP && currentPage > 1 && obj.pagerToBack) {
+        grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
+        grid.jqGrid('setSelection', rowInPage, false);
+        obj.highlightRow();
+        grid.focus();
+        obj.pagerToNext = true;
+    }
+
+    if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
+        setTimeout(function () {
+            document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+        }, 500);
+    }
+
+    if(e.keyCode == KEY.HOME) {
+        if(currentPage > 1) {
+            grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+            obj.highlightRow();
+            currentRow = 1;
+        }
+        grid.jqGrid('setSelection', 1, false);
+        grid.focus();
+    }
+
+    if(e.keyCode == KEY.END) {
+        if(currentPage == totalPages) {
+            grid.jqGrid('setSelection', realRowInLasPage, false);
+            currentRow = realRowInLasPage;
+        } else {
+            grid.jqGrid('setSelection', rowInPage, false);
+            currentRow = rowInPage;
+        }
+        grid.focus();
+    }
+
+
+    (currentRow == realRowInLasPage && currentPage == totalPages)
+    ? obj.pagerLastRow = true : obj.pagerLastRow = false;
+
+    currentRow == rowInPage
+    ? obj.pagerToNext = true : obj.pagerToNext = false;
+
+    currentRow == 1
+    ? obj.pagerToBack = true : obj.pagerToBack = false;
+}
 
 function ready() {
     // Инициализация
