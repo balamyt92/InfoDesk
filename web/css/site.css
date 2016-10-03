@@ -119,7 +119,7 @@ pre {
 }
 
 .table > tbody > tr.success > td {
-    background-color: #dff0d8;
+    background-color: #b9b0b0;
 }
 
 .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
@@ -132,9 +132,13 @@ pre {
     грязно и иначе ни как пока
 */
 .table > tbody > tr.success > td {
-    background-color: #dff0d8 !important;
+    background-color: #b9b0b0 !important;
 }
 
 .ui-jqgrid .ui-pg-button:hover {
     padding: 0 5px;
+}
+
+.table-bordered {
+    border: 1px solid #4e4e4e;
 }

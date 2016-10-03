@@ -201,17 +201,17 @@ var searchParts = {
                 color = !color;
             }
             if(color) {
-                this.grid.setCell(i,1,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,2,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,3,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,4,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,5,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,6,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,7,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,8,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,9,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,10,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,11,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,1,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,2,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,3,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,4,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,5,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,6,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,7,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,8,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,9,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,10,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,11,'',{ background:'#dff0d8'});
             }
         }
     },
@@ -277,7 +277,7 @@ var searchParts = {
             grid.jqGrid({
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'Приоритет', name: 'Priority', width: 5},
+                    {label: 'Приоритет', name: 'Priority', width: 7},
                     {label: 'ID', name: 'ID_Firm', width: 10},
                     {label: 'Марка', name: 'MarkName', width: 30},
                     {label: 'Модель', name: 'ModelName', width: 30},
