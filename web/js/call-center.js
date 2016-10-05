@@ -194,7 +194,7 @@ var searchParts = {
         let realRowInLasPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
         let firmID = this.grid.getCell(1, 'ID_Firm');
         let color = false;
-        for(let i = 2; currentPage < totalPages ? i < rowInPage : i < realRowInLasPage; i++) {
+        for(let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
             let newId = this.grid.getCell(i, 'ID_Firm');
             if (firmID != newId) {
                 firmID = newId;
@@ -356,7 +356,7 @@ var searchParts = {
                 searchParts.currentSelect = this;
             });
         });
-    },
+    },it
 
     getMarks :  function () {
         $.ajax({
