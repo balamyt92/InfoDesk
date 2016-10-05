@@ -24,7 +24,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
 <div class="row">
     <div class="col-md-3">
-        <h3>Поиск фирм</h3>
+        <label>Поиск фирм</label>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
@@ -35,7 +35,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
 
     <div class="col-md-4" onkeydown="searchParts.eventStatus(event);">
-        <h3>Поиск запчастей</h3>
+        <label>Поиск запчастей</label>
         <div>
             <label>Деталь</label>
             <input type="text" id="detail-select" style="width: 100%"/>
@@ -54,8 +54,8 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     </div>
 
     <div class="col-md-5">
-        <h3>Поиск сервисов</h3>
-        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
+        <label>Поиск сервисов</label>
+        <select class="form-control" name="service-list" id="service" size="37" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
             <?php
                 $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
                 foreach ($services as $value) {
