@@ -50,7 +50,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             <label>Номер</label>
             <input type="text" class="form-control" id="number">
         </div>
-        <button type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>
+        <button id="search-parts-button" type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>
     </div>
 
     <div class="col-md-5">

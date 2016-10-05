@@ -824,6 +824,15 @@ function ready() {
         searcherFirms.search();
     });
 
+    $('#search-parts-button').on( "keydown", function (e) {
+        if(e.keyCode == KEY.TAB) {
+            let detal = $('#detail-select');
+            detal.select2("open");
+            detal.select2("close");
+            e.preventDefault();
+        }
+    });
+
     result.firms = true;
     result.parts = false;
     result.service = false;
