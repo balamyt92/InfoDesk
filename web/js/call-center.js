@@ -730,7 +730,7 @@ function gridKeyHandler(e, grid, obj) {
         if(e.keyCode == KEY.DOWN && e.ctrlKey)
             grid.jqGrid('setSelection', i, false);
         else
-            grid.jqGrid('setSelection', i, false);
+            grid.jqGrid('setSelection', i + 1, false);
         grid.focus();
     }
 
