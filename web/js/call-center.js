@@ -356,7 +356,7 @@ var searchParts = {
                 searchParts.currentSelect = this;
             });
         });
-    },it
+    },
 
     getMarks :  function () {
         $.ajax({
