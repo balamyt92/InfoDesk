@@ -6,6 +6,7 @@ var result = {
     firms : false,
     parts : false,
     service : false,
+    opened : false,
 };
 
 var KEY = {
@@ -65,6 +66,7 @@ var searcherFirms = {
         result.service = false;
     },
     search : function() {
+        result.opened = true;
         this.modalWindow.modal({backdrop: false});
         let str = document.getElementById('search-line').value.toString().trim();
 
@@ -250,7 +252,7 @@ var searchParts = {
             console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
-
+        result.opened = true;
         $('#gbox_part-result-search').show();
         this.modalWindow.modal({backdrop: false});
 
@@ -525,6 +527,7 @@ var serviceSearch = {
 
     },
     searchService: function () {
+        result.opened = true;
         this.modalWindow.modal({backdrop: false});
         let grid = this.grid;
         $('#gbox_service-result-search').show();
@@ -671,29 +674,35 @@ function openFirmInParts(id) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    switch(event.keyCode) {
-        case KEY.F1 :
-            $($('#search-line').focus()).select();
-            result.firms   = true;
-            result.parts   = false;
-            result.service = false;
-            event.preventDefault();
-            break;
-        case KEY.F2 :
-            $(searchParts.currentSelect).select2("open");
-            $(searchParts.currentSelect).select2("close");
-            result.firms   = false;
-            result.parts   = true;
-            result.service = false;
-            event.preventDefault();
-            break;
-        case KEY.F3 :
-            $('#service').focus();
-            result.service = true;
-            result.firms   = false; 
-            result.parts   = false;
-            event.preventDefault();
-            break; 
+    if (!result.opened) {
+        switch(event.keyCode) {
+            case KEY.F1 :
+                $($('#search-line').focus()).select();
+                result.firms   = true;
+                result.parts   = false;
+                result.service = false;
+                event.preventDefault();
+                break;
+            case KEY.F2 :
+                $(searchParts.currentSelect).select2("open");
+                $(searchParts.currentSelect).select2("close");
+                result.firms   = false;
+                result.parts   = true;
+                result.service = false;
+                event.preventDefault();
+                break;
+            case KEY.F3 :
+                $('#service').focus();
+                result.service = true;
+                result.firms   = false;
+                result.parts   = false;
+                event.preventDefault();
+                break;
+        }
+    } else if (event.keyCode == KEY.F1 ||
+               event.keyCode == KEY.F2 ||
+               event.keyCode == KEY.F3 ) {
+        event.preventDefault()
     }
 }
 
@@ -874,6 +883,7 @@ function ready() {
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
         }
+        result.opened = false;
     });
 
     searchParts.getDetails();
