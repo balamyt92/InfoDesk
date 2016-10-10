@@ -897,12 +897,15 @@ function ready() {
         allowClear : true,
     }).on("select2-selecting", function(e) {
         searchParts.idModel = e.choice.id;
+        searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", true);
         searchParts.getBodys();
         searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idModel = false;
         searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", false);
         $('#body-select').select2("val", "");
         searchParts.getEngine();
@@ -918,6 +921,7 @@ function ready() {
         allowClear : true,
     }).on("select2-selecting", function(e) {
         searchParts.idBody = e.choice.id;
+        searchParts.idEngine = false;
         searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idBody = false;
