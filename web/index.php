@@ -8,7 +8,7 @@ if (YII_DEBUG) {
     require __DIR__.'/../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
     $config = HTMLPurifier_Config::createDefault();
     $config->set('Core.Encoding', 'UTF-8'); // replace with your encoding
-    $config->set('HTML.Doctype', 'HTML5'); // replace with your doctype
+    $config->set('HTML.Doctype', 'HTML 4.01 Transitional'); // replace with your doctype
     $purifier = new HTMLPurifier($config);
     $clean_html = $purifier->purify('');
 }
