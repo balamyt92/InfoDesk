@@ -37,7 +37,6 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Call-center', 'url' => ['/site/index']],
-        ['label' => 'Импорт', 'url' => ['/import/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
