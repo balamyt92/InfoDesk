@@ -719,7 +719,7 @@ function gridKeyHandler(e, grid, obj) {
     let currentRow = grid.jqGrid ('getGridParam', 'selrow');
     let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
-    if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
+    if(e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)){
         let i = currentRow;
         let oldID = grid.getCell(i, 'ID_Firm');
         let newID = oldID;
@@ -736,10 +736,12 @@ function gridKeyHandler(e, grid, obj) {
                 i--;
             newID = grid.getCell(i, 'ID_Firm');
         }
-        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+        if(e.keyCode == KEY.DOWN && e.ctrlKey) {
             grid.jqGrid('setSelection', i, false);
-        else
+            i === realRowInLasPage ? obj.pagerLastRow = true : obj.pagerLastRow = false;
+        } else {
             grid.jqGrid('setSelection', i + 1, false);
+        }
         grid.focus();
     }
 
@@ -871,14 +873,17 @@ function ready() {
 
     $('#modalResult').on('hidden.bs.modal', function () {
         if(result.service) {
+            serviceSearch.pagerLastRow = false;
             $('#service').focus();
             $('#gbox_service-result-search').hide();
         }
         if(result.firms) {
+            searcherFirms.pagerLastRow = false;
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
+            searchParts.pagerLastRow = false;
             $('#gbox_part-result-search').hide();
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
