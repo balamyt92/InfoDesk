@@ -467,12 +467,15 @@ var searchParts = {
             return results.sort(function(a, b) {
                 let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
                 let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+
+                let x = a.Name.toLowerCase();
+                let y = b.Name.toLowerCase();
                 if(indexA == indexB && indexA == 0) {
-                    return a.Name.length - b.Name.length;
+                    return x < y ? -1 : x > y ? 1 : 0;
                 } else {
-                    if(indexA == 0) return -100;
+                    if(indexA == 0) return -1;
                     if(indexB == 0) return 1;
-                    return a.Name > b.Name;
+                    return x < y ? -1 : x > y ? 1 : 0;
                 }
             });
         } else {
