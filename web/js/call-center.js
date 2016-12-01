@@ -467,12 +467,15 @@ var searchParts = {
             return results.sort(function(a, b) {
                 let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
                 let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+
+                let x = a.Name.toLowerCase();
+                let y = b.Name.toLowerCase();
                 if(indexA == indexB && indexA == 0) {
-                    return a.Name.length - b.Name.length;
+                    return x < y ? -1 : x > y ? 1 : 0;
                 } else {
-                    if(indexA == 0) return -100;
+                    if(indexA == 0) return -1;
                     if(indexB == 0) return 1;
-                    return a.Name > b.Name;
+                    return x < y ? -1 : x > y ? 1 : 0;
                 }
             });
         } else {
@@ -719,7 +722,7 @@ function gridKeyHandler(e, grid, obj) {
     let currentRow = grid.jqGrid ('getGridParam', 'selrow');
     let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
-    if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
+    if(e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)){
         let i = currentRow;
         let oldID = grid.getCell(i, 'ID_Firm');
         let newID = oldID;
@@ -736,10 +739,12 @@ function gridKeyHandler(e, grid, obj) {
                 i--;
             newID = grid.getCell(i, 'ID_Firm');
         }
-        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+        if(e.keyCode == KEY.DOWN && e.ctrlKey) {
             grid.jqGrid('setSelection', i, false);
-        else
+            i === realRowInLasPage ? obj.pagerLastRow = true : obj.pagerLastRow = false;
+        } else {
             grid.jqGrid('setSelection', i + 1, false);
+        }
         grid.focus();
     }
 
@@ -871,14 +876,17 @@ function ready() {
 
     $('#modalResult').on('hidden.bs.modal', function () {
         if(result.service) {
+            serviceSearch.pagerLastRow = false;
             $('#service').focus();
             $('#gbox_service-result-search').hide();
         }
         if(result.firms) {
+            searcherFirms.pagerLastRow = false;
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
+            searchParts.pagerLastRow = false;
             $('#gbox_part-result-search').hide();
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
