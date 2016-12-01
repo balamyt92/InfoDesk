@@ -6,10 +6,12 @@ use app\models\Firms;
 use app\models\FirmsSearch;
 use app\models\User;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * FirmsController implements the CRUD actions for Firms model.
@@ -30,7 +32,6 @@ class FirmsController extends Controller
                         'allow'   => true,
                     ],
                     [
-                        'actions'       => ['logout', 'index', 'update', 'delete', 'view', 'create'],
                         'allow'         => true,
                         'roles'         => ['@'],
                         'matchCallback' => function ($rule, $action) {
@@ -143,6 +144,27 @@ class FirmsController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionSearch($q = null, $id = null)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'text' => '']];
+        if (!is_null($q)) {
+            $query = new Query();
+            $query->select('id, name AS text, address')
+                ->from('Firms')
+                ->where(['like', 'name', $q])
+                ->orderBy(['name' => SORT_ASC])
+                ->limit(50);
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+            $out['results'] = array_values($data);
+        }
+        elseif ($id > 0) {
+            $out['results'] = ['id' => $id, 'text' => Firms::find($id)->name];
+        }
+        return $out;
     }
 
     /**

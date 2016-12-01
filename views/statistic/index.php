@@ -1,237 +1,205 @@
 <?php
-/* @var $this yii\web\View */
+/*
+ * @var $this yii\web\View
+ * @var $model \app\models\statistic\ParamForm
+ */
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+use yii\web\JsExpression;
 
 $this->title = 'Статистика';
 
-use yii\data\SqlDataProvider;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
+\app\assets\StatisticAsset::register($this);
 
-$countPartsQuery = Yii::$app->db->createCommand('
-    SELECT count(*) FROM stat_parts_query
-')->queryScalar();
-
-$providerPartsQuery = new SqlDataProvider([
-    'sql'        => 'SELECT * FROM stat_parts_query',
-    'params'     => [],
-    'totalCount' => $countPartsQuery,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'date_time',
-        ],
-    ],
-]);
-
-$countPartsFirms = Yii::$app->db->createCommand('
-    SELECT count(*) FROM (SELECT id_firm, SUM(opened) as total FROM stat_parts_firms GROUP BY id_firm) cnt
-')->queryScalar();
-
-$providerPartsFirms = new SqlDataProvider([
-    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_parts_firms GROUP BY id_firm',
-    'params'     => [],
-    'totalCount' => $countPartsFirms,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'id_firm' => [
-                'asc'     => ['id_firm' => SORT_ASC],
-                'desc'    => ['id_firm' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Фирма',
-            ],
-            'total' => [
-                'asc'     => ['total' => SORT_ASC],
-                'desc'    => ['total' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Названа раз',
-            ],
-        ],
-        'defaultOrder' => ['id_firm' => SORT_ASC],
-    ],
-]);
-
-
-$countFirmsQuery = Yii::$app->db->createCommand('
-    SELECT count(*) FROM stat_firms_query
-')->queryScalar();
-
-$providerFirmsQuery = new SqlDataProvider([
-    'sql'        => 'SELECT * FROM stat_firms_query',
-    'params'     => [],
-    'totalCount' => $countFirmsQuery,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'date_time',
-        ],
-    ],
-]);
-
-$countFirmsFirms = Yii::$app->db->createCommand('
-    SELECT count(*) FROM (SELECT id_firm, SUM(opened) as total FROM stat_firms_firms GROUP BY id_firm) cnt
-')->queryScalar();
-
-$providerFirmsFirms = new SqlDataProvider([
-    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_firms_firms GROUP BY id_firm',
-    'params'     => [],
-    'totalCount' => $countFirmsFirms,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'id_firm' => [
-                'asc'     => ['id_firm' => SORT_ASC],
-                'desc'    => ['id_firm' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Фирма',
-            ],
-            'total' => [
-                'asc'     => ['total' => SORT_ASC],
-                'desc'    => ['total' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Названа раз',
-            ],
-        ],
-        'defaultOrder' => ['id_firm' => SORT_ASC],
-    ],
-]);
-
-$countServiceQuery = Yii::$app->db->createCommand('
-    SELECT count(*) FROM stat_service_query
-')->queryScalar();
-
-$providerServiceQuery = new SqlDataProvider([
-    'sql'        => 'SELECT * FROM stat_service_query',
-    'params'     => [],
-    'totalCount' => $countServiceQuery,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'date_time',
-        ],
-    ],
-]);
-
-$countServiceFirms = Yii::$app->db->createCommand('
-    SELECT count(*) FROM (SELECT id_firm, SUM(opened) as total FROM stat_service_firms GROUP BY id_firm) cnt
-')->queryScalar();
-
-$providerServiceFirms = new SqlDataProvider([
-    'sql'        => 'SELECT id_firm, SUM(opened) as total FROM stat_service_firms GROUP BY id_firm',
-    'params'     => [],
-    'totalCount' => $countServiceFirms,
-    'pagination' => [
-        'pageSize' => 10,
-    ],
-    'sort' => [
-        'attributes' => [
-            'id_firm' => [
-                'asc'     => ['id_firm' => SORT_ASC],
-                'desc'    => ['id_firm' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Фирма',
-            ],
-            'total' => [
-                'asc'     => ['total' => SORT_ASC],
-                'desc'    => ['total' => SORT_DESC],
-                'default' => SORT_ASC,
-                'label'   => 'Названа раз',
-            ],
-        ],
-        'defaultOrder' => ['id_firm' => SORT_ASC],
-    ],
-]);
 ?>
 
-<div class="row" style="margin-top: 20px">
-    <div class="col-sm-12">
+<div class="row" style="margin-top: 20px;">
+    <div class="col-sm-4">
         <div class="panel panel-default">
-            <div class="panel-heading">Статистика поиска запчастей</div>
+            <div class="panel-heading">
+                Элементы управления
+            </div>
             <div class="panel-body">
-                <?php
-                Pjax::begin();
-                echo GridView::widget([
-                'dataProvider' => $providerPartsQuery,
-                ]);
-                Pjax::end();
+            <?php $form = ActiveForm::begin([
+                'method' => 'get'
+            ]);
+                $url = \yii\helpers\Url::to(['firms/search']);
+            ?>
 
-                Pjax::begin();
-                echo GridView::widget([
-                    'dataProvider' => $providerPartsFirms,
-                    'columns'      => [
-                        ['class' => 'yii\grid\SerialColumn'],
 
-                        'id_firm',
-                        'total',
+                <?= $form->field($model, 'id_firm')->widget(\kartik\select2\Select2::className(), [
+                    'initValueText' => empty($model->id_firm) ? '' : \app\models\Firms::findOne($model->id_firm)->Name,
+                    'options' => ['placeholder' => 'Поиск фирмы...'],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'minimumInputLength' => 2,
+                        'language' => [
+                            'errorLoading' => new JsExpression("function () { return 'Подождите...'; }"),
+                        ],
+                        'ajax' => [
+                            'url' => $url,
+                            'dataType' => 'json',
+                            'data' => new JsExpression('function(params) {return {q:params.term, page: params.address}; }'),
+                            'cache' => true
+                        ],
+                        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                        'templateResult' => new JsExpression('
+                            function(firm) {
+                                firm.address = firm.address ? firm.address : "";
+                                return `${firm.text} ${firm.address}`; 
+                            }'),
+                        'templateSelection' => new JsExpression('
+                            function (firm) {
+                                firm.address = firm.address ? firm.address : "";
+                                return `${firm.text} ${firm.address}`; 
+                            }'),
                     ],
-                ]);
-                Pjax::end();
-                ?>
+                ]) ?>
+
+                <?= $form->field($model, 'sections')->checkboxList(
+                    ['Запчасти', 'Сервисы', 'Поиск по фирмам']
+                ) ?>
+
+
+                <?= $form->field($model, 'operators')->checkboxList(
+                    \yii\helpers\ArrayHelper::map(\app\models\User::find()->all(), 'id', 'username')) ?>
+
+                <?= $form->field($model, 'date_start')->widget(\kartik\datetime\DateTimePicker::className(), [
+                    'options' => ['placeholder' => 'Выберите начальную дату...'],
+                    'language' => 'ru',
+                    'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
+                    'pluginOptions' => [
+                        'format' => 'yyyy-m-d h:i:s',
+                        'todayHighlight' => true
+                    ]]) ?>
+
+                <?= $form->field($model, 'date_end')->widget(\kartik\datetime\DateTimePicker::className(), [
+                    'options' => ['placeholder' => 'Выберите начальную дату...'],
+                    'language' => 'ru',
+                    'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
+                    'pluginOptions' => [
+                        'format' => 'yyyy-m-d h:i:s',
+                        'todayHighlight' => true
+                    ]]) ?>
+
+                <div class="form-group">
+                    <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
+                </div>
+
+            <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-sm-6">
+    <?php
+    $sections = isset($model->sections) ? $model->sections : []
+    ?>
+
+    <div class="col-sm-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Статистика поиска запчастей</div>
+            <div class="panel-body">
+                Таблица списка запросов по запчастям
+                <?php
+                   if(in_array('0', $sections)) {
+                    echo "Запчасти!";
+                   }
+                   echo in_array('0', $sections);
+                ?>
+            </div>
+        </div>
         <div class="panel panel-default">
             <div class="panel-heading">Статистика поиска фирм</div>
             <div class="panel-body">
                 <?php
-                Pjax::begin();
-                echo GridView::widget([
-                'dataProvider' => $providerFirmsQuery,
-                ]);
-                Pjax::end();
-
-                Pjax::begin();
-                echo GridView::widget([
-                    'dataProvider' => $providerFirmsFirms,
-                    'columns'      => [
-                        ['class' => 'yii\grid\SerialColumn'],
-
-                        'id_firm',
-                        'total',
-                    ],
-                ]);
-                Pjax::end();
+                    echo 'Общая стата';
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-sm-6">
+        <?php
+            if(in_array('2', $sections)) {
+                $id_firm = $model->id_firm ? ' AND f.id_firm='. $model->id_firm . ' ' : ' ';
+                $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
+                $sql_firms = "
+                            SELECT 
+                                q.date_time,
+                                u.username,
+                                q.search,
+                                f.position + 1 as position,
+                                f.opened
+                            FROM stat_firms_query as q
+                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
+                            WHERE 
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
+                                {$id_firm} 
+                            GROUP BY q.id";
+
+                $count = Yii::$app->db->createCommand("
+                            SELECT 
+                              COUNT(DISTINCT q.id)
+                            FROM stat_firms_query as q
+                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                            WHERE 
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$id_firm}",
+                    [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ])->queryScalar();
+
+                $dataProvider = new \yii\data\SqlDataProvider([
+                    'sql' => $sql_firms,
+                    'params' => [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ],
+                    'totalCount' => $count,
+                    'pagination' => [
+                        'pageSize' =>10,
+                    ],
+                ]);
+
+                Pjax::begin();
+                echo kartik\grid\GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+
+                        'date_time',
+                        'username',
+                        'search',
+                        'position',
+                        'opened'
+                    ],
+                    'pjax'=>true,
+                    'panel'=>[
+                        'type'=>'default',
+                        'heading'=>'Поиск по фирмам'
+                    ],
+                    'toolbar'=> [
+                        '{export}',
+                        '{toggleData}',
+                    ]
+                ]);
+                Pjax::end();
+            }
+        ?>
         <div class="panel panel-default">
             <div class="panel-heading">Статистика поиска сервисов</div>
             <div class="panel-body">
+                Табилица списка запростов по сервисам
+                <pre>
                 <?php
-                Pjax::begin();
-                echo GridView::widget([
-                'dataProvider' => $providerServiceQuery,
-                ]);
-                Pjax::end();
-
-                Pjax::begin();
-                echo GridView::widget([
-                    'dataProvider' => $providerServiceFirms,
-                    'columns'      => [
-                        ['class' => 'yii\grid\SerialColumn'],
-
-                        'id_firm',
-                        'total',
-                    ],
-                ]);
-                Pjax::end();
+                    if(in_array('1', $sections)) {
+                        echo "Сервисы!";
+                    }
                 ?>
+                </pre>
             </div>
         </div>
     </div>
