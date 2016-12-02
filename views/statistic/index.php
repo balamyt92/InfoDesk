@@ -95,22 +95,114 @@ $this->title = 'Статистика';
     </div>
 
     <?php
-    $sections = isset($model->sections) ? $model->sections : []
+    $sections = isset($model->sections) ? $model->sections : [];
+    $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
     ?>
 
     <div class="col-sm-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">Статистика поиска запчастей</div>
-            <div class="panel-body">
-                Таблица списка запросов по запчастям
-                <?php
-                   if(in_array('0', $sections)) {
-                    echo "Запчасти!";
-                   }
-                   echo in_array('0', $sections);
-                ?>
-            </div>
-        </div>
+        <?php
+            if(in_array('0', $sections)) {
+                $setting_parts = [
+                    'pjax'=>true,
+                    'panel'=>[
+                        'type'=>'default',
+                        'heading'=>'Поиск по запчастям'
+                    ],
+                ];
+
+                $id_firm = '';
+                $position = '';
+                $columns = [
+                    'date_time',
+                    'username',
+                ];
+
+                if($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                    $position = ', f.position + 1 as position, f.opened ';
+                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'opened',
+                        'pageSummary' => true,
+                    ];
+                    $setting_parts['showPageSummary'] = true;
+                }
+
+                $sql_parts = "
+                            SELECT
+                                q.date_time,
+                                u.username
+                                {$position}
+                            FROM stat_parts_query as q
+                            LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
+                                {$id_firm}
+                            GROUP BY q.id";
+
+                $count = Yii::$app->db->createCommand("
+                            SELECT
+                              COUNT(DISTINCT q.id)
+                            FROM stat_parts_query as q
+                            LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$id_firm}",
+                    [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ])->queryScalar();
+
+                if($model->id_firm) {
+                    $opened_firms = Yii::$app->db->createCommand("
+                                SELECT
+                                    sum(f.opened)
+                                FROM stat_parts_query as q
+                                LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
+                                LEFT JOIN user as u ON (q.id_operator = u.id)
+                                WHERE
+                                    (q.date_time BETWEEN :d_start AND :d_end)
+                                    {$operators}
+                                    {$id_firm}",
+                        [
+                            ':d_start' => $model->date_start,
+                            ':d_end' => $model->date_end
+                        ])->queryScalar();
+                } else {
+                    $opened_firms = 'не зивестно сколько';
+                }
+
+                $dataProviderParts = new \yii\data\SqlDataProvider([
+                    'sql' => $sql_parts,
+                    'params' => [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ],
+                    'totalCount' => $count,
+                    'pagination' => [
+                        'pageSize' =>10,
+                    ],
+                ]);
+
+                $setting_parts['dataProvider'] = $dataProviderParts;
+                $setting_parts['columns'] = $columns;
+                $setting_parts['toolbar'] = [
+                    "<span class=\"btn-group\">
+                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
+                    </span>",
+                    '{export}',
+                    '{toggleData}',
+                ];
+
+                Pjax::begin();
+                echo kartik\grid\GridView::widget($setting_parts);
+                Pjax::end();
+
+            }
+        ?>
         <?php
             if(in_array('2', $sections)) {
                 $setting_firms = [
@@ -128,8 +220,6 @@ $this->title = 'Статистика';
                     'username',
                     'search',
                 ];
-
-                $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
 
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
@@ -181,8 +271,7 @@ $this->title = 'Статистика';
                                 WHERE
                                     (q.date_time BETWEEN :d_start AND :d_end)
                                     {$operators}
-                                    {$id_firm}
-                                GROUP BY q.id",
+                                    {$id_firm}",
                         [
                             ':d_start' => $model->date_start,
                             ':d_end' => $model->date_end
@@ -191,7 +280,7 @@ $this->title = 'Статистика';
                     $opened_firms = 'не зивестно сколько';
                 }
 
-                $dataProvider = new \yii\data\SqlDataProvider([
+                $dataProviderFirms = new \yii\data\SqlDataProvider([
                     'sql' => $sql_firms,
                     'params' => [
                         ':d_start' => $model->date_start,
@@ -203,7 +292,7 @@ $this->title = 'Статистика';
                     ],
                 ]);
 
-                $setting_firms['dataProvider'] = $dataProvider;
+                $setting_firms['dataProvider'] = $dataProviderFirms;
                 $setting_firms['columns'] = $columns;
                 $setting_firms['toolbar'] = [
                     "<span class=\"btn-group\">
