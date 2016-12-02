@@ -111,46 +111,85 @@ $this->title = 'Статистика';
                 ?>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">Статистика поиска фирм</div>
-            <div class="panel-body">
-                <?php
-                    echo 'Общая стата';
-                ?>
-            </div>
-        </div>
         <?php
             if(in_array('2', $sections)) {
-                $id_firm = $model->id_firm ? ' AND f.id_firm='. $model->id_firm . ' ' : ' ';
+                $setting_firms = [
+                    'pjax'=>true,
+                    'panel'=>[
+                        'type'=>'default',
+                        'heading'=>'Поиск по фирмам'
+                    ],
+                ];
+
+                $id_firm = '';
+                $position = '';
+                $columns = [
+                    'date_time',
+                    'username',
+                    'search',
+                ];
+
                 $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
+
+                if($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                    $position = ', f.position + 1 as position, f.opened ';
+                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'opened',
+                        'pageSummary' => true,
+                    ];
+                    $setting_firms['showPageSummary'] = true;
+                }
+
                 $sql_firms = "
-                            SELECT 
+                            SELECT
                                 q.date_time,
                                 u.username,
-                                q.search,
-                                f.position + 1 as position,
-                                f.opened
+                                q.search
+                                {$position}
                             FROM stat_firms_query as q
                             LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
                             LEFT JOIN user as u ON (q.id_operator = u.id)
-                            WHERE 
+                            WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
                                 {$operators}
-                                {$id_firm} 
+                                {$id_firm}
                             GROUP BY q.id";
 
                 $count = Yii::$app->db->createCommand("
-                            SELECT 
+                            SELECT
                               COUNT(DISTINCT q.id)
                             FROM stat_firms_query as q
                             LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
-                            WHERE 
+                            WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
                         ':d_end' => $model->date_end
                     ])->queryScalar();
+
+                if($model->id_firm) {
+                    $opened_firms = Yii::$app->db->createCommand("
+                                SELECT
+                                    sum(f.opened)
+                                FROM stat_firms_query as q
+                                LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                                LEFT JOIN user as u ON (q.id_operator = u.id)
+                                WHERE
+                                    (q.date_time BETWEEN :d_start AND :d_end)
+                                    {$operators}
+                                    {$id_firm}
+                                GROUP BY q.id",
+                        [
+                            ':d_start' => $model->date_start,
+                            ':d_end' => $model->date_end
+                        ])->queryScalar();
+                } else {
+                    $opened_firms = 'не зивестно сколько';
+                }
 
                 $dataProvider = new \yii\data\SqlDataProvider([
                     'sql' => $sql_firms,
@@ -164,28 +203,18 @@ $this->title = 'Статистика';
                     ],
                 ]);
 
-                Pjax::begin();
-                echo kartik\grid\GridView::widget([
-                    'dataProvider' => $dataProvider,
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
+                $setting_firms['dataProvider'] = $dataProvider;
+                $setting_firms['columns'] = $columns;
+                $setting_firms['toolbar'] = [
+                    "<span class=\"btn-group\">
+                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
+                    </span>",
+                    '{export}',
+                    '{toggleData}',
+                ];
 
-                        'date_time',
-                        'username',
-                        'search',
-                        'position',
-                        'opened'
-                    ],
-                    'pjax'=>true,
-                    'panel'=>[
-                        'type'=>'default',
-                        'heading'=>'Поиск по фирмам'
-                    ],
-                    'toolbar'=> [
-                        '{export}',
-                        '{toggleData}',
-                    ]
-                ]);
+                Pjax::begin();
+                echo kartik\grid\GridView::widget($setting_firms);
                 Pjax::end();
             }
         ?>
