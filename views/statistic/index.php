@@ -115,6 +115,11 @@ $this->title = 'Статистика';
                 $columns = [
                     'date_time',
                     'username',
+                    'detail',
+                    'mark',
+                    'model',
+                    'body',
+                    'engine'
                 ];
 
                 if($model->id_firm) {
@@ -132,16 +137,26 @@ $this->title = 'Статистика';
                 $sql_parts = "
                             SELECT
                                 q.date_time,
-                                u.username
+                                u.username,
+                                ma.Name as mark,
+                                d.Name as detail,
+                                mo.Name as model,
+                                b.Name as boyd,
+                                e.Name as engine
                                 {$position}
                             FROM stat_parts_query as q
                             LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
                             LEFT JOIN user as u ON (q.id_operator = u.id)
+                            LEFT JOIN CarMarksEN as ma ON (ma.id = q.mark_id)
+                            LEFT JOIN CarENDetailNames as d ON (d.id = q.detail_id)
+                            LEFT JOIN CarModelsEN as mo ON (mo.id = q.model_id)
+                            LEFT JOIN CarBodyModelsEN as b ON (b.id = q.body_id)
+                            LEFT JOIN CarEngineModelsEN as e ON (e.id = q.engine_id)
                             WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
                                 {$operators}
                                 {$id_firm}
-                            GROUP BY q.id";
+                            ";
 
                 $count = Yii::$app->db->createCommand("
                             SELECT
