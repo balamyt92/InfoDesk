@@ -122,6 +122,7 @@ $this->title = 'Статистика';
                     'engine'
                 ];
 
+                $order_parts = " ORDER BY q.id";
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
                     $position = ', f.position + 1 as position, f.opened ';
@@ -132,6 +133,7 @@ $this->title = 'Статистика';
                         'pageSummary' => true,
                     ];
                     $setting_parts['showPageSummary'] = true;
+                    $order_parts = "";
                 }
 
                 $sql_parts = "
@@ -156,7 +158,7 @@ $this->title = 'Статистика';
                                 (q.date_time BETWEEN :d_start AND :d_end)
                                 {$operators}
                                 {$id_firm}
-                            ";
+                            {$order_parts}";
 
                 $count = Yii::$app->db->createCommand("
                             SELECT
@@ -174,7 +176,7 @@ $this->title = 'Статистика';
                 if($model->id_firm) {
                     $opened_firms = Yii::$app->db->createCommand("
                                 SELECT
-                                    sum(f.opened)
+                                    COALESCE(sum(f.opened),0)
                                 FROM stat_parts_query as q
                                 LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
                                 LEFT JOIN user as u ON (q.id_operator = u.id)
@@ -187,7 +189,7 @@ $this->title = 'Статистика';
                             ':d_end' => $model->date_end
                         ])->queryScalar();
                 } else {
-                    $opened_firms = 'не зивестно сколько';
+                    $opened_firms = 'не известно сколько';
                 }
 
                 $dataProviderParts = new \yii\data\SqlDataProvider([
@@ -279,7 +281,7 @@ $this->title = 'Статистика';
                 if($model->id_firm) {
                     $opened_firms = Yii::$app->db->createCommand("
                                 SELECT
-                                    sum(f.opened)
+                                    COALESCE(sum(f.opened),0)
                                 FROM stat_firms_query as q
                                 LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
                                 LEFT JOIN user as u ON (q.id_operator = u.id)
@@ -292,7 +294,7 @@ $this->title = 'Статистика';
                             ':d_end' => $model->date_end
                         ])->queryScalar();
                 } else {
-                    $opened_firms = 'не зивестно сколько';
+                    $opened_firms = 'не известно сколько';
                 }
 
                 $dataProviderFirms = new \yii\data\SqlDataProvider([
@@ -322,18 +324,111 @@ $this->title = 'Статистика';
                 Pjax::end();
             }
         ?>
-        <div class="panel panel-default">
-            <div class="panel-heading">Статистика поиска сервисов</div>
-            <div class="panel-body">
-                Табилица списка запростов по сервисам
-                <pre>
-                <?php
-                    if(in_array('1', $sections)) {
-                        echo "Сервисы!";
-                    }
-                ?>
-                </pre>
-            </div>
-        </div>
+
+        <?php
+            if(in_array('1', $sections)) {
+                $setting_service = [
+                    'pjax'=>true,
+                    'panel'=>[
+                        'type'=>'default',
+                        'heading'=>'Поиск по сервисам'
+                    ],
+                ];
+
+                $id_firm = '';
+                $position = '';
+                $columns = [
+                    'date_time',
+                    'username',
+                    'service',
+                ];
+
+                if($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                    $position = ', f.position + 1 as position, f.opened ';
+                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'opened',
+                        'pageSummary' => true,
+                    ];
+                    $setting_service['showPageSummary'] = true;
+                }
+
+                $sql_service = "
+                            SELECT
+                                q.date_time,
+                                u.username,
+                                s.Name as service
+                                {$position}
+                            FROM stat_service_query as q
+                            LEFT JOIN stat_service_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
+                            LEFT JOIN Services as s ON (s.id = q.id_service)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
+                                {$id_firm}
+                            GROUP BY q.id";
+
+                $count = Yii::$app->db->createCommand("
+                            SELECT
+                              COUNT(DISTINCT q.id)
+                            FROM stat_service_query as q
+                            LEFT JOIN stat_service_firms as f ON (q.id = f.id_query)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$id_firm}",
+                    [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ])->queryScalar();
+
+                if($model->id_firm) {
+                    $opened_firms = Yii::$app->db->createCommand("
+                                SELECT
+                                    COALESCE(sum(f.opened),0)
+                                FROM stat_service_query as q
+                                LEFT JOIN stat_service_firms as f ON (q.id = f.id_query)
+                                LEFT JOIN user as u ON (q.id_operator = u.id)
+                                WHERE
+                                    (q.date_time BETWEEN :d_start AND :d_end)
+                                    {$operators}
+                                    {$id_firm}",
+                        [
+                            ':d_start' => $model->date_start,
+                            ':d_end' => $model->date_end
+                        ])->queryScalar();
+                } else {
+                    $opened_firms = 'не известно сколько';
+                }
+
+                $dataProviderService = new \yii\data\SqlDataProvider([
+                    'sql' => $sql_service,
+                    'params' => [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ],
+                    'totalCount' => $count,
+                    'pagination' => [
+                        'pageSize' =>10,
+                    ],
+                ]);
+
+                $setting_service['dataProvider'] = $dataProviderService;
+                $setting_service['columns'] = $columns;
+                $setting_service['toolbar'] = [
+                    "<span class=\"btn-group\">
+                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
+                    </span>",
+                    '{export}',
+                    '{toggleData}',
+                ];
+
+                Pjax::begin();
+                echo kartik\grid\GridView::widget($setting_service);
+                Pjax::end();
+            }
+        ?>
     </div>
 </div>
