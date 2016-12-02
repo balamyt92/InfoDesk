@@ -73,7 +73,9 @@ $this->title = 'Статистика';
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
                         'format' => 'yyyy-m-d h:i:s',
-                        'todayHighlight' => true
+                        'todayHighlight' => true,
+                        'minView' => 1,
+                        'autoclose' => true,
                     ]]) ?>
 
                 <?= $form->field($model, 'date_end')->widget(\kartik\datetime\DateTimePicker::className(), [
@@ -82,7 +84,9 @@ $this->title = 'Статистика';
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
                         'format' => 'yyyy-m-d h:i:s',
-                        'todayHighlight' => true
+                        'todayHighlight' => true,
+                        'minView' => 1,
+                        'autoclose' => true,
                     ]]) ?>
 
                 <div class="form-group">
