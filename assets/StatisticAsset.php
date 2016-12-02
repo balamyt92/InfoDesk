@@ -8,6 +8,7 @@ class StatisticAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        'css/statistic.css',
     ];
     public $js = [
         'js/statistic.js',
