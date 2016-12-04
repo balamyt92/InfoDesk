@@ -128,7 +128,7 @@ $this->title = 'Статистика';
                     'engine'
                 ];
 
-                $order_parts = " ORDER BY q.id";
+                $group_parts = " GROUP BY q.id";
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
                     $position = ', f.position + 1 as position, f.opened ';
@@ -139,7 +139,7 @@ $this->title = 'Статистика';
                         'pageSummary' => true,
                     ];
                     $setting_parts['showPageSummary'] = true;
-                    $order_parts = "";
+                    $group_parts = "";
                 }
 
                 $sql_parts = "
@@ -164,7 +164,7 @@ $this->title = 'Статистика';
                                 (q.date_time BETWEEN :d_start AND :d_end)
                                 {$operators}
                                 {$id_firm}
-                            {$order_parts}";
+                            {$group_parts}";
 
                 $count = Yii::$app->db->createCommand("
                             SELECT
