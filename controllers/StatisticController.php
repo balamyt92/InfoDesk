@@ -68,6 +68,13 @@ class StatisticController extends Controller
                 'model' => $model
             ]);
         } else {
+            $model->operators = [
+                0 => '2',
+                1 => '3',
+                2 => '4',
+                3 => '5',
+                4 => '6',
+            ];
             return $this->render('index', [
                 'model' => $model
             ]);
