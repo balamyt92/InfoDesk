@@ -76,6 +76,7 @@ $this->title = 'Статистика';
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
+                        'initialDate' => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
                     ]]) ?>
 
                 <?= $form->field($model, 'date_end')->widget(\kartik\datetime\DateTimePicker::className(), [
@@ -87,6 +88,7 @@ $this->title = 'Статистика';
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
+                        'initialDate' => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
                     ]]) ?>
 
                 <div class="form-group">
