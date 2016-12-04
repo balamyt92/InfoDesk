@@ -69,10 +69,10 @@ $this->title = 'Статистика';
 
                 <?= $form->field($model, 'date_start')->widget(\kartik\datetime\DateTimePicker::className(), [
                     'options' => ['placeholder' => 'Выберите начальную дату...'],
-                    'language' => 'ru',
+                    'language' => 'en',
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'yyyy-m-d h:i:s',
+                        'format' => 'dd-M-yyyy hh:ii:ss',
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
@@ -81,10 +81,10 @@ $this->title = 'Статистика';
 
                 <?= $form->field($model, 'date_end')->widget(\kartik\datetime\DateTimePicker::className(), [
                     'options' => ['placeholder' => 'Выберите начальную дату...'],
-                    'language' => 'ru',
+                    'language' => 'en',
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'yyyy-m-d h:i:s',
+                        'format' => 'dd-M-yyyy hh:ii:ss',
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
@@ -101,6 +101,8 @@ $this->title = 'Статистика';
     </div>
 
     <?php
+    $model->date_start = date('Y-m-d h:i:s', strtotime($model->date_start));
+    $model->date_end = date('Y-m-d h:i:s', strtotime($model->date_end));
     $sections = isset($model->sections) ? $model->sections : [];
     $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
     ?>
