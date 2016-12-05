@@ -88,7 +88,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                     'language' => 'en',
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'dd-M-yyyy hh:ii:ss',
+                        'format' => 'dd M yyyy hh:ii:ss',
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
