@@ -155,8 +155,14 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y H:i:s'],
-                        'label' => 'Время запроса',
+                        'format' => ['datetime', 'php:d M Y'],
+                        'label' => 'Дата',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'format' => ['datetime', 'php:H:i:s'],
+                        'label' => 'Время',
                     ],
                     [
                         'class' => '\kartik\grid\DataColumn',
@@ -306,8 +312,14 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y H:i:s'],
-                        'label' => 'Время запроса',
+                        'format' => ['datetime', 'php:d M Y'],
+                        'label' => 'Дата',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'format' => ['datetime', 'php:H:i:s'],
+                        'label' => 'Время',
                     ],
                     [
                         'class' => '\kartik\grid\DataColumn',
@@ -427,8 +439,14 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y H:i:s'],
-                        'label' => 'Время запроса',
+                        'format' => ['datetime', 'php:d M Y'],
+                        'label' => 'Дата',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'format' => ['datetime', 'php:H:i:s'],
+                        'label' => 'Время',
                     ],
                     [
                         'class' => '\kartik\grid\DataColumn',
