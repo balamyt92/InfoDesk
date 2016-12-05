@@ -330,10 +330,12 @@ HTML;
                         'label' => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class' => 'kartik\grid\BooleanColumn',
                         'attribute' => 'opened',
                         'label' => 'Открыт',
-                        'pageSummary' => true,
+                        'vAlign' => 'middle',
+                        'trueLabel' => 'Да',
+                        'falseLabel' => 'Нет'
                     ];
                     $setting_service['showPageSummary'] = true;
                 }
@@ -449,10 +451,12 @@ HTML;
                         'label' => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class' => 'kartik\grid\BooleanColumn',
                         'attribute' => 'opened',
                         'label' => 'Открыт',
-                        'pageSummary' => true,
+                        'vAlign' => 'middle',
+                        'trueLabel' => 'Да',
+                        'falseLabel' => 'Нет'
                     ];
                     $setting_firms['showPageSummary'] = true;
                 }
