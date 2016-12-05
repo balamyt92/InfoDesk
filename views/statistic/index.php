@@ -125,23 +125,56 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                 $id_firm = '';
                 $position = '';
                 $columns = [
-                    'date_time',
-                    'username',
-                    'detail',
-                    'mark',
-                    'model',
-                    'body',
-                    'engine'
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'label' => 'Время запроса',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'username',
+                        'label' => 'Оператор',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'detail',
+                        'label' => 'Деталь',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'mark',
+                        'label' => 'Марка',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'model',
+                        'label' => 'Модель',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'body',
+                        'label' => 'Кузов',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'engine',
+                        'label' => 'Двигатель',
+                    ],
                 ];
 
                 $group_parts = " GROUP BY q.id";
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
                     $position = ', f.position + 1 as position, f.opened ';
-                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'position',
+                        'label' => 'Позиция',
+                    ];
                     $columns[] = [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'opened',
+                        'label' => 'Открыт',
                         'pageSummary' => true,
                     ];
                     $setting_parts['showPageSummary'] = true;
@@ -244,19 +277,37 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
                 $id_firm = '';
                 $position = '';
+
                 $columns = [
-                    'date_time',
-                    'username',
-                    'search',
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'label' => 'Время запроса',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'username',
+                        'label' => 'Оператор',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'search',
+                        'label' => 'Что искали',
+                    ],
                 ];
 
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
                     $position = ', f.position + 1 as position, f.opened ';
-                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'position',
+                        'label' => 'Позиция',
+                    ];
                     $columns[] = [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'opened',
+                        'label' => 'Открыт',
                         'pageSummary' => true,
                     ];
                     $setting_firms['showPageSummary'] = true;
@@ -349,19 +400,37 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
                 $id_firm = '';
                 $position = '';
+
                 $columns = [
-                    'date_time',
-                    'username',
-                    'service',
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'label' => 'Время запроса',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'username',
+                        'label' => 'Оператор',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'service',
+                        'label' => 'Услуга',
+                    ],
                 ];
 
                 if($model->id_firm) {
                     $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
                     $position = ', f.position + 1 as position, f.opened ';
-                    $columns[] = 'position';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'position',
+                        'label' => 'Позиция',
+                    ];
                     $columns[] = [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'opened',
+                        'label' => 'Открыт',
                         'pageSummary' => true,
                     ];
                     $setting_service['showPageSummary'] = true;
