@@ -64,7 +64,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                 ]) ?>
 
                 <?= $form->field($model, 'sections')->checkboxList(
-                    ['Запчасти', 'Сервисы', 'Поиск по фирмам']
+                    ['Запчасти', 'Услуги', 'Каталог фирм']
                 ) ?>
 
 
@@ -76,7 +76,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                     'language' => 'en',
                     'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'dd-M-yyyy hh:ii:ss',
+                        'format' => 'dd M yyyy hh:ii:ss',
                         'todayHighlight' => true,
                         'minView' => 1,
                         'autoclose' => true,
@@ -105,22 +105,49 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
     </div>
 
     <?php
-    $model->date_start = date('Y-m-d h:i:s', strtotime($model->date_start));
-    $model->date_end = date('Y-m-d h:i:s', strtotime($model->date_end));
+    $model->date_start = date('Y-m-d H:i:s', strtotime($model->date_start));
+    $model->date_end = date('Y-m-d H:i:s', strtotime($model->date_end));
     $sections = isset($model->sections) ? $model->sections : [];
     $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
     ?>
 
     <div class="col-sm-8">
         <?php
+$panelTemplate = <<< HTML
+<div class="{prefix}{type}">
+    {panelBefore}
+    {items}
+    {panelAfter}
+    {panelFooter}
+</div>
+HTML;
+
+$panelFooterTemplate = <<< HTML
+    <div class="kv-panel-pager">
+        {pager}<div style="display: inline-block;float: right;">{summary}</div>
+    </div>
+    {footer}
+    <div class="clearfix"></div>
+HTML;
+
+            $tableConf = [
+                'pjax'=>true,
+                'panel'=>[
+                    'type'=>'default',
+                ],
+                'panelTemplate' => $panelTemplate,
+                'pager' => [
+                    'firstPageLabel' => '<<',
+                    'lastPageLabel' => '>>',
+                    'prevPageLabel' => '<',
+                    'nextPageLabel' => '>',
+                    'maxButtonCount' => 8,
+                ],
+                'panelFooterTemplate' => $panelFooterTemplate,
+            ];
+
             if(in_array('0', $sections)) {
-                $setting_parts = [
-                    'pjax'=>true,
-                    'panel'=>[
-                        'type'=>'default',
-                        'heading'=>'Поиск по запчастям'
-                    ],
-                ];
+                $setting_parts = $tableConf;
 
                 $id_firm = '';
                 $position = '';
@@ -128,6 +155,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
+                        'format' => 'datetime',
                         'label' => 'Время запроса',
                     ],
                     [
@@ -172,12 +200,13 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                         'label' => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class' => 'kartik\grid\BooleanColumn',
                         'attribute' => 'opened',
                         'label' => 'Открыт',
-                        'pageSummary' => true,
+                        'vAlign' => 'middle',
+                        'trueLabel' => 'Да',
+                        'falseLabel' => 'Нет'
                     ];
-                    $setting_parts['showPageSummary'] = true;
                     $group_parts = "";
                 }
 
@@ -234,7 +263,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                             ':d_end' => $model->date_end
                         ])->queryScalar();
                 } else {
-                    $opened_firms = 'не известно сколько';
+                    $opened_firms = $count;
                 }
 
                 $dataProviderParts = new \yii\data\SqlDataProvider([
@@ -253,7 +282,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                 $setting_parts['columns'] = $columns;
                 $setting_parts['toolbar'] = [
                     "<span class=\"btn-group\">
-                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
+                        <h3 style=\"margin-top: 5px; float: rigth;\">Запчасти {$opened_firms} из {$count}</h3>
                     </span>",
                     '{export}',
                     '{toggleData}',
@@ -265,138 +294,10 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
             }
         ?>
-        <?php
-            if(in_array('2', $sections)) {
-                $setting_firms = [
-                    'pjax'=>true,
-                    'panel'=>[
-                        'type'=>'default',
-                        'heading'=>'Поиск по фирмам'
-                    ],
-                ];
-
-                $id_firm = '';
-                $position = '';
-
-                $columns = [
-                    [
-                        'class' => '\kartik\grid\DataColumn',
-                        'attribute' => 'date_time',
-                        'label' => 'Время запроса',
-                    ],
-                    [
-                        'class' => '\kartik\grid\DataColumn',
-                        'attribute' => 'username',
-                        'label' => 'Оператор',
-                    ],
-                    [
-                        'class' => '\kartik\grid\DataColumn',
-                        'attribute' => 'search',
-                        'label' => 'Что искали',
-                    ],
-                ];
-
-                if($model->id_firm) {
-                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
-                    $position = ', f.position + 1 as position, f.opened ';
-                    $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
-                        'attribute' => 'position',
-                        'label' => 'Позиция',
-                    ];
-                    $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
-                        'attribute' => 'opened',
-                        'label' => 'Открыт',
-                        'pageSummary' => true,
-                    ];
-                    $setting_firms['showPageSummary'] = true;
-                }
-
-                $sql_firms = "
-                            SELECT
-                                q.date_time,
-                                u.username,
-                                q.search
-                                {$position}
-                            FROM stat_firms_query as q
-                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
-                            LEFT JOIN user as u ON (q.id_operator = u.id)
-                            WHERE
-                                (q.date_time BETWEEN :d_start AND :d_end)
-                                {$operators}
-                                {$id_firm}
-                            GROUP BY q.id";
-
-                $count = Yii::$app->db->createCommand("
-                            SELECT
-                              COUNT(DISTINCT q.id)
-                            FROM stat_firms_query as q
-                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
-                            WHERE
-                                (q.date_time BETWEEN :d_start AND :d_end)
-                                {$id_firm}",
-                    [
-                        ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
-                    ])->queryScalar();
-
-                if($model->id_firm) {
-                    $opened_firms = Yii::$app->db->createCommand("
-                                SELECT
-                                    COALESCE(sum(f.opened),0)
-                                FROM stat_firms_query as q
-                                LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
-                                LEFT JOIN user as u ON (q.id_operator = u.id)
-                                WHERE
-                                    (q.date_time BETWEEN :d_start AND :d_end)
-                                    {$operators}
-                                    {$id_firm}",
-                        [
-                            ':d_start' => $model->date_start,
-                            ':d_end' => $model->date_end
-                        ])->queryScalar();
-                } else {
-                    $opened_firms = 'не известно сколько';
-                }
-
-                $dataProviderFirms = new \yii\data\SqlDataProvider([
-                    'sql' => $sql_firms,
-                    'params' => [
-                        ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
-                    ],
-                    'totalCount' => $count,
-                    'pagination' => [
-                        'pageSize' =>10,
-                    ],
-                ]);
-
-                $setting_firms['dataProvider'] = $dataProviderFirms;
-                $setting_firms['columns'] = $columns;
-                $setting_firms['toolbar'] = [
-                    "<span class=\"btn-group\">
-                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
-                    </span>",
-                    '{export}',
-                    '{toggleData}',
-                ];
-
-                Pjax::begin();
-                echo kartik\grid\GridView::widget($setting_firms);
-                Pjax::end();
-            }
-        ?>
 
         <?php
             if(in_array('1', $sections)) {
-                $setting_service = [
-                    'pjax'=>true,
-                    'panel'=>[
-                        'type'=>'default',
-                        'heading'=>'Поиск по сервисам'
-                    ],
-                ];
+                $setting_service = $tableConf;
 
                 $id_firm = '';
                 $position = '';
@@ -405,6 +306,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
+                        'format' => 'datetime',
                         'label' => 'Время запроса',
                     ],
                     [
@@ -481,7 +383,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                             ':d_end' => $model->date_end
                         ])->queryScalar();
                 } else {
-                    $opened_firms = 'не известно сколько';
+                    $opened_firms = $count;
                 }
 
                 $dataProviderService = new \yii\data\SqlDataProvider([
@@ -500,7 +402,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                 $setting_service['columns'] = $columns;
                 $setting_service['toolbar'] = [
                     "<span class=\"btn-group\">
-                        <h3 style=\"margin-top: 5px;\"> назван {$opened_firms} раз из {$count}</h3>
+                        <h3 style=\"margin-top: 5px;\">Услуги {$opened_firms} из {$count}</h3>
                     </span>",
                     '{export}',
                     '{toggleData}',
@@ -508,6 +410,124 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
                 Pjax::begin();
                 echo kartik\grid\GridView::widget($setting_service);
+                Pjax::end();
+            }
+        ?>
+
+        <?php
+            if(in_array('2', $sections)) {
+                $setting_firms = $tableConf;
+
+                $id_firm = '';
+                $position = '';
+
+                $columns = [
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'date_time',
+                        'format' => 'datetime',
+                        'label' => 'Время запроса',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'username',
+                        'label' => 'Оператор',
+                    ],
+                    [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'search',
+                        'label' => 'Что искали',
+                    ],
+                ];
+
+                if($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                    $position = ', f.position + 1 as position, f.opened ';
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'position',
+                        'label' => 'Позиция',
+                    ];
+                    $columns[] = [
+                        'class' => '\kartik\grid\DataColumn',
+                        'attribute' => 'opened',
+                        'label' => 'Открыт',
+                        'pageSummary' => true,
+                    ];
+                    $setting_firms['showPageSummary'] = true;
+                }
+
+                $sql_firms = "
+                            SELECT
+                                q.date_time,
+                                u.username,
+                                q.search
+                                {$position}
+                            FROM stat_firms_query as q
+                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
+                                {$id_firm}
+                            GROUP BY q.id";
+
+                $count = Yii::$app->db->createCommand("
+                            SELECT
+                              COUNT(DISTINCT q.id)
+                            FROM stat_firms_query as q
+                            LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                            WHERE
+                                (q.date_time BETWEEN :d_start AND :d_end)
+                                {$id_firm}",
+                    [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ])->queryScalar();
+
+                if($model->id_firm) {
+                    $opened_firms = Yii::$app->db->createCommand("
+                                SELECT
+                                    COALESCE(sum(f.opened),0)
+                                FROM stat_firms_query as q
+                                LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                                LEFT JOIN user as u ON (q.id_operator = u.id)
+                                WHERE
+                                    (q.date_time BETWEEN :d_start AND :d_end)
+                                    {$operators}
+                                    {$id_firm}",
+                        [
+                            ':d_start' => $model->date_start,
+                            ':d_end' => $model->date_end
+                        ])->queryScalar();
+                } else {
+                    $opened_firms = $count;
+                }
+
+                $dataProviderFirms = new \yii\data\SqlDataProvider([
+                    'sql' => $sql_firms,
+                    'params' => [
+                        ':d_start' => $model->date_start,
+                        ':d_end' => $model->date_end
+                    ],
+                    'totalCount' => $count,
+                    'pagination' => [
+                        'pageSize' =>10,
+                    ],
+                ]);
+
+                $setting_firms['dataProvider'] = $dataProviderFirms;
+                $setting_firms['columns'] = $columns;
+                $setting_firms['toolbar'] = [
+                    "<span class=\"btn-group\">
+                        <h3 style=\"margin-top: 5px;\"> Каталог фирм {$opened_firms} из {$count}</h3>
+                    </span>",
+                    '{export}',
+                    '{toggleData}',
+                ];
+
+                Pjax::begin();
+                echo kartik\grid\GridView::widget($setting_firms);
                 Pjax::end();
             }
         ?>
