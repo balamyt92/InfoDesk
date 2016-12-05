@@ -14,6 +14,10 @@ $this->title = 'Статистика';
 
 \app\assets\StatisticAsset::register($this);
 
+$sql_set_mode = "set sql_mode = ''";
+
+Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
+
 ?>
 
 <div class="row" style="margin-top: 20px;">
