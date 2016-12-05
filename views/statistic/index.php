@@ -155,7 +155,7 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => 'datetime',
+                        'format' => ['datetime', 'php:d M Y H:i:s'],
                         'label' => 'Время запроса',
                     ],
                     [
@@ -306,7 +306,7 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => 'datetime',
+                        'format' => ['datetime', 'php:d M Y H:i:s'],
                         'label' => 'Время запроса',
                     ],
                     [
@@ -425,7 +425,7 @@ HTML;
                     [
                         'class' => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => 'datetime',
+                        'format' => ['datetime', 'php:d M Y H:i:s'],
                         'label' => 'Время запроса',
                     ],
                     [
