@@ -32,7 +32,7 @@ use yii\bootstrap\ActiveForm;
 
     <?= $form->field($model, 'OperatingMode')->textarea(['rows' => 3]) ?>
 
-    <?= $form->field($model, 'Enabled')->checkbox() ?>
+    <?= $form->field($model, 'Enabled')->dropDownList([ 0 => 'Нет', 1 => 'Да']) ?>
 
     <?= $form->field($model, 'Identifier')->textInput(['maxlength' => true]) ?>
 
