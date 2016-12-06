@@ -21,6 +21,7 @@ $this->title = $model->Name;
                 'method'  => 'post',
             ],
         ]) ?>
+        <?= Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
     </p>
 
     <?= DetailView::widget([
