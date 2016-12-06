@@ -244,8 +244,10 @@ HTML;
                               COUNT(DISTINCT q.id)
                             FROM stat_parts_query as q
                             LEFT JOIN stat_parts_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
                             WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
@@ -371,8 +373,10 @@ HTML;
                               COUNT(DISTINCT q.id)
                             FROM stat_service_query as q
                             LEFT JOIN stat_service_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
                             WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
@@ -497,8 +501,10 @@ HTML;
                               COUNT(DISTINCT q.id)
                             FROM stat_firms_query as q
                             LEFT JOIN stat_firms_firms as f ON (q.id = f.id_query)
+                            LEFT JOIN user as u ON (q.id_operator = u.id)
                             WHERE
                                 (q.date_time BETWEEN :d_start AND :d_end)
+                                {$operators}
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
