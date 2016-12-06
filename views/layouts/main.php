@@ -37,7 +37,6 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Call-center', 'url' => ['/site/index']],
-        ['label' => 'Импорт', 'url' => ['/import/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
@@ -69,13 +68,13 @@ AppAsset::register($this);
     </div>
 </div>
 
-<footer class="footer">
+<!-- <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; Автомобильная справочная служба <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
-</footer>
+</footer> -->
 
 <?php $this->endBody() ?>
 

@@ -36,6 +36,13 @@ $config = [
             ],
         ],
     ],
+    'modules' => [
+        'gridview' => [
+            'class'          => '\kartik\grid\Module',
+            'downloadAction' => 'gridview/export/download',
+            // 'i18n' => []
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {

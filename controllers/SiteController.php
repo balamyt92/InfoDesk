@@ -121,7 +121,11 @@ class SiteController extends Controller
      */
     public function actionSearch($str)
     {
-        $search_array = explode('+', $str);
+        // Экранируем как можем :)
+        $search = str_replace('%', "\%", $str);
+        $search = str_replace('.', "\.", $search);
+        $search_array = explode('+', $search);
+
         $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM '.
                 '(SELECT @rn := 0) as r, '.
                 "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
@@ -156,7 +160,6 @@ class SiteController extends Controller
 
         $firms = Firms::findBySql($sql)->all();
 
-
         // пишем статистику
         $stat = new StatFirmsQuery();
         $stat->firmStatistic($str, \Yii::$app->user->identity->id);
@@ -177,7 +180,6 @@ class SiteController extends Controller
             }
         }
         $stat->firmStatistic($firm_list, $id);
-
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -506,7 +508,6 @@ class SiteController extends Controller
     public function actionServiceSearch($id)
     {
         $rows = [];
-
 
         $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM
                   (SELECT @rn := 0) as r,

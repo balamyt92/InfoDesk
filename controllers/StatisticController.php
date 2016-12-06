@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\statistic\ParamForm;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
@@ -24,7 +25,6 @@ class StatisticController extends Controller
                         'allow'   => true,
                     ],
                     [
-                        'actions'       => ['logout', 'index', 'update', 'delete', 'view', 'create'],
                         'allow'         => true,
                         'roles'         => ['@'],
                         'matchCallback' => function ($rule, $action) {
@@ -59,6 +59,24 @@ class StatisticController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new ParamForm();
+
+        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
+            return $this->render('index', [
+                'model' => $model,
+            ]);
+        } else {
+            $model->operators = [
+                0 => '2',
+                1 => '3',
+                2 => '4',
+                3 => '5',
+                4 => '6',
+            ];
+
+            return $this->render('index', [
+                'model' => $model,
+            ]);
+        }
     }
 }

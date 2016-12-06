@@ -6,6 +6,7 @@ var result = {
     firms : false,
     parts : false,
     service : false,
+    opened : false,
 };
 
 var KEY = {
@@ -26,6 +27,9 @@ var KEY = {
     END: 35,
     BACKSPACE: 8,
     DELETE: 46,
+    F1: 112,
+    F2: 113,
+    F3: 114,
 };
 
 /**
@@ -42,6 +46,10 @@ var searcherFirms = {
         response : false,
     },
     grid: false,
+
+    highlightRow: function () {
+        // заглушка
+    },
     render : function(data) {
         let grid = this.grid;
 
@@ -58,6 +66,7 @@ var searcherFirms = {
         result.service = false;
     },
     search : function() {
+        result.opened = true;
         this.modalWindow.modal({backdrop: false});
         let str = document.getElementById('search-line').value.toString().trim();
 
@@ -103,64 +112,7 @@ var searcherFirms = {
             });
 
             grid.bind('keydown', function (e) {
-                let rowInPage = grid.jqGrid('getGridParam','rowNum');
-                let totalPages = grid.jqGrid('getGridParam','lastpage');
-                let currentPage = grid.jqGrid('getGridParam','page');
-                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-                let realRowInPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
-
-                // если вниз и последняя строка
-                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searcherFirms.pagerToNext) {
-                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-                // если вниз и последняя строка последней страницы
-                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searcherFirms.pagerLastRow){
-                    grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-                // если вверх и первая строка
-                if (e.keyCode == KEY.UP && currentPage > 1 && searcherFirms.pagerToBack) {
-                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', rowInPage, false);
-                    grid.focus();
-                }
-
-                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
-                    setTimeout(function () {
-                        document.elementFromPoint(100, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 500);
-                }
-
-                if(e.keyCode == KEY.HOME) {
-                    if(currentPage > 1) {
-                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                        searchParts.highlightRow();
-                    }
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-
-                currentRow == realRowInPage
-                ? searcherFirms.pagerLastRow = true : searcherFirms.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searcherFirms.pagerToNext = true : searcherFirms.pagerToNext = false;
-
-                currentRow == 1
-                ? searcherFirms.pagerToBack = true : searcherFirms.pagerToBack = false;
-
-                if(e.keyCode == KEY.END) {
-                    if(currentPage == totalPages) {
-                        grid.jqGrid('setSelection', realRowInLasPage, false);
-                    } else {
-                        grid.jqGrid('setSelection', rowInPage, false);
-                    }
-                    grid.focus();
-                    searcherFirms.pagerToNext = true;
-                }
+                gridKeyHandler(e, grid, searcherFirms);
             });
 
             this.gridCreate = true;
@@ -244,24 +196,24 @@ var searchParts = {
         let realRowInLasPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
         let firmID = this.grid.getCell(1, 'ID_Firm');
         let color = false;
-        for(let i = 2; currentPage < totalPages ? i < rowInPage : i < realRowInLasPage; i++) {
+        for(let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
             let newId = this.grid.getCell(i, 'ID_Firm');
             if (firmID != newId) {
                 firmID = newId;
                 color = !color;
             }
             if(color) {
-                this.grid.setCell(i,1,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,2,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,3,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,4,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,5,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,6,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,7,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,8,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,9,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,10,'',{ background:'#d8cfcf'});
-                this.grid.setCell(i,11,'',{ background:'#d8cfcf'});
+                this.grid.setCell(i,1,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,2,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,3,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,4,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,5,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,6,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,7,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,8,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,9,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,10,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,11,'',{ background:'#dff0d8'});
             }
         }
     },
@@ -300,7 +252,7 @@ var searchParts = {
             console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
-
+        result.opened = true;
         $('#gbox_part-result-search').show();
         this.modalWindow.modal({backdrop: false});
 
@@ -327,7 +279,7 @@ var searchParts = {
             grid.jqGrid({
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'Приоритет', name: 'Priority', width: 5},
+                    {label: 'Приоритет', name: 'Priority', width: 7},
                     {label: 'ID', name: 'ID_Firm', width: 10},
                     {label: 'Марка', name: 'MarkName', width: 30},
                     {label: 'Модель', name: 'ModelName', width: 30},
@@ -362,92 +314,7 @@ var searchParts = {
             });
 
             grid.bind('keydown', function (e) {
-                let rowInPage = grid.jqGrid('getGridParam','rowNum');
-                let totalPages = grid.jqGrid('getGridParam','lastpage');
-                let currentPage = grid.jqGrid('getGridParam','page');
-                let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-                let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
-
-                (currentRow == realRowInLasPage && currentPage == totalPages)
-                ? searchParts.pagerLastRow = true : searchParts.pagerLastRow = false;
-
-                currentRow == rowInPage
-                ? searchParts.pagerToNext = true : searchParts.pagerToNext = false;
-
-                currentRow == 1
-                ? searchParts.pagerToBack = true : searchParts.pagerToBack = false;
-
-                if(e.ctrlKey && (e.keyCode == KEY.DOWN || e.keyCode == KEY.UP)){
-                    let i = currentRow;
-                    let oldID = grid.getCell(i, 'ID_Firm');
-                    let newID = oldID;
-
-                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
-                    else
-                        newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
-
-                    while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
-                        if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                            i++;
-                        else
-                            i--;
-                        newID = grid.getCell(i, 'ID_Firm');
-                    }
-                    if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                        grid.jqGrid('setSelection', i, false);
-                    else
-                        grid.jqGrid('setSelection', i, false);
-                    grid.focus();
-                }
-
-                // если вниз и последняя строка
-                if (e.keyCode == KEY.DOWN && totalPages != currentPage && searchParts.pagerToNext) {
-                    grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                    searchParts.pagerToBack = true;
-                }
-                // если вниз и последняя строка последней страницы
-                if(e.keyCode == KEY.DOWN && totalPages == currentPage && searchParts.pagerLastRow && totalPages > 1){
-                    grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', 1, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                }
-                if (e.keyCode == KEY.UP && currentPage > 1 && searchParts.pagerToBack) {
-                    grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-                    grid.jqGrid('setSelection', rowInPage, false);
-                    searchParts.highlightRow();
-                    grid.focus();
-                    searchParts.pagerToNext = true;
-                }
-
-                if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
-                    setTimeout(function () {
-                        document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-                    }, 500);
-                }
-
-                if(e.keyCode == KEY.HOME) {
-                    if(currentPage > 1) {
-                        grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
-                        searchParts.highlightRow();
-                    }
-                    grid.jqGrid('setSelection', 1, false);
-                    grid.focus();
-                }
-
-                if(e.keyCode == KEY.END) {
-                    if(currentPage == totalPages) {
-                        grid.jqGrid('setSelection', realRowInLasPage, false);
-                    } else {
-                        grid.jqGrid('setSelection', rowInPage, false);
-                    }
-                    grid.focus();
-                    searchParts.pagerToNext = true;
-                }
+                gridKeyHandler(e, grid, searchParts);
             });
             this.gridCreate = true;
         }
@@ -480,18 +347,7 @@ var searchParts = {
         }).done(function(data){
             $('#detail-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).on("select2-selecting", function(e) {
@@ -512,18 +368,7 @@ var searchParts = {
         }).done(function(data){
             $('#mark-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).on("select2-selecting", function(e) {
@@ -562,18 +407,7 @@ var searchParts = {
         }).done(function(data){
             $('#model-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -588,18 +422,7 @@ var searchParts = {
         }).done(function(data){
             $('#body-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -618,18 +441,7 @@ var searchParts = {
         }).done(function(data){
             $('#engine-select').select2({
                 data : { results: data, text: 'Name' },
-                sortResults : function(results, container, query) {
-                    if(query.term != undefined && query.term.length > 0) {
-                        return results.sort(function(a, b) {
-                            let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                                b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                            return index > 0 ? index : a.Name.length - b.Name.length;
-                        });
-                    } else {
-                        return results;
-                    }
-                },
+                sortResults : searchParts.filterSort,
                 openOnEnter : false,
                 allowClear : true,
             }).select2("val", "");
@@ -650,6 +462,26 @@ var searchParts = {
             }
         });
     },
+    filterSort : function(results, container, query) {
+        if(query.term != undefined && query.term.length > 0) {
+            return results.sort(function(a, b) {
+                let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+                let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+
+                let x = a.Name.toLowerCase();
+                let y = b.Name.toLowerCase();
+                if(indexA == indexB && indexA == 0) {
+                    return x < y ? -1 : x > y ? 1 : 0;
+                } else {
+                    if(indexA == 0) return -1;
+                    if(indexB == 0) return 1;
+                    return x < y ? -1 : x > y ? 1 : 0;
+                }
+            });
+        } else {
+            return results;
+        }
+    },
 };
 /**
  * Объект отвечает за работу с поиском сервисов
@@ -665,6 +497,10 @@ var serviceSearch = {
         response : false,
     },
     grid: $("#service-result-search"),
+
+    highlightRow: function () {
+        // заглушка
+    },
     open: function (event) {
         if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
             this.openCategory();
@@ -694,6 +530,7 @@ var serviceSearch = {
 
     },
     searchService: function () {
+        result.opened = true;
         this.modalWindow.modal({backdrop: false});
         let grid = this.grid;
         $('#gbox_service-result-search').show();
@@ -730,6 +567,10 @@ var serviceSearch = {
                     openFirm(grid.getCell(id, 'ID_Firm'));
                     serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 }
+            });
+
+            grid.bind('keydown', function (e) {
+                gridKeyHandler(e, grid, serviceSearch);
             });
 
             this.gridCreate = true; // для того что бы делать это единожды
@@ -798,7 +639,7 @@ function openFirm(id) {
         $('#firmFax').html(data.message[0].Fax);
         $('#firmEmail').html(data.message[0].Email);
         $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html(data.message[0].OperatingMode);
+        $('#firmOperatingMode').html('<pre>' + data.message[0].OperatingMode + '</pre>');
         $('#firmComment').html(data.message[0].Comment);
 
         // открываем окно
@@ -836,41 +677,147 @@ function openFirmInParts(id) {
  * Функция обработки хоткеев навигации
  */
 function keyNavigate(event) {
-    // перемещение по фильтрам
-    if (event.keyCode == KEY.RIGHT && event.ctrlKey) {
-        if (result.firms) {
-            $(searchParts.currentSelect).select2("open");
-            $(searchParts.currentSelect).select2("close");
-            result.parts = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $('#service').focus();
-            result.service = true;
-            result.parts = false;
-        } else if (result.service) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.service = false;
+    if (!result.opened) {
+        switch(event.keyCode) {
+            case KEY.F1 :
+                $($('#search-line').focus()).select();
+                result.firms   = true;
+                result.parts   = false;
+                result.service = false;
+                event.preventDefault();
+                break;
+            case KEY.F2 :
+                $(searchParts.currentSelect).select2("open");
+                $(searchParts.currentSelect).select2("close");
+                result.firms   = false;
+                result.parts   = true;
+                result.service = false;
+                event.preventDefault();
+                break;
+            case KEY.F3 :
+                $('#service').focus();
+                result.service = true;
+                result.firms   = false;
+                result.parts   = false;
+                event.preventDefault();
+                break;
         }
-    }
-    if (event.keyCode == KEY.LEFT && event.ctrlKey) {
-        if (result.firms) {
-            $('#service').focus();
-            result.service = true;
-            result.firms = false;
-        } else if (result.parts) {
-            $($('#search-line').focus()).select();
-            result.firms = true;
-            result.parts = false;
-        } else if (result.service) {
-            $(searchParts.currentSelect).select2("open");
-            $(searchParts.currentSelect).select2("close");
-            result.parts = true;
-            result.service = false;
-        }
+    } else if (event.keyCode == KEY.F1 ||
+               event.keyCode == KEY.F2 ||
+               event.keyCode == KEY.F3 ) {
+        event.preventDefault()
     }
 }
 
+/**
+ * Функция обработки хоткеев в грде резултатов поиска
+ * @param  {object} e    евент нажатия кнопки
+ * @param  {object} grid целевой грид
+ * @param  {object} obj  целевой объект
+ */
+function gridKeyHandler(e, grid, obj) {
+    let rowInPage = grid.jqGrid('getGridParam','rowNum');
+    let totalPages = grid.jqGrid('getGridParam','lastpage');
+    let currentPage = grid.jqGrid('getGridParam','page');
+    let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+    let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+
+    if(e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)){
+        let i = currentRow;
+        let oldID = grid.getCell(i, 'ID_Firm');
+        let newID = oldID;
+
+        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+        else
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+
+        while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
+            if(e.keyCode == KEY.DOWN && e.ctrlKey)
+                i++;
+            else
+                i--;
+            newID = grid.getCell(i, 'ID_Firm');
+        }
+        if(e.keyCode == KEY.DOWN && e.ctrlKey) {
+            grid.jqGrid('setSelection', i, false);
+            i === realRowInLasPage ? obj.pagerLastRow = true : obj.pagerLastRow = false;
+        } else {
+            grid.jqGrid('setSelection', i + 1, false);
+        }
+        grid.focus();
+    }
+
+    // если вниз и последняя строка
+    if (e.keyCode == KEY.DOWN && totalPages != currentPage && obj.pagerToNext) {
+        grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
+        grid.jqGrid('setSelection', 1, false);
+        obj.highlightRow();
+        grid.focus();
+        obj.pagerToBack = true;
+        currentPage = currentPage + 1;
+        currentRow = 1;
+    }
+    // если вниз и последняя строка последней страницы
+    if(e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow){
+        grid.jqGrid('setSelection', realRowInLasPage, false);
+        grid.focus();
+        currentRow = realRowInLasPage;
+    }
+    if (e.keyCode == KEY.UP && currentPage > 1 && obj.pagerToBack) {
+        grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
+        grid.jqGrid('setSelection', rowInPage, false);
+        obj.highlightRow();
+        grid.focus();
+        obj.pagerToNext = true;
+        currentPage = currentPage - 1;
+        currentRow = rowInPage;
+    }
+
+    if (e.keyCode == KEY.UP && currentPage == 1 && currentRow <= 1) {
+        grid.jqGrid('setSelection', 1, false);
+        grid.focus();
+        currentRow = 1;
+    }
+
+    if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
+        setTimeout(function () {
+            document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+        }, 500);
+    }
+
+    if(e.keyCode == KEY.HOME) {
+        if(currentPage > 1) {
+            grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+            obj.highlightRow();
+            currentRow = 1;
+        }
+        grid.jqGrid('setSelection', 1, false);
+        grid.focus();
+    }
+
+    if(e.keyCode == KEY.END) {
+        if(currentPage == totalPages) {
+            grid.jqGrid('setSelection', realRowInLasPage, false);
+            currentRow = realRowInLasPage;
+        } else {
+            grid.jqGrid('setSelection', rowInPage, false);
+            currentRow = rowInPage;
+        }
+        obj.pagerToNext = true;
+        grid.focus();
+    }
+
+
+    (currentRow == realRowInLasPage && currentPage == totalPages)
+    ? obj.pagerLastRow = true : obj.pagerLastRow = false;
+
+    currentRow == rowInPage
+    ? obj.pagerToNext = true : obj.pagerToNext = false;
+
+    currentRow == 1
+    ? obj.pagerToBack = true : obj.pagerToBack = false;
+}
 
 function ready() {
     // Инициализация
@@ -894,6 +841,15 @@ function ready() {
     search.keypress(function(e) { searcherFirms.runSearch(e) });
     $('#search-firm-button').on( "click", function () {
         searcherFirms.search();
+    });
+
+    $('#search-parts-button').on( "keydown", function (e) {
+        if(e.keyCode == KEY.TAB) {
+            let detal = $('#detail-select');
+            detal.select2("open");
+            detal.select2("close");
+            e.preventDefault();
+        }
     });
 
     result.firms = true;
@@ -920,18 +876,22 @@ function ready() {
 
     $('#modalResult').on('hidden.bs.modal', function () {
         if(result.service) {
+            serviceSearch.pagerLastRow = false;
             $('#service').focus();
             $('#gbox_service-result-search').hide();
         }
         if(result.firms) {
+            searcherFirms.pagerLastRow = false;
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
         }
         if(result.parts) {
+            searchParts.pagerLastRow = false;
             $('#gbox_part-result-search').hide();
             $(searchParts.currentSelect).select2("open");
             $(searchParts.currentSelect).select2("close");
         }
+        result.opened = false;
     });
 
     searchParts.getDetails();
@@ -940,28 +900,20 @@ function ready() {
 
     $('#model-select').select2({
         data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {
         searchParts.idModel = e.choice.id;
+        searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", true);
         searchParts.getBodys();
         searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idModel = false;
         searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", false);
         $('#body-select').select2("val", "");
         searchParts.getEngine();
@@ -972,22 +924,12 @@ function ready() {
 
     $('#body-select').select2({
         data : [],
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {
         searchParts.idBody = e.choice.id;
+        searchParts.idEngine = false;
         searchParts.getEngine();
     }).on("select2-removed", function(e) {
         searchParts.idBody = false;
@@ -998,18 +940,7 @@ function ready() {
 
     $('#engine-select').select2({
         data : [],
-        sortResults : function(results, container, query) {
-            if(query.term != undefined && query.term.length > 0) {
-                return results.sort(function(a, b) {
-                    let index = a.Name.toLowerCase().indexOf(query.term.toLowerCase()) -
-                        b.Name.toLowerCase().indexOf(query.term.toLowerCase());
-
-                    return index > 0 ? index : a.Name.length - b.Name.length;
-                });
-            } else {
-                return results;
-            }
-        },
+        sortResults : searchParts.filterSort,
         openOnEnter : false,
         allowClear : true,
     }).on("select2-selecting", function(e) {

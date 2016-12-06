@@ -24,7 +24,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
 <div class="row">
     <div class="col-md-3">
-        <h3>Поиск фирм</h3>
+        <label>Поиск фирм</label>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
@@ -35,7 +35,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
 
     <div class="col-md-4" onkeydown="searchParts.eventStatus(event);">
-        <h3>Поиск запчастей</h3>
+        <label>Поиск запчастей</label>
         <div>
             <label>Деталь</label>
             <input type="text" id="detail-select" style="width: 100%"/>
@@ -50,12 +50,12 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             <label>Номер</label>
             <input type="text" class="form-control" id="number">
         </div>
-        <button type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>
+        <button id="search-parts-button" type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>
     </div>
 
     <div class="col-md-5">
-        <h3>Поиск сервисов</h3>
-        <select class="form-control" name="service-list" id="service" size="20" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
+        <label>Поиск сервисов</label>
+        <select class="form-control" name="service-list" id="service" size="37" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
             <?php
                 $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();
                 foreach ($services as $value) {
@@ -97,11 +97,11 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 <div class="modal" id="modalFirm" tabindex="-1" role="dialog" style="">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="padding: 2px;">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 id="firmName" class="modal-title"></h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="padding: 2px;">
         <table class="table table-condensed">
             <tbody>
                 <tr>
@@ -147,7 +147,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             </tbody>
         </table>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: none;">
         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
       </div>
     </div><!-- /.modal-content -->

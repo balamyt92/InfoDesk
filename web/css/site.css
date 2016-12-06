@@ -7,11 +7,10 @@ body {
     min-height: 100%;
     height: auto;
     margin: 0 auto -60px;
-    padding: 0 0 60px;
 }
 
 .wrap > .container-fluid {
-    padding: 50px 15px 20px;
+    padding: 48px 15px 20px;
 }
 
 .footer {
@@ -47,6 +46,10 @@ tr.hover {
 
 .table > thead > tr > th {
     padding: 0px 1px;
+}
+
+.table > tbody > tr > td > label {
+    margin-bottom: 0px;
 }
 
 /*
@@ -115,7 +118,7 @@ pre {
 }
 
 .table > tbody > tr.success > td {
-    background-color: #dff0d8;
+    background-color: #b9b0b0;
 }
 
 .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
@@ -128,9 +131,13 @@ pre {
     грязно и иначе ни как пока
 */
 .table > tbody > tr.success > td {
-    background-color: #dff0d8 !important;
+    background-color: #b9b0b0 !important;
 }
 
 .ui-jqgrid .ui-pg-button:hover {
     padding: 0 5px;
+}
+
+.table-bordered {
+    border: 1px solid #4e4e4e;
 }
