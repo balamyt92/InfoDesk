@@ -91,10 +91,3 @@ $this->params['breadcrumbs'][] = $this->title;
         ",
     ]); ?>
 <?php Pjax::end(); ?></div>
-
-<?php
-// попросили, других способов это сделать не нашел
-$script = <<< JS
-$('#w1-filters > td:nth-child(5) > select > option:nth-child(1)').html('Все');
-JS;
-$this->registerJs($script, yii\web\View::POS_READY);
