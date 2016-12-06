@@ -23,13 +23,11 @@ class m160626_091310_create_car_body_model_table extends Migration
         $this->addPrimaryKey('body', 'CarBodyModelsEN', ['id', 'ID_Mark', 'ID_Model']);
         $this->alterColumn('CarBodyModelsEN', 'id', $this->integer().' NOT NULL AUTO_INCREMENT');
 
-
         $this->addForeignKey('body_to_mark', 'CarBodyModelsEN', 'ID_Mark',
             'CarMarksEN', 'id', 'RESTRICT', 'CASCADE');
 
         $this->addForeignKey('body_to_model', 'CarBodyModelsEN', 'ID_Model',
             'CarModelsEN', 'id', 'RESTRICT', 'CASCADE');
-
 
         $this->createTable('CarBodyModelGroupsEN', [
             'ID_BodyGroup' => $this->integer()->notNull(),

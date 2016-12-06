@@ -160,10 +160,10 @@ class FirmsController extends Controller
             $command = $query->createCommand();
             $data = $command->queryAll();
             $out['results'] = array_values($data);
-        }
-        elseif ($id > 0) {
+        } elseif ($id > 0) {
             $out['results'] = ['id' => $id, 'text' => Firms::find($id)->name];
         }
+
         return $out;
     }
 

@@ -2,6 +2,7 @@
 /**
  * Интерфейс необходимый моделям для импорта данных из legacy базы.
  */
+
 namespace app\models;
 
 interface iLegacyImport
