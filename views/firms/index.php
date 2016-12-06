@@ -19,7 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns'      => [
             [
                 'attribute'  => 'id',
-                'vAlign'     => GridView::ALIGN_MIDDLE,
                 'width'      => '20px',
             ],
             [
@@ -43,7 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class'      => 'kartik\grid\BooleanColumn',
                 'attribute'  => 'Enabled',
-                'vAlign'     => GridView::ALIGN_MIDDLE,
                 'trueLabel'  => 'Да',
                 'falseLabel' => 'Нет',
                 'width'      => '20px',
@@ -52,7 +50,6 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'Priority',
                 'width'     => '20px',
-                'vAlign'    => GridView::ALIGN_MIDDLE,
                 'hAlign'    => GridView::ALIGN_CENTER,
             ],
             [

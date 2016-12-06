@@ -47,7 +47,7 @@ class FirmsSearch extends Firms
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 50,
+                'pageSize' => 100,
             ],
         ]);
 

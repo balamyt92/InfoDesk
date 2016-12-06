@@ -42,8 +42,7 @@ class Firms extends ActiveRecord implements iLegacyImport
             [['Name', 'Enabled', 'Identifier', 'Priority'], 'required'],
             [['Address', 'Comment', 'ActivityType', 'OperatingMode'], 'string'],
             [['Enabled', 'Priority'], 'integer'],
-            [['Name'], 'string', 'max' => 75],
-            [['Phone', 'District'], 'string', 'max' => 200],
+            [['Name', 'Phone', 'District'], 'string', 'max' => 200],
             [['OrganizationType', 'Fax', 'Email', 'URL', 'Identifier'], 'string', 'max' => 100],
         ];
     }

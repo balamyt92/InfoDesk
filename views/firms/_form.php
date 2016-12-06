@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Firms */
@@ -10,23 +10,19 @@ use yii\widgets\ActiveForm;
 
 <div class="firms-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['layout' => 'horizontal']); ?>
 
     <?= $form->field($model, 'Name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'Address')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'Phone')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'Comment')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'Enabled')->checkbox() ?>
-
-    <?= $form->field($model, 'ActivityType')->textarea(['rows' => 6]) ?>
-
     <?= $form->field($model, 'OrganizationType')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'ActivityType')->textarea(['rows' => 3]) ?>
+
     <?= $form->field($model, 'District')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'Address')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'Phone')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'Fax')->textInput(['maxlength' => true]) ?>
 
@@ -34,16 +30,30 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'URL')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'OperatingMode')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'OperatingMode')->textarea(['rows' => 3]) ?>
+
+    <?= $form->field($model, 'Enabled')->checkbox() ?>
 
     <?= $form->field($model, 'Identifier')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'Priority')->textInput() ?>
 
+    <?= $form->field($model, 'Comment')->textarea(['rows' => 2]) ?>
+
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <?= Html::submitButton($model->isNewRecord ? 'Созать' : 'Обновить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::a('Отмена', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
+        </div>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <?php ActiveForm::end();
+
+    $this->registerCss("
+        .form-group {
+            margin-bottom: 0px; 
+        }");
+    ?>
 
 </div>
