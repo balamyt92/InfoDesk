@@ -17,31 +17,34 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
     <p>
-        <?= Html::a('Create Firms', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Новая фирма', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+<?php Pjax::begin(); ?>    <?= kartik\grid\GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel'  => $searchModel,
         'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
+            [
+                'attribute'  => 'id',
+                'vAlign'     => 'middle',
+            ],
             'Name',
-            'Address:ntext',
             'Phone',
-//            'Comment:ntext',
-            'Enabled',
-//            'ActivityType:ntext',
-//            'OrganizationType',
-//            'District',
-//            'Fax',
-//            'Email:email',
-//            'URL:url',
-//            'OperatingMode:ntext',
-            'Identifier',
+            'Address:ntext',
+            [
+                'class'      => 'kartik\grid\BooleanColumn',
+                'attribute'  => 'Enabled',
+                'vAlign'     => 'middle',
+                'trueLabel'  => 'Да',
+                'falseLabel' => 'Нет',
+            ],
             'Priority',
+            'Comment:ntext',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
+        'panel' => [
+            'type' => 'default',
+        ]
     ]); ?>
 <?php Pjax::end(); ?></div>

@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'Comment')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'Enabled')->textInput() ?>
+    <?= $form->field($model, 'Enabled')->checkbox() ?>
 
     <?= $form->field($model, 'ActivityType')->textarea(['rows' => 6]) ?>
 

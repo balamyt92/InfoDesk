@@ -16,7 +16,8 @@ class FirmsSearch extends Firms
     public function rules()
     {
         return [
-            [['id', 'Enabled', 'Priority'], 'integer'],
+            [['id', 'Priority'], 'integer'],
+            [['Enabled'], 'boolean'],
             [['Name', 'Address', 'Phone', 'Comment', 'ActivityType', 'OrganizationType', 'District', 'Fax', 'Email', 'URL', 'OperatingMode', 'Identifier'], 'safe'],
         ];
     }
