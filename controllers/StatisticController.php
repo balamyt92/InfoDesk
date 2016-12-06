@@ -9,8 +9,6 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 
-use yii\data\SqlDataProvider;
-
 class StatisticController extends Controller
 {
     /**
@@ -63,9 +61,9 @@ class StatisticController extends Controller
     {
         $model = new ParamForm();
 
-        if($model->load(Yii::$app->request->get()) && $model->validate()) {
+        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
             return $this->render('index', [
-                'model' => $model
+                'model' => $model,
             ]);
         } else {
             $model->operators = [
@@ -75,8 +73,9 @@ class StatisticController extends Controller
                 3 => '5',
                 4 => '6',
             ];
+
             return $this->render('index', [
-                'model' => $model
+                'model' => $model,
             ]);
         }
     }

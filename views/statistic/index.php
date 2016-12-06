@@ -5,10 +5,9 @@
  */
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
 use yii\web\JsExpression;
+use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 $this->title = 'Статистика';
 
@@ -28,7 +27,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
             </div>
             <div class="panel-body">
             <?php $form = ActiveForm::begin([
-                'method' => 'get'
+                'method' => 'get',
             ]);
                 $url = \yii\helpers\Url::to(['firms/search']);
             ?>
@@ -36,20 +35,20 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
                 <?= $form->field($model, 'id_firm')->widget(\kartik\select2\Select2::className(), [
                     'initValueText' => empty($model->id_firm) ? '' : \app\models\Firms::findOne($model->id_firm)->Name,
-                    'options' => ['placeholder' => 'Поиск фирмы...'],
+                    'options'       => ['placeholder' => 'Поиск фирмы...'],
                     'pluginOptions' => [
-                        'allowClear' => true,
+                        'allowClear'         => true,
                         'minimumInputLength' => 2,
-                        'language' => [
+                        'language'           => [
                             'errorLoading' => new JsExpression("function () { return 'Подождите...'; }"),
                         ],
                         'ajax' => [
-                            'url' => $url,
+                            'url'      => $url,
                             'dataType' => 'json',
-                            'data' => new JsExpression('function(params) {return {q:params.term, page: params.address}; }'),
-                            'cache' => true
+                            'data'     => new JsExpression('function(params) {return {q:params.term, page: params.address}; }'),
+                            'cache'    => true,
                         ],
-                        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                        'escapeMarkup'   => new JsExpression('function (markup) { return markup; }'),
                         'templateResult' => new JsExpression('
                             function(firm) {
                                 firm.address = firm.address ? firm.address : "";
@@ -72,28 +71,28 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                     \yii\helpers\ArrayHelper::map(\app\models\User::find()->all(), 'id', 'username')) ?>
 
                 <?= $form->field($model, 'date_start')->widget(\kartik\datetime\DateTimePicker::className(), [
-                    'options' => ['placeholder' => 'Выберите начальную дату...'],
-                    'language' => 'en',
-                    'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
+                    'options'       => ['placeholder' => 'Выберите начальную дату...'],
+                    'language'      => 'en',
+                    'type'          => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'dd M yyyy hh:ii:ss',
+                        'format'         => 'dd M yyyy hh:ii:ss',
                         'todayHighlight' => true,
-                        'minView' => 1,
-                        'autoclose' => true,
-                        'initialDate' => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
-                    ]]) ?>
+                        'minView'        => 1,
+                        'autoclose'      => true,
+                        'initialDate'    => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
+                    ], ]) ?>
 
                 <?= $form->field($model, 'date_end')->widget(\kartik\datetime\DateTimePicker::className(), [
-                    'options' => ['placeholder' => 'Выберите начальную дату...'],
-                    'language' => 'en',
-                    'type' => \kartik\datetime\DateTimePicker::TYPE_INPUT,
+                    'options'       => ['placeholder' => 'Выберите начальную дату...'],
+                    'language'      => 'en',
+                    'type'          => \kartik\datetime\DateTimePicker::TYPE_INPUT,
                     'pluginOptions' => [
-                        'format' => 'dd M yyyy hh:ii:ss',
+                        'format'         => 'dd M yyyy hh:ii:ss',
                         'todayHighlight' => true,
-                        'minView' => 1,
-                        'autoclose' => true,
-                        'initialDate' => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
-                    ]]) ?>
+                        'minView'        => 1,
+                        'autoclose'      => true,
+                        'initialDate'    => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
+                    ], ]) ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
@@ -108,12 +107,12 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
     $model->date_start = date('Y-m-d H:i:s', strtotime($model->date_start));
     $model->date_end = date('Y-m-d H:i:s', strtotime($model->date_end));
     $sections = isset($model->sections) ? $model->sections : [];
-    $operators = $model->operators ? ' AND q.id_operator IN (' . implode(',', $model->operators) . ')' : ' ';
+    $operators = $model->operators ? ' AND q.id_operator IN ('.implode(',', $model->operators).')' : ' ';
     ?>
 
     <div class="col-sm-8">
         <?php
-$panelTemplate = <<< HTML
+$panelTemplate = <<< 'HTML'
 <div class="{prefix}{type}">
     {panelBefore}
     {items}
@@ -122,7 +121,7 @@ $panelTemplate = <<< HTML
 </div>
 HTML;
 
-$panelFooterTemplate = <<< HTML
+$panelFooterTemplate = <<< 'HTML'
     <div class="kv-panel-pager">
         {pager}<div style="display: inline-block;float: right;">{summary}</div>
     </div>
@@ -131,89 +130,89 @@ $panelFooterTemplate = <<< HTML
 HTML;
 
             $tableConf = [
-                'pjax'=>true,
-                'panel'=>[
-                    'type'=>'default',
+                'pjax' => true,
+                'panel'=> [
+                    'type'=> 'default',
                 ],
                 'panelTemplate' => $panelTemplate,
-                'pager' => [
+                'pager'         => [
                     'firstPageLabel' => '<<',
-                    'lastPageLabel' => '>>',
-                    'prevPageLabel' => '<',
-                    'nextPageLabel' => '>',
+                    'lastPageLabel'  => '>>',
+                    'prevPageLabel'  => '<',
+                    'nextPageLabel'  => '>',
                     'maxButtonCount' => 8,
                 ],
                 'panelFooterTemplate' => $panelFooterTemplate,
             ];
 
-            if(in_array('0', $sections)) {
+            if (in_array('0', $sections)) {
                 $setting_parts = $tableConf;
 
                 $id_firm = '';
                 $position = '';
                 $columns = [
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y'],
-                        'label' => 'Дата',
+                        'format'    => ['datetime', 'php:d M Y'],
+                        'label'     => 'Дата',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:H:i:s'],
-                        'label' => 'Время',
+                        'format'    => ['datetime', 'php:H:i:s'],
+                        'label'     => 'Время',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'username',
-                        'label' => 'Оператор',
+                        'label'     => 'Оператор',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'detail',
-                        'label' => 'Деталь',
+                        'label'     => 'Деталь',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'mark',
-                        'label' => 'Марка',
+                        'label'     => 'Марка',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'model',
-                        'label' => 'Модель',
+                        'label'     => 'Модель',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'body',
-                        'label' => 'Кузов',
+                        'label'     => 'Кузов',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'engine',
-                        'label' => 'Двигатель',
+                        'label'     => 'Двигатель',
                     ],
                 ];
 
-                $group_parts = " GROUP BY q.id";
-                if($model->id_firm) {
-                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                $group_parts = ' GROUP BY q.id';
+                if ($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'position',
-                        'label' => 'Позиция',
+                        'label'     => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => 'kartik\grid\BooleanColumn',
-                        'attribute' => 'opened',
-                        'label' => 'Открыт',
-                        'vAlign' => 'middle',
-                        'trueLabel' => 'Да',
-                        'falseLabel' => 'Нет'
+                        'class'      => 'kartik\grid\BooleanColumn',
+                        'attribute'  => 'opened',
+                        'label'      => 'Открыт',
+                        'vAlign'     => 'middle',
+                        'trueLabel'  => 'Да',
+                        'falseLabel' => 'Нет',
                     ];
-                    $group_parts = "";
+                    $group_parts = '';
                 }
 
                 $sql_parts = "
@@ -250,10 +249,10 @@ HTML;
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ])->queryScalar();
 
-                if($model->id_firm) {
+                if ($model->id_firm) {
                     $opened_firms = Yii::$app->db->createCommand("
                                 SELECT
                                     COALESCE(sum(f.opened),0)
@@ -266,21 +265,21 @@ HTML;
                                     {$id_firm}",
                         [
                             ':d_start' => $model->date_start,
-                            ':d_end' => $model->date_end
+                            ':d_end'   => $model->date_end,
                         ])->queryScalar();
                 } else {
                     $opened_firms = $count;
                 }
 
                 $dataProviderParts = new \yii\data\SqlDataProvider([
-                    'sql' => $sql_parts,
+                    'sql'    => $sql_parts,
                     'params' => [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ],
                     'totalCount' => $count,
                     'pagination' => [
-                        'pageSize' =>10,
+                        'pageSize' => 10,
                     ],
                 ]);
 
@@ -297,12 +296,11 @@ HTML;
                 Pjax::begin();
                 echo kartik\grid\GridView::widget($setting_parts);
                 Pjax::end();
-
             }
         ?>
 
         <?php
-            if(in_array('1', $sections)) {
+            if (in_array('1', $sections)) {
                 $setting_service = $tableConf;
 
                 $id_firm = '';
@@ -310,44 +308,44 @@ HTML;
 
                 $columns = [
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y'],
-                        'label' => 'Дата',
+                        'format'    => ['datetime', 'php:d M Y'],
+                        'label'     => 'Дата',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:H:i:s'],
-                        'label' => 'Время',
+                        'format'    => ['datetime', 'php:H:i:s'],
+                        'label'     => 'Время',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'username',
-                        'label' => 'Оператор',
+                        'label'     => 'Оператор',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'service',
-                        'label' => 'Услуга',
+                        'label'     => 'Услуга',
                     ],
                 ];
 
-                if($model->id_firm) {
-                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                if ($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'position',
-                        'label' => 'Позиция',
+                        'label'     => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => 'kartik\grid\BooleanColumn',
-                        'attribute' => 'opened',
-                        'label' => 'Открыт',
-                        'vAlign' => 'middle',
-                        'trueLabel' => 'Да',
-                        'falseLabel' => 'Нет'
+                        'class'      => 'kartik\grid\BooleanColumn',
+                        'attribute'  => 'opened',
+                        'label'      => 'Открыт',
+                        'vAlign'     => 'middle',
+                        'trueLabel'  => 'Да',
+                        'falseLabel' => 'Нет',
                     ];
                     $setting_service['showPageSummary'] = true;
                 }
@@ -378,10 +376,10 @@ HTML;
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ])->queryScalar();
 
-                if($model->id_firm) {
+                if ($model->id_firm) {
                     $opened_firms = Yii::$app->db->createCommand("
                                 SELECT
                                     COALESCE(sum(f.opened),0)
@@ -394,21 +392,21 @@ HTML;
                                     {$id_firm}",
                         [
                             ':d_start' => $model->date_start,
-                            ':d_end' => $model->date_end
+                            ':d_end'   => $model->date_end,
                         ])->queryScalar();
                 } else {
                     $opened_firms = $count;
                 }
 
                 $dataProviderService = new \yii\data\SqlDataProvider([
-                    'sql' => $sql_service,
+                    'sql'    => $sql_service,
                     'params' => [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ],
                     'totalCount' => $count,
                     'pagination' => [
-                        'pageSize' =>10,
+                        'pageSize' => 10,
                     ],
                 ]);
 
@@ -429,7 +427,7 @@ HTML;
         ?>
 
         <?php
-            if(in_array('2', $sections)) {
+            if (in_array('2', $sections)) {
                 $setting_firms = $tableConf;
 
                 $id_firm = '';
@@ -437,44 +435,44 @@ HTML;
 
                 $columns = [
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:d M Y'],
-                        'label' => 'Дата',
+                        'format'    => ['datetime', 'php:d M Y'],
+                        'label'     => 'Дата',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'date_time',
-                        'format' => ['datetime', 'php:H:i:s'],
-                        'label' => 'Время',
+                        'format'    => ['datetime', 'php:H:i:s'],
+                        'label'     => 'Время',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'username',
-                        'label' => 'Оператор',
+                        'label'     => 'Оператор',
                     ],
                     [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'search',
-                        'label' => 'Что искали',
+                        'label'     => 'Что искали',
                     ],
                 ];
 
-                if($model->id_firm) {
-                    $id_firm = ' AND f.id_firm='. $model->id_firm . ' ';
+                if ($model->id_firm) {
+                    $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
                     $columns[] = [
-                        'class' => '\kartik\grid\DataColumn',
+                        'class'     => '\kartik\grid\DataColumn',
                         'attribute' => 'position',
-                        'label' => 'Позиция',
+                        'label'     => 'Позиция',
                     ];
                     $columns[] = [
-                        'class' => 'kartik\grid\BooleanColumn',
-                        'attribute' => 'opened',
-                        'label' => 'Открыт',
-                        'vAlign' => 'middle',
-                        'trueLabel' => 'Да',
-                        'falseLabel' => 'Нет'
+                        'class'      => 'kartik\grid\BooleanColumn',
+                        'attribute'  => 'opened',
+                        'label'      => 'Открыт',
+                        'vAlign'     => 'middle',
+                        'trueLabel'  => 'Да',
+                        'falseLabel' => 'Нет',
                     ];
                     $setting_firms['showPageSummary'] = true;
                 }
@@ -504,10 +502,10 @@ HTML;
                                 {$id_firm}",
                     [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ])->queryScalar();
 
-                if($model->id_firm) {
+                if ($model->id_firm) {
                     $opened_firms = Yii::$app->db->createCommand("
                                 SELECT
                                     COALESCE(sum(f.opened),0)
@@ -520,21 +518,21 @@ HTML;
                                     {$id_firm}",
                         [
                             ':d_start' => $model->date_start,
-                            ':d_end' => $model->date_end
+                            ':d_end'   => $model->date_end,
                         ])->queryScalar();
                 } else {
                     $opened_firms = $count;
                 }
 
                 $dataProviderFirms = new \yii\data\SqlDataProvider([
-                    'sql' => $sql_firms,
+                    'sql'    => $sql_firms,
                     'params' => [
                         ':d_start' => $model->date_start,
-                        ':d_end' => $model->date_end
+                        ':d_end'   => $model->date_end,
                     ],
                     'totalCount' => $count,
                     'pagination' => [
-                        'pageSize' =>10,
+                        'pageSize' => 10,
                     ],
                 ]);
 
