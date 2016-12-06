@@ -46,6 +46,9 @@ class FirmsSearch extends Firms
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 50,
+            ],
         ]);
 
         $this->load($params);
@@ -58,12 +61,12 @@ class FirmsSearch extends Firms
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id'       => $this->id,
             'Enabled'  => $this->Enabled,
             'Priority' => $this->Priority,
         ]);
 
         $query->andFilterWhere(['like', 'Name', $this->Name])
+            ->andFilterWhere(['like', 'id', $this->id])
             ->andFilterWhere(['like', 'Address', $this->Address])
             ->andFilterWhere(['like', 'Phone', $this->Phone])
             ->andFilterWhere(['like', 'Comment', $this->Comment])
