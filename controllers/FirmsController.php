@@ -77,6 +77,22 @@ class FirmsController extends Controller
         ]);
     }
 
+    public function actionPrice($id)
+    {
+        return $this->render('price', [
+            'model'         => $this->findPrice($id),
+        ]);
+    }
+
+    public function actionService($id)
+    {
+        $models = $this->findService($id);
+        return $this->render('service', [
+            'model'         => $this->findService($id),
+        ]);
+    }
+
+
     /**
      * Displays a single Firms model.
      *
@@ -184,5 +200,29 @@ class FirmsController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function findPrice($id)
+    {
+        $query = \app\models\CarPresenceEN::find()->where('ID_Firm = :id', [':id' => $id]);
+
+        return new \yii\data\ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+        ]);
+    }
+
+    protected function findService($id)
+    {
+        $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
+
+        return new \yii\data\ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+        ]);
     }
 }

@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'trueLabel'  => 'Да',
                 'falseLabel' => 'Нет',
                 'width'      => '20px',
-                'hAlign'    => GridView::ALIGN_CENTER,
+                'hAlign'     => GridView::ALIGN_CENTER,
             ],
             [
                 'attribute' => 'Priority',
@@ -53,13 +53,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 'hAlign'    => GridView::ALIGN_CENTER,
             ],
             [
-                'attribute'  => 'Comment',
+                'attribute'      => 'Comment',
                 'contentOptions' => [
                     'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
                 ],
             ],
             [
-                'class'     => 'yii\grid\ActionColumn',
+                'class'          => 'yii\grid\ActionColumn',
+                'template'       => '{price} {service} {update} {delete}',
+                'buttons'        => [
+                    'price' => function ($url, $model, $key) {
+                        $title = 'Прайс';
+                        $options = array_merge([
+                            'title'      => $title,
+                            'aria-label' => $title,
+                            'data-pjax'  => '0',
+                        ]);
+                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-list"]);
+                        return Html::a($icon, $url, $options);
+                    },
+                    'service' => function ($url, $model, $key) {
+                        $title = 'Услуги';
+                        $options = array_merge([
+                            'title'      => $title,
+                            'aria-label' => $title,
+                            'data-pjax'  => '0',
+                        ]);
+                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-wrench"]);
+                        return Html::a($icon, $url, $options);
+                    },
+                ],
                 'contentOptions' => [
                     'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
                 ],

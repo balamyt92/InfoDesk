@@ -43,7 +43,7 @@ use yii\bootstrap\ActiveForm;
     <div class="form-group">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-            <?= Html::submitButton($model->isNewRecord ? 'Созать' : 'Обновить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::submitButton($model->isNewRecord ? 'Созать' : 'Ок', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
             <?= Html::a('Отмена', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
             <?php
             \yii\bootstrap\Modal::begin([
