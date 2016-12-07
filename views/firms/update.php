@@ -7,13 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Изменеие фирмы:';
 ?>
-<div class="firms-update">
-
-    <div class="row">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6"><h1><?= Html::encode($this->title) ?></h1></div>
-    </div>
-
+<div class="firms-update" style="margin-top: 10px;">
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

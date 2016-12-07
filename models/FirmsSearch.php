@@ -62,11 +62,11 @@ class FirmsSearch extends Firms
         // grid filtering conditions
         $query->andFilterWhere([
             'Enabled'  => $this->Enabled,
+            'id'       => $this->id,
             'Priority' => $this->Priority,
         ]);
 
         $query->andFilterWhere(['like', 'Name', $this->Name])
-            ->andFilterWhere(['like', 'id', $this->id])
             ->andFilterWhere(['like', 'Address', $this->Address])
             ->andFilterWhere(['like', 'Phone', $this->Phone])
             ->andFilterWhere(['like', 'Comment', $this->Comment])
