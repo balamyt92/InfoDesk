@@ -47,7 +47,7 @@ use yii\bootstrap\ActiveForm;
             <?= Html::a('Отмена', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
             <?php
             \yii\bootstrap\Modal::begin([
-                'header' => '<h1 id="firmName"></h1>',
+                'header' => '<h3 id="firmName" style="margin: 0px;"></h3>',
                 'toggleButton' => [
                     'label' => 'Предпросмотр',
                     'class' => 'btn btn-default',
@@ -123,7 +123,7 @@ use yii\bootstrap\ActiveForm;
         $('#firmFax')[0].innerHTML              = $('#firms-fax')[0].value;
         $('#firmEmail')[0].innerHTML            = $('#firms-email')[0].value;
         $('#firmURL')[0].innerHTML              = $('#firms-url')[0].value;
-        $('#firmOperatingMode')[0].innerHTML    = $('#firms-operatingmode')[0].value;
+        $('#firmOperatingMode')[0].innerHTML    = '<pre>' + $('#firms-operatingmode')[0].value + '</pre>';
         $('#firmComment')[0].innerHTML          = $('#firms-comment')[0].value;
     }
     ", yii\web\View::POS_READY);
