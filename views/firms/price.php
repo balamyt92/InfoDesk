@@ -25,17 +25,17 @@ $this->title = 'Прайс фирмы';
             "<span class=\"btn-group\">{summary}</span>",
             "<span class=\"btn-group\">" . Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']) . "</span>",
             ExportMenu::widget([
-			    'dataProvider' 	  => $model,
+			    'dataProvider' 	  => $exportModel,
 			    'fontAwesome' 	  => true,
 			    'target' 		  => ExportMenu::TARGET_SELF,
 			    'dropdownOptions' => [
 			        'label' => 'Экспорт прайса',
 			        'class' => 'btn btn-default'
 			    ],
+                'showConfirmAlert' => false,
                 'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
 			    'pdfLibraryPath' => '@vendor/mpdf/mpdf',
 			]),
-			'{export}',
             '{toggleData}',
         ],
         'panelTemplate' => "

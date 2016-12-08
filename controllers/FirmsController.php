@@ -79,16 +79,52 @@ class FirmsController extends Controller
 
     public function actionPrice($id)
     {
+        $query = \app\models\CarPresenceEN::find()->where('ID_Firm = :id', [':id' => $id]);
+
+        $renderDataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+        ]);
+
+        $exportDataProvider = false;
+        if(Yii::$app->request->post()) {
+            ini_set('max_execution_time', 900);
+            $exportDataProvider = new \yii\data\ActiveDataProvider([
+                'query' => $query,
+                'pagination' => false,
+            ]);
+        }
         return $this->render('price', [
-            'model'         => $this->findPrice($id),
+            'model'         => $renderDataProvider,
+            'exportModel'   => $exportDataProvider ? $exportDataProvider : $renderDataProvider,
         ]);
     }
 
     public function actionService($id)
     {
-        $models = $this->findService($id);
+        $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
+
+        $renderDataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+        ]);
+
+        $exportDataProvider = false;
+        if(Yii::$app->request->post()) {
+            ini_set('max_execution_time', 900);
+            $exportDataProvider = new \yii\data\ActiveDataProvider([
+                'query' => $query,
+                'pagination' => false,
+            ]);
+        }
+
         return $this->render('service', [
-            'model'         => $this->findService($id),
+            'model'         => $renderDataProvider,
+            'exportModel'   => $exportDataProvider ? $exportDataProvider : $renderDataProvider,
         ]);
     }
 
@@ -200,29 +236,5 @@ class FirmsController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    protected function findPrice($id)
-    {
-        $query = \app\models\CarPresenceEN::find()->where('ID_Firm = :id', [':id' => $id]);
-
-        return new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100,
-            ],
-        ]);
-    }
-
-    protected function findService($id)
-    {
-        $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
-
-        return new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100,
-            ],
-        ]);
     }
 }

@@ -3,6 +3,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use kartik\export\ExportMenu;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\FirmsSearch */
@@ -101,7 +102,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar'       => [
             "<span class=\"btn-group\">{summary}</span>",
             "<span class=\"btn-group\">{$create_button}</span>",
-            '{export}',
+            ExportMenu::widget([
+                'dataProvider'    => $dataProvider,
+                'fontAwesome'     => true,
+                'target'          => ExportMenu::TARGET_SELF,
+                'dropdownOptions' => [
+                    'label' => 'Экспорт списка фирм',
+                    'class' => 'btn btn-default'
+                ],
+                'showConfirmAlert' => false,
+                'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                'pdfLibraryPath' => '@vendor/mpdf/mpdf',
+                'enableFormatter' => false,
+            ]),
             '{toggleData}',
         ],
         'panelTemplate' => "
