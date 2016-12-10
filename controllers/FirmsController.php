@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\CarPresenceSearch;
 use app\models\Firms;
 use app\models\FirmsSearch;
 use app\models\User;
@@ -9,6 +10,7 @@ use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -79,26 +81,32 @@ class FirmsController extends Controller
 
     public function actionPrice($id)
     {
-        $query = \app\models\CarPresenceEN::find()->where('ID_Firm = :id', [':id' => $id]);
+        $filterModel = new CarPresenceSearch();
 
-        $renderDataProvider = new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100,
-            ],
-        ]);
+        $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
         $exportDataProvider = false;
         if(Yii::$app->request->post()) {
+            // for big pdf generate need more time
             ini_set('max_execution_time', 900);
-            $exportDataProvider = new \yii\data\ActiveDataProvider([
-                'query' => $query,
-                'pagination' => false,
-            ]);
+            $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
+
+        $names   = $filterModel->getDetailNames($id);
+        $marks   = $filterModel->getMarksName($id);
+        $models  = $filterModel->getModelsName($id);
+        $bodys   = $filterModel->getBodysName($id);
+        $engines = $filterModel->getEnginesName($id);
+
         return $this->render('price', [
             'model'         => $renderDataProvider,
             'exportModel'   => $exportDataProvider ? $exportDataProvider : $renderDataProvider,
+            'filterModel'   => $filterModel,
+            'names'         => $names,
+            'marks'         => $marks,
+            'models'        => $models,
+            'bodys'         => $bodys,
+            'engines'       => $engines,
         ]);
     }
 
