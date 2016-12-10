@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\CarPresenceSearch;
 use app\models\Firms;
 use app\models\FirmsSearch;
+use app\models\ServicePresenceSearch;
 use app\models\User;
 use Yii;
 use yii\db\Query;
@@ -112,27 +113,24 @@ class FirmsController extends Controller
 
     public function actionService($id)
     {
+        $filterModel = new ServicePresenceSearch();
+
         $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
 
-        $renderDataProvider = new \yii\data\ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100,
-            ],
-        ]);
+        $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
         $exportDataProvider = false;
         if(Yii::$app->request->post()) {
+            // for big pdf generate need more time
             ini_set('max_execution_time', 900);
-            $exportDataProvider = new \yii\data\ActiveDataProvider([
-                'query' => $query,
-                'pagination' => false,
-            ]);
+            $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
 
         return $this->render('service', [
             'model'         => $renderDataProvider,
             'exportModel'   => $exportDataProvider ? $exportDataProvider : $renderDataProvider,
+            'filterModel'   => $filterModel,
+            'services'      => $filterModel->getServicesName($id),
         ]);
     }
 

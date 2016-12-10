@@ -1,16 +1,56 @@
 <?php
+/**
+ * @var $model app\models\ServicePresence
+ * @var $exportModel app\models\ServicePresence
+ * @var $filterModel app\models\ServicePresenceSearch
+ * @var $services array
+ */
+
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use kartik\export\ExportMenu;
 
 $this->title = 'Услуги фирмы';
+
+$style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
+
+$columns = [
+	[
+		'attribute' => 'ID_Service',
+		'value' => 'iDService.Name',
+		'contentOptions' => [
+			'style' => $style
+		],
+		'filter' => $services,
+	],
+	[
+		'attribute' => 'Comment',
+		'contentOptions' => [
+			'style' => $style
+		],
+	],
+	[
+		'attribute' => 'CarList',
+		'contentOptions' => [
+			'style' => $style
+		],
+	],
+	[
+		'attribute' => 'Coast',
+		'contentOptions' => [
+			'style' => $style
+		],
+	],
+]
 ?>
 
 <div class="service-firm">
 	<?php Pjax::begin(); ?>    
 	<?= GridView::widget([
 		'dataProvider' => $model,
+		'columns' => $columns,
+		'filterModel' => $filterModel,
 		'panel'         => [
             'type' => 'default',
         ],
