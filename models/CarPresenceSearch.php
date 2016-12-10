@@ -71,6 +71,39 @@ class CarPresenceSearch extends CarPresenceEN
         $config['pagination'] = $pagination;
 
         $dataProvider = new ActiveDataProvider($config);
+        $dataProvider->setSort([
+            'attributes' => [
+                'ID_Name' => [
+                    'asc' => ['n.Name' => SORT_ASC],
+                    'desc' => ['n.Name' => SORT_DESC],
+                    'default' => SORT_ASC
+                ],
+                'ID_Mark' => [
+                    'asc' => ['ma.Name' => SORT_ASC],
+                    'desc' => ['ma.Name' => SORT_DESC],
+                    'default' => SORT_ASC
+                ],
+                'ID_Model' => [
+                    'asc' => ['mo.Name' => SORT_ASC],
+                    'desc' => ['mo.Name' => SORT_DESC],
+                    'default' => SORT_ASC
+                ],
+                'ID_Body' => [
+                    'asc' => ['b.Name' => SORT_ASC],
+                    'desc' => ['b.Name' => SORT_DESC],
+                    'default' => SORT_ASC
+                ],
+                'ID_Engine' => [
+                    'asc' => ['e.Name' => SORT_ASC],
+                    'desc' => ['e.Name' => SORT_DESC],
+                    'default' => SORT_ASC
+                ],
+                'Cost',
+                'Comment',
+                'TechNumber',
+                'Catalog_Number',
+            ]
+        ]);
 
         $this->load($params);
 
