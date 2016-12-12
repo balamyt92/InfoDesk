@@ -93,6 +93,10 @@ class FirmsController extends Controller
             $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
 
+        // for off sql_mode=only_full_group_by
+        $sql_set_mode = "set sql_mode = ''";
+        Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
+
         $names   = $filterModel->getDetailNames($id);
         $marks   = $filterModel->getMarksName($id);
         $models  = $filterModel->getModelsName($id);
@@ -125,6 +129,10 @@ class FirmsController extends Controller
             ini_set('max_execution_time', 900);
             $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
+
+        // for off sql_mode=only_full_group_by
+        $sql_set_mode = "set sql_mode = ''";
+        Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
         return $this->render('service', [
             'model'         => $renderDataProvider,
