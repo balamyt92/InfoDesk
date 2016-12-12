@@ -118,7 +118,6 @@ $columns = [
                 'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
 			    'pdfLibraryPath' => '@vendor/mpdf/mpdf',
 			]),
-            '{toggleData}',
         ],
         'panelTemplate' => "
             <div class=\"{prefix}{type}\">

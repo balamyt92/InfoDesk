@@ -51,6 +51,14 @@ class CarPresenceSearch extends CarPresenceEN
      */
     public function search($params, array $pagination = [ 'pageSize' => 100 ])
     {
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return new ActiveDataProvider([
+                'query' => CarPresenceEN::find(),
+            ]);
+        }
+
         $query = CarPresenceEN::find()
             ->joinWith(['iDName n', 'iDMark ma', 'iDModel mo', 'iDBody b', 'iDEngine e'])
             ->groupBy([
@@ -65,8 +73,42 @@ class CarPresenceSearch extends CarPresenceEN
                 'Catalog_Number',
             ]);
 
+        $query->andFilterWhere([
+            'CarPresenceEN.ID_Mark' => $this->ID_Mark,
+            'CarPresenceEN.ID_Model' => $this->ID_Model,
+            'CarPresenceEN.ID_Name' => $this->ID_Name,
+            'CarPresenceEN.ID_Firm' => $params['id'],
+            'CarPresenceEN.ID_Body' => $this->ID_Body,
+            'CarPresenceEN.ID_Engine' => $this->ID_Engine,
+            'Cost' => $this->Cost,
+        ]);
+
+        $query->andFilterWhere(['like', 'CarYear', $this->CarYear])
+            ->andFilterWhere(['like', 'Comment', $this->Comment])
+            ->andFilterWhere(['like', 'Hash_Comment', $this->Hash_Comment])
+            ->andFilterWhere(['like', 'TechNumber', $this->TechNumber])
+            ->andFilterWhere(['like', 'Catalog_Number', $this->Catalog_Number]);
+
+        $totalCount = CarPresenceEN::find()
+            ->andFilterWhere([
+                'CarPresenceEN.ID_Mark' => $this->ID_Mark,
+                'CarPresenceEN.ID_Model' => $this->ID_Model,
+                'CarPresenceEN.ID_Name' => $this->ID_Name,
+                'CarPresenceEN.ID_Firm' => $params['id'],
+                'CarPresenceEN.ID_Body' => $this->ID_Body,
+                'CarPresenceEN.ID_Engine' => $this->ID_Engine,
+                'Cost' => $this->Cost,
+            ]);
+
+        $totalCount->andFilterWhere(['like', 'CarYear', $this->CarYear])
+            ->andFilterWhere(['like', 'Comment', $this->Comment])
+            ->andFilterWhere(['like', 'Hash_Comment', $this->Hash_Comment])
+            ->andFilterWhere(['like', 'TechNumber', $this->TechNumber])
+            ->andFilterWhere(['like', 'Catalog_Number', $this->Catalog_Number]);
+
         $config = [
-            'query' => $query,
+            'query'      => $query,
+            'totalCount' => $totalCount->count(),
         ];
         $config['pagination'] = $pagination;
 
@@ -104,31 +146,6 @@ class CarPresenceSearch extends CarPresenceEN
                 'Catalog_Number',
             ]
         ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-            'CarPresenceEN.ID_Model' => $this->ID_Model,
-            'CarPresenceEN.ID_Name' => $this->ID_Name,
-            'CarPresenceEN.ID_Firm' => $params['id'],
-            'CarPresenceEN.ID_Body' => $this->ID_Body,
-            'CarPresenceEN.ID_Engine' => $this->ID_Engine,
-            'Cost' => $this->Cost,
-        ]);
-
-        $query->andFilterWhere(['like', 'CarYear', $this->CarYear])
-            ->andFilterWhere(['like', 'Comment', $this->Comment])
-            ->andFilterWhere(['like', 'Hash_Comment', $this->Hash_Comment])
-            ->andFilterWhere(['like', 'TechNumber', $this->TechNumber])
-            ->andFilterWhere(['like', 'Catalog_Number', $this->Catalog_Number]);
 
         return $dataProvider;
     }
