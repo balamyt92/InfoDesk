@@ -43,11 +43,11 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
     public function attributeLabels()
     {
         return [
-            'ID_Service' => 'Id  Service',
-            'ID_Firm'    => 'Id  Firm',
-            'Comment'    => 'Comment',
-            'CarList'    => 'Car List',
-            'Coast'      => 'Coast',
+            'ID_Service' => 'Услуга',
+            'ID_Firm'    => 'Id Firm',
+            'Comment'    => 'Коментарий',
+            'CarList'    => 'Обслуживаемые автомобили',
+            'Coast'      => 'Цена',
         ];
     }
 

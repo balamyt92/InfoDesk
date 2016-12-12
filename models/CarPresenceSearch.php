@@ -164,7 +164,7 @@ class CarPresenceSearch extends CarPresenceEN
                     'CarPresenceEN.ID_Body' => $this->ID_Body,
                     'CarPresenceEN.ID_Engine' => $this->ID_Engine,
                 ])
-                ->groupBy('Name')
+                ->groupBy('id')
                 ->orderBy('Name')
                 ->asArray()->all(),
             'id', 'Name');
