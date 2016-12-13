@@ -134,3 +134,9 @@ $columns = [
 	<?php Pjax::end();?>
 
 </div>
+
+<?php
+$this->registerCss("
+    table > tbody> tr:hover {
+        background-color: #b1f1e2 !important;
+    }");
