@@ -70,8 +70,8 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
             'ID_Engine'      => 'Двигатель',
             'Comment'        => 'Комментарий',
             'Hash_Comment'   => 'Hash',
-            'TechNumber'     => 'Номер',
-            'Catalog_Number' => 'Код',
+            'TechNumber'     => 'Фото',
+            'Catalog_Number' => 'Номер',
             'Cost'           => 'Цена',
         ];
     }

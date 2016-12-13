@@ -39,17 +39,17 @@ AppAsset::register($this);
         ['label' => 'Call-center', 'url' => ['/site/index']],
     ];
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $loginMenu[] = ['label' => 'Войти', 'url' => ['/site/login']];
     } else {
         if (\app\models\User::isUserAdmin(Yii::$app->user->identity->username)) {
             $menuItems[] = ['label' => 'Фирмы', 'url' => ['/firms/index']];
             $menuItems[] = ['label' => 'Статистика', 'url' => ['/statistic/index']];
         }
 
-        $menuItems[] = '<li>'
+        $loginMenu[] = '<li>'
             .Html::beginForm(['/site/logout'], 'post')
             .Html::submitButton(
-                'Logout ('.Yii::$app->user->identity->username.')',
+                'Сменить пользователя ('.Yii::$app->user->identity->username.')',
                 ['class' => 'btn btn-link', 'style' => 'height:50px']
             )
             .Html::endForm()
@@ -59,6 +59,11 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav nav-pills'],
         'items'   => $menuItems,
     ]);
+
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-right'],
+        'items'   => $loginMenu,
+    ]);
     NavBar::end();
     ?>
 
@@ -67,14 +72,6 @@ AppAsset::register($this);
         <?= $content ?>
     </div>
 </div>
-
-<!-- <footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; Автомобильная справочная служба <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
-</footer> -->
 
 <?php $this->endBody() ?>
 

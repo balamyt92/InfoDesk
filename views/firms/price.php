@@ -61,24 +61,27 @@ $columns = [
 	],
 	[
 		'attribute' => 'Cost',
+		'width'      => '20px',
 		'contentOptions' => [
 			'style' => $style
 		],
 	],
 	[
 		'attribute' => 'Comment',
-		'contentOptions' => [
-			'style' => $style
-		],
-	],
-	[
-		'attribute' => 'TechNumber',
+		'width'      => '400px',
 		'contentOptions' => [
 			'style' => $style
 		],
 	],
 	[
 		'attribute' => 'Catalog_Number',
+		'contentOptions' => [
+			'style' => $style
+		],
+	],
+	[
+		'attribute' => 'TechNumber',
+		'width'      => '20px',
 		'contentOptions' => [
 			'style' => $style
 		],
