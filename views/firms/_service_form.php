@@ -6,13 +6,14 @@ use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\ServicePresence */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $items array */
 ?>
 
 <div class="firms-form">
 
     <?php $form = ActiveForm::begin(['layout' => 'horizontal']); ?>
 
-    <?= $form->field($model, 'ID_Service')->dropDownList($items) ?>
+    <?= $form->field($model, 'ID_Service', ['inputOptions' => ['autofocus' => 'autofocus']])->dropDownList($items) ?>
 
     <?= $form->field($model, 'Comment')->textarea(['rows' => 3]) ?>
 

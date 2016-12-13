@@ -34,6 +34,7 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
             [['Comment', 'CarList', 'Coast'], 'string'],
             [['ID_Firm'], 'exist', 'skipOnError' => true, 'targetClass' => Firms::className(), 'targetAttribute' => ['ID_Firm' => 'id']],
             [['ID_Service'], 'exist', 'skipOnError' => true, 'targetClass' => Services::className(), 'targetAttribute' => ['ID_Service' => 'id']],
+            [['update_at'] , 'safe'],
         ];
     }
 
@@ -48,6 +49,7 @@ class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
             'Comment'    => 'Коментарий',
             'CarList'    => 'Обслуживаемые автомобили',
             'Coast'      => 'Цена',
+            'update_at'  => 'Дата обновления',
         ];
     }
 

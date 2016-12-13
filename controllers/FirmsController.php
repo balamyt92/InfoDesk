@@ -267,7 +267,21 @@ class FirmsController extends Controller
     {
         $model = $this->findService($ID_Service, $ID_Firm, $Comment);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\yii\db\IntegrityException $e) {
+                $items = ArrayHelper::map(
+                    \app\models\Services::find()
+                        ->where('ID_Parent IS NOT NULL')
+                        ->orderBy('Name')
+                        ->asArray()->all(), 'id', 'Name');
+                return $this->render('service_update', [
+                    'model' => $model,
+                    'items' => $items,
+                    'err'   => $e,
+                ]);
+            }
             return $this->redirect(['firms/service', 'id' => $ID_Firm]);
         } else {
             $items = ArrayHelper::map(
@@ -278,6 +292,7 @@ class FirmsController extends Controller
             return $this->render('service_update', [
                 'model' => $model,
                 'items' => $items,
+                'err'   => false,
             ]);
         }
     }
@@ -286,9 +301,30 @@ class FirmsController extends Controller
     {
         $model = new ServicePresence();
         $model->ID_Firm = $ID_Firm;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\yii\db\IntegrityException $e) {
+                $items = ArrayHelper::map(
+                    \app\models\Services::find()
+                        ->where('ID_Parent IS NOT NULL')
+                        ->orderBy('Name')
+                        ->asArray()->all(), 'id', 'Name');
+                return $this->render('service_add', [
+                    'model' => $model,
+                    'items' => $items,
+                    'err'   => $e,
+                ]);
+            }
+            return $this->redirect(['firms/service', 'id' => $ID_Firm, 'err' => false]);
         } else {
+            $last = ServicePresence::find()->orderBy('update_at DESC')->one();
+
+            $model->ID_Service = $last->ID_Service;
+            $model->Comment    = $last->Comment;
+            $model->CarList    = $last->CarList;
+            $model->Coast      = $last->Coast;
+
             $items = ArrayHelper::map(
                 \app\models\Services::find()
                     ->where('ID_Parent IS NOT NULL')
@@ -297,6 +333,7 @@ class FirmsController extends Controller
             return $this->render('service_add', [
                 'model' => $model,
                 'items' => $items,
+                'err'   => false,
             ]);
         }
     }
