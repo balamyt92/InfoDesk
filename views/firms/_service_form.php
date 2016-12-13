@@ -13,7 +13,14 @@ use yii\bootstrap\ActiveForm;
 
     <?php $form = ActiveForm::begin(['layout' => 'horizontal']); ?>
 
-    <?= $form->field($model, 'ID_Service', ['inputOptions' => ['autofocus' => 'autofocus']])->dropDownList($items) ?>
+    <?= $form->field($model, 'ID_Service', ['inputOptions' => ['autofocus' => 'autofocus']])
+        ->widget(\kartik\select2\Select2::className(), [
+            'data' => $items,
+            'pluginOptions' => [
+                'allowClear' => true,
+                'focus'      => true,
+            ],
+        ]) ?>
 
     <?= $form->field($model, 'Comment')->textarea(['rows' => 3]) ?>
 
@@ -29,6 +36,10 @@ use yii\bootstrap\ActiveForm;
         </div>
     </div>
 
-    <?php ActiveForm::end();?>
+    <?php ActiveForm::end();
+    if($model->isNewRecord) {
+        $this->registerJs("$('select').select2('open');");
+    }
+    ?>
 
 </div>
