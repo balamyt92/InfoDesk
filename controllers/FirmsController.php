@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\CarPresenceSearch;
 use app\models\Firms;
 use app\models\FirmsSearch;
+use app\models\ServicePresence;
 use app\models\ServicePresenceSearch;
 use app\models\User;
 use Yii;
@@ -139,6 +140,7 @@ class FirmsController extends Controller
             'exportModel'   => $exportDataProvider ? $exportDataProvider : $renderDataProvider,
             'filterModel'   => $filterModel,
             'services'      => $filterModel->getServicesName($id),
+            'ID_Firm'       => $id,
         ]);
     }
 
@@ -246,6 +248,76 @@ class FirmsController extends Controller
     protected function findModel($id)
     {
         if (($model = Firms::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    /**
+     * Updates an existing Service model.
+     *
+     * @param int    $ID_Service
+     * @param int    $ID_Firm
+     * @param string $Comment
+     *
+     * @return mixed
+     */
+    public function actionServiceUpdate($ID_Service, $ID_Firm, $Comment)
+    {
+        $model = $this->findService($ID_Service, $ID_Firm, $Comment);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+        } else {
+            $items = ArrayHelper::map(
+                \app\models\Services::find()
+                    ->where('ID_Parent IS NOT NULL')
+                    ->orderBy('Name')
+                    ->asArray()->all(), 'id', 'Name');
+            return $this->render('service_update', [
+                'model' => $model,
+                'items' => $items,
+            ]);
+        }
+    }
+
+    public function actionServiceAdd($ID_Firm)
+    {
+        $model = new ServicePresence();
+        $model->ID_Firm = $ID_Firm;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+        } else {
+            $items = ArrayHelper::map(
+                \app\models\Services::find()
+                    ->where('ID_Parent IS NOT NULL')
+                    ->orderBy('Name')
+                    ->asArray()->all(), 'id', 'Name');
+            return $this->render('service_add', [
+                'model' => $model,
+                'items' => $items,
+            ]);
+        }
+    }
+
+    public function actionServiceDelete($ID_Service, $ID_Firm, $Comment)
+    {
+        $this->findService($ID_Service, $ID_Firm, $Comment)->delete();
+
+        return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+    }
+
+    protected function findService($ID_Service, $ID_Firm, $Comment)
+    {
+        $model = ServicePresence::find()
+            ->andFilterWhere([
+                'ID_Service' => $ID_Service,
+                'ID_Firm' => $ID_Firm,
+            ])
+            ->andFilterWhere(['like', 'Comment', $Comment])->one();
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

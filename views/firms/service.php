@@ -42,6 +42,35 @@ $columns = [
 			'style' => $style
 		],
 	],
+	[
+        'class'          => 'yii\grid\ActionColumn',
+        'template'       => '{service-update} {service-delete}',
+        'buttons'        => [
+            'service-update' => function ($url, $model, $key) {
+                $title = 'Изменить';
+                $options = array_merge([
+                    'title'      => $title,
+                    'aria-label' => $title,
+                    'data-pjax'  => '0',
+                ]);
+                $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-pencil"]);
+                return Html::a($icon, $url, $options);
+            },
+            'service-delete' => function ($url, $model, $key) {
+                $title = 'Удалить';
+                $options = array_merge([
+                    'title'      => $title,
+                    'aria-label' => $title,
+                    'data-pjax'  => '0',
+                ]);
+                $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-trash"]);
+                return Html::a($icon, $url, $options);
+            },
+        ],
+        'contentOptions' => [
+            'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+        ],
+    ],
 ]
 ?>
 
@@ -63,6 +92,7 @@ $columns = [
         ],
         'toolbar'       => [
             "<span class=\"btn-group\">{summary}</span>",
+            Html::a('Добавить услугу', ['service-add', 'ID_Firm' => $ID_Firm], ['class' => 'btn btn-success']),
             "<span class=\"btn-group\">" . Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']) . "</span>",
             ExportMenu::widget([
                 'dataProvider'    => $exportModel,
@@ -90,3 +120,9 @@ $columns = [
 	<?php Pjax::end();?>
 
 </div>
+
+<?php
+$this->registerCss("
+    table > tbody> tr:hover {
+        background-color: #b1f1e2 !important;
+    }");
