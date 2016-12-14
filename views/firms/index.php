@@ -1,9 +1,9 @@
 <?php
 
+use kartik\export\ExportMenu;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use kartik\export\ExportMenu;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\FirmsSearch */
@@ -23,21 +23,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width'      => '20px',
             ],
             [
-                'attribute'  => 'Name',
+                'attribute'      => 'Name',
                 'contentOptions' => [
-                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
                 ],
             ],
             [
-                'attribute'  => 'Phone',
+                'attribute'      => 'Phone',
                 'contentOptions' => [
-                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
                 ],
             ],
             [
-                'attribute'  => 'Address',
+                'attribute'      => 'Address',
                 'contentOptions' => [
-                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
                 ],
             ],
             [
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute'      => 'Comment',
                 'contentOptions' => [
-                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
                 ],
             ],
             [
@@ -70,7 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-list"]);
+                        $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-list']);
+
                         return Html::a($icon, $url, $options);
                     },
                     'service' => function ($url, $model, $key) {
@@ -80,12 +81,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        $icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-wrench"]);
+                        $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-wrench']);
+
                         return Html::a($icon, $url, $options);
                     },
                 ],
                 'contentOptions' => [
-                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+                    'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
                 ],
             ],
         ],
@@ -100,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            "<span class=\"btn-group\">{summary}</span>",
+            '<span class="btn-group">{summary}</span>',
             "<span class=\"btn-group\">{$create_button}</span>",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,
@@ -108,28 +110,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 'target'          => ExportMenu::TARGET_SELF,
                 'dropdownOptions' => [
                     'label' => 'Экспорт списка фирм',
-                    'class' => 'btn btn-default'
+                    'class' => 'btn btn-default',
                 ],
                 'showConfirmAlert' => false,
-                'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                'pdfLibraryPath' => '@vendor/mpdf/mpdf',
-                'enableFormatter' => false,
+                'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
+                'enableFormatter'  => false,
             ]),
             '{toggleData}',
         ],
-        'panelTemplate' => "
-            <div class=\"{prefix}{type}\">
+        'panelTemplate' => '
+            <div class="{prefix}{type}">
                 {panelBefore}
                 {items}
                 {panelAfter}
                 {panelFooter}
             </div>
-        ",
+        ',
     ]); ?>
 <?php Pjax::end(); ?></div>
 
 <?php
-$this->registerCss("
+$this->registerCss('
     table > tbody> tr:hover {
         background-color: #b1f1e2 !important;
-    }");
+    }');
