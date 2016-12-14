@@ -2,6 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\CarBodyModelsEN;
+use app\models\CarENDetailNames;
+use app\models\CarEngineAndBodyCorrespondencesEN;
+use app\models\CarEngineAndModelCorrespondencesEN;
+use app\models\CarEngineModelsEN;
+use app\models\CarMarksEN;
+use app\models\CarModelsEN;
+use app\models\CarPresenceEN;
 use app\models\CarPresenceSearch;
 use app\models\Firms;
 use app\models\FirmsSearch;
@@ -113,6 +121,7 @@ class FirmsController extends Controller
             'models'        => $models,
             'bodys'         => $bodys,
             'engines'       => $engines,
+            'ID_Firm'       => $id,
         ]);
     }
 
@@ -358,6 +367,272 @@ class FirmsController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionPriceElementUpdate()
+    {
+        $params = Yii::$app->request->get();
+        if(count($params) < 11) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $model = $this->findPriceElement($params);
+
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\yii\db\IntegrityException $e) {
+                $items = $this->getItemForPriceEditForm($params);
+                return $this->render('price_update', [
+                    'model'   => $model,
+                    'err'     => $e,
+                    'names'   => $items['names'],
+                    'marks'   => $items['marks'],
+                    'models'  => $items['models'],
+                    'bodys'   => $items['bodys'],
+                    'engines' => $items['engines'],
+                ]);
+            }
+            return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
+        } else {
+            $items = $this->getItemForPriceEditForm($params);
+            return $this->render('price_update', [
+                'model'   => $model,
+                'err'     => false,
+                'names'   => $items['names'],
+                'marks'   => $items['marks'],
+                'models'  => $items['models'],
+                'bodys'   => $items['bodys'],
+                'engines' => $items['engines'],
+            ]);
+        }
+    }
+
+    public function actionPriceElementDelete()
+    {
+        $params = Yii::$app->request->get();
+        if(count($params) < 11) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $this->findPriceElement($params)->delete();
+        return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
+    }
+
+    public function actionPriceElementAdd($ID_Firm)
+    {
+        $model = new CarPresenceEN();
+        $model->ID_Firm = $ID_Firm;
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->Hash_Comment = md5($model->Comment);
+                $model->save();
+            } catch (\yii\db\IntegrityException $e) {
+                $items = $this->getItemForPriceEditForm(Yii::$app->request->post());
+                return $this->render('price_add', [
+                    'model' => $model,
+                    'err'   => $e,
+                    'names'   => $items['names'],
+                    'marks'   => $items['marks'],
+                    'models'  => $items['models'],
+                    'bodys'   => $items['bodys'],
+                    'engines' => $items['engines'],
+                ]);
+            }
+            return $this->redirect(['firms/price', 'id' => $ID_Firm, 'err' => false]);
+        } else {
+            $items = $this->getItemForPriceEditForm([
+                'ID_Mark' => false,
+                'ID_Model' => false,
+            ]);
+            return $this->render('price_add', [
+                'model' => $model,
+                'err'   => false,
+                'names'   => $items['names'],
+                'marks'   => $items['marks'],
+                'models'  => $items['models'],
+                'bodys'   => $items['bodys'],
+                'engines' => $items['engines'],
+            ]);
+        }
+    }
+
+    protected function findPriceElement($params)
+    {
+        $model = CarPresenceEN::find()
+            ->andFilterWhere([
+                'ID_Mark'   => $params['ID_Mark'],
+                'ID_Model'  => $params['ID_Model'],
+                'ID_Name'   => $params['ID_Name'],
+                'ID_Firm'   => $params['ID_Firm'],
+                'ID_Body'   => $params['ID_Body'],
+                'ID_Engine' => $params['ID_Engine'],
+                'Cost'      => $params['Cost'],
+            ])
+            ->andFilterWhere(['like', 'CarYear', $params['CarYear']])
+            ->andFilterWhere(['like', 'Hash_Comment', $params['Hash_Comment']])
+            ->andFilterWhere(['like', 'TechNumber', $params['TechNumber']])
+            ->andFilterWhere(['like', 'Catalog_Number', $params['Catalog_Number']])
+            ->one();
+        return $model;
+    }
+
+    protected function getItemForPriceEditForm($param)
+    {
+        $names = ArrayHelper::map(
+            CarENDetailNames::find()
+                ->select('id, Name')
+                ->orderBy('Name')
+                ->asArray()->all(),
+            'id', 'Name');
+
+        $marks = ArrayHelper::map(
+            CarMarksEN::find()
+                ->select('id, Name')
+                ->orderBy('Name')->asArray()->all(),
+            'id', 'Name');
+
+        $models = false;
+        if ($param['ID_Mark']) {
+            $models = ArrayHelper::map(CarModelsEN::find()
+                ->select('id, Name')
+                ->andFilterWhere(['ID_Mark' => $param['ID_Mark']])
+                ->orderBy('Name')->asArray()->all(), 'id', 'Name');
+        }
+
+        $bodys = false;
+        if ($param['ID_Model']) {
+            $bodys = ArrayHelper::map(CarBodyModelsEN::find()
+                ->select('id, Name')
+                ->andFilterWhere([
+                    'ID_Mark'  => $param['ID_Mark'],
+                    'ID_Model' => $param['ID_Model'],
+                ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+        }
+
+        // need refactor... :(
+        // very bad code
+        $engines = false;
+        if ($param['ID_Mark']) {
+            if ($param['ID_Model']) {
+                if ($param['ID_Body']) {
+                    $links = ArrayHelper::getColumn(
+                        CarEngineAndBodyCorrespondencesEN::find()
+                        ->select('ID_Engine')
+                        ->andFilterWhere([
+                            'ID_Mark'  => $param['ID_Mark'],
+                            'ID_Model' => $param['ID_Model'],
+                            'ID_Body'  => $param['ID_Body'],
+                        ])->asArray()->all(), 'ID_Engine');
+                } else {
+                    $links = ArrayHelper::getColumn(
+                        CarEngineAndModelCorrespondencesEN::find()
+                        ->select('ID_Engine')
+                        ->andFilterWhere([
+                            'ID_Mark'  => $param['ID_Mark'],
+                            'ID_Model' => $param['ID_Model'],
+                        ])->asArray()->all(), 'ID_Engine');
+                }
+                $engines = ArrayHelper::map(CarEngineModelsEN::find()
+                    ->select('id, Name')
+                    ->andFilterWhere([
+                        'id' => $links,
+                    ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+            } else {
+                $engines = ArrayHelper::map(CarEngineModelsEN::find()
+                    ->select('id, Name')
+                    ->andFilterWhere([
+                        'ID_Mark' => $param['ID_Mark'],
+                    ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+            }
+        }
+        return compact('names', 'marks', 'models', 'bodys', 'engines');
+    }
+
+    public function actionGetModels($id)
+    {
+        $models = CarModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere(['ID_Mark' => $id])
+            ->orderBy('Name')->asArray()->all();
+
+        echo "<option></option>";
+        foreach ($models as $value)
+        {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    public function actionGetBodys($id_models)
+    {
+        $boyds = CarBodyModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'ID_Model' => $id_models,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo "<option></option>";
+        foreach ($boyds as $value)
+        {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    public function actionGetEnginesByMark($id_mark)
+    {
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'ID_Mark' => $id_mark,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo "<option></option>";
+        foreach ($engines as $value)
+        {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    public function actionGetEnginesByModel($id_model)
+    {
+        $links = ArrayHelper::getColumn(
+            CarEngineAndModelCorrespondencesEN::find()
+                ->select('ID_Engine')
+                ->andFilterWhere([
+                    'ID_Model' => $id_model,
+                ])->asArray()->all(), 'ID_Engine');
+
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+            'id' => $links,
+        ])->orderBy('Name')->asArray()->all();
+
+        echo "<option></option>";
+        foreach ($engines as $value)
+        {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    public function actionGetEnginesByBody($id_body)
+    {
+        $links = ArrayHelper::getColumn(
+            CarEngineAndBodyCorrespondencesEN::find()
+                ->select('ID_Engine')
+                ->andFilterWhere([
+                    'ID_Body' => $id_body,
+                ])->asArray()->all(), 'ID_Engine');
+
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'id' => $links,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo "<option></option>";
+        foreach ($engines as $value)
+        {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
 }

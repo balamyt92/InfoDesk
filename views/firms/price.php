@@ -8,6 +8,7 @@
  * @var $models array
  * @var $bodys array
  * @var $engines array
+ * @var $ID_Firm integer
  */
 use kartik\grid\GridView;
 use yii\helpers\Html;
@@ -86,6 +87,35 @@ $columns = [
 			'style' => $style
 		],
 	],
+	[
+		'class'          => 'yii\grid\ActionColumn',
+		'template'       => '{price-element-update} {price-element-delete}',
+		'buttons'        => [
+			'price-element-update' => function ($url, $model, $key) {
+				$title = 'Изменить';
+				$options = array_merge([
+					'title'      => $title,
+					'aria-label' => $title,
+					'data-pjax'  => '0',
+				]);
+				$icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-pencil"]);
+				return Html::a($icon, $url, $options);
+			},
+			'price-element-delete' => function ($url, $model, $key) {
+				$title = 'Удалить';
+				$options = array_merge([
+					'title'      => $title,
+					'aria-label' => $title,
+					'data-pjax'  => '0',
+				]);
+				$icon = Html::tag('span', '', ['class' => "glyphicon glyphicon-trash"]);
+				return Html::a($icon, $url, $options);
+			},
+		],
+		'contentOptions' => [
+			'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+		],
+	],
 ];
 ?>
 
@@ -107,6 +137,7 @@ $columns = [
         ],
         'toolbar'       => [
             "<span class=\"btn-group\">{summary}</span>",
+			Html::a('Добавить позицию', ['price-element-add', 'ID_Firm' => $ID_Firm], ['class' => 'btn btn-success']),
             "<span class=\"btn-group\">" . Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']) . "</span>",
             ExportMenu::widget([
 			    'dataProvider' 	  => $exportModel,
