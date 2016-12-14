@@ -28,10 +28,8 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
             <?php $form = ActiveForm::begin([
                 'method' => 'get',
             ]);
-                $url = \yii\helpers\Url::to(['firms/search']);
+                $url = \yii\helpers\Url::to(['statistic/search-firm']);
             ?>
-
-
                 <?= $form->field($model, 'id_firm')->widget(\kartik\select2\Select2::className(), [
                     'initValueText' => empty($model->id_firm) ? '' : \app\models\Firms::findOne($model->id_firm)->Name,
                     'options'       => ['placeholder' => 'Поиск фирмы...'],

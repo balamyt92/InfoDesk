@@ -81,6 +81,13 @@ class FirmsController extends Controller
         ]);
     }
 
+    /**
+     * Select firm price
+     *
+     * @param  int $id firm
+     *
+     * @return mixed
+     */
     public function actionPrice($id)
     {
         $filterModel = new CarPresenceSearch();
@@ -116,6 +123,13 @@ class FirmsController extends Controller
         ]);
     }
 
+    /**
+     * Select firm services
+     *
+     * @param  int $id firm
+     *
+     * @return mixed
+     */
     public function actionService($id)
     {
         $filterModel = new ServicePresenceSearch();
@@ -161,7 +175,7 @@ class FirmsController extends Controller
 
     /**
      * Creates a new Firms model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      *
      * @return mixed
      */
@@ -180,7 +194,7 @@ class FirmsController extends Controller
 
     /**
      * Updates an existing Firms model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      *
      * @param int $id
      *
@@ -212,27 +226,6 @@ class FirmsController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    public function actionSearch($q = null, $id = null)
-    {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        $out = ['results' => ['id' => '', 'text' => '']];
-        if (!is_null($q)) {
-            $query = new Query();
-            $query->select('id, name AS text, address')
-                ->from('Firms')
-                ->where(['like', 'name', $q])
-                ->orderBy(['name' => SORT_ASC])
-                ->limit(50);
-            $command = $query->createCommand();
-            $data = $command->queryAll();
-            $out['results'] = array_values($data);
-        } elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'text' => Firms::find($id)->name];
-        }
-
-        return $out;
     }
 
     /**
@@ -297,6 +290,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Add new service in firm
+     *
+     * @param  int $ID_Firm
+     *
+     * @return mixed
+     */
     public function actionServiceAdd($ID_Firm)
     {
         $model = new ServicePresence();
@@ -338,6 +338,15 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Delete service in firm
+     *
+     * @param  int $ID_Service
+     * @param  int $ID_Firm
+     * @param  string $Comment
+     *
+     * @return mixed
+     */
     public function actionServiceDelete($ID_Service, $ID_Firm, $Comment)
     {
         $this->findService($ID_Service, $ID_Firm, $Comment)->delete();
@@ -345,6 +354,15 @@ class FirmsController extends Controller
         return $this->redirect(['firms/service', 'id' => $ID_Firm]);
     }
 
+    /**
+     * Find service in firm
+     *
+     * @param  int $ID_Service
+     * @param  int $ID_Firm
+     * @param  string $Comment
+     *
+     * @return mixed
+     */
     protected function findService($ID_Service, $ID_Firm, $Comment)
     {
         $model = ServicePresence::find()
