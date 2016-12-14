@@ -6,7 +6,7 @@ class m161213_134747_service_add_update_column extends Migration
 {
     public function up()
     {
-        $this->addColumn('ServicePresence', 'update_at', 'timestamp(14)');
+        $this->addColumn('ServicePresence', 'update_at', 'timestamp(14) DEFAULT CURRENT_TIMESTAMP');
     }
 
     public function down()
