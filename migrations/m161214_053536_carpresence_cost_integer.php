@@ -2,17 +2,16 @@
 
 use yii\db\Migration;
 
-class m161213_134747_service_add_update_column extends Migration
+class m161214_053536_carpresence_cost_integer extends Migration
 {
     public function up()
     {
-        $this->addColumn('ServicePresence', 'update_at', 'timestamp(14) DEFAULT CURRENT_TIMESTAMP');
+        $this->alterColumn('CarPresenceEN', 'Cost', 'BIGINT');
     }
 
     public function down()
     {
-        echo "m161213_134747_service_add_update_column cannot be reverted.\n";
-        $this->dropColumn('ServicePresence', 'update_at');
+        echo "m161214_053536_carpresence_cost_integer cannot be reverted.\n";
 
         return false;
     }

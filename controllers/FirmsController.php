@@ -96,20 +96,20 @@ class FirmsController extends Controller
         $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
         $exportDataProvider = false;
-        if(Yii::$app->request->post()) {
+        if (Yii::$app->request->post()) {
             // for big pdf generate need more time
             ini_set('max_execution_time', 900);
-            $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
+            $exportDataProvider = $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
 
         // for off sql_mode=only_full_group_by
         $sql_set_mode = "set sql_mode = ''";
         Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
-        $names   = $filterModel->getDetailNames($id);
-        $marks   = $filterModel->getMarksName($id);
-        $models  = $filterModel->getModelsName($id);
-        $bodys   = $filterModel->getBodysName($id);
+        $names = $filterModel->getDetailNames($id);
+        $marks = $filterModel->getMarksName($id);
+        $models = $filterModel->getModelsName($id);
+        $bodys = $filterModel->getBodysName($id);
         $engines = $filterModel->getEnginesName($id);
 
         return $this->render('price', [
@@ -134,10 +134,10 @@ class FirmsController extends Controller
         $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
         $exportDataProvider = false;
-        if(Yii::$app->request->post()) {
+        if (Yii::$app->request->post()) {
             // for big pdf generate need more time
             ini_set('max_execution_time', 900);
-            $exportDataProvider =  $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
+            $exportDataProvider = $filterModel->search(Yii::$app->request->queryParams, ['pageSize' => false]);
         }
 
         // for off sql_mode=only_full_group_by
@@ -152,7 +152,6 @@ class FirmsController extends Controller
             'ID_Firm'       => $id,
         ]);
     }
-
 
     /**
      * Displays a single Firms model.
@@ -285,12 +284,14 @@ class FirmsController extends Controller
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
+
                 return $this->render('service_update', [
                     'model' => $model,
                     'items' => $items,
                     'err'   => $e,
                 ]);
             }
+
             return $this->redirect(['firms/service', 'id' => $ID_Firm]);
         } else {
             $items = ArrayHelper::map(
@@ -298,6 +299,7 @@ class FirmsController extends Controller
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
+
             return $this->render('service_update', [
                 'model' => $model,
                 'items' => $items,
@@ -319,26 +321,29 @@ class FirmsController extends Controller
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
+
                 return $this->render('service_add', [
                     'model' => $model,
                     'items' => $items,
                     'err'   => $e,
                 ]);
             }
+
             return $this->redirect(['firms/service', 'id' => $ID_Firm, 'err' => false]);
         } else {
             $last = ServicePresence::find()->orderBy('update_at DESC')->one();
 
             $model->ID_Service = $last->ID_Service;
-            $model->Comment    = $last->Comment;
-            $model->CarList    = $last->CarList;
-            $model->Coast      = $last->Coast;
+            $model->Comment = $last->Comment;
+            $model->CarList = $last->CarList;
+            $model->Coast = $last->Coast;
 
             $items = ArrayHelper::map(
                 \app\models\Services::find()
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
+
             return $this->render('service_add', [
                 'model' => $model,
                 'items' => $items,
@@ -359,7 +364,7 @@ class FirmsController extends Controller
         $model = ServicePresence::find()
             ->andFilterWhere([
                 'ID_Service' => $ID_Service,
-                'ID_Firm' => $ID_Firm,
+                'ID_Firm'    => $ID_Firm,
             ])
             ->andFilterWhere(['like', 'Comment', $Comment])->one();
 

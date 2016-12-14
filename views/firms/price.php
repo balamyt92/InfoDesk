@@ -1,19 +1,19 @@
 <?php
 /**
- * @var $model app\models\CarPresenceEN
- * @var $exportModel app\models\CarPresenceEN
- * @var $filterModel app\models\CarPresenceSearch
- * @var $names array
- * @var $marks array
- * @var $models array
- * @var $bodys array
- * @var $engines array
+ * @var app\models\CarPresenceEN
+ * @var $exportModel             app\models\CarPresenceEN
+ * @var $filterModel             app\models\CarPresenceSearch
+ * @var $names                   array
+ * @var $marks                   array
+ * @var $models                  array
+ * @var $bodys                   array
+ * @var $engines                 array
  * @var $ID_Firm integer
  */
+use kartik\export\ExportMenu;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use kartik\export\ExportMenu;
 
 $this->title = 'Прайс фирмы';
 
@@ -122,10 +122,10 @@ $columns = [
 <div class="price-firm">
 	<?php Pjax::begin(); ?>
 	<?= GridView::widget([
-		'dataProvider' => $model,
-		'filterModel'  => $filterModel,
-		'columns'	   => $columns,
-		'panel'         => [
+        'dataProvider'  => $model,
+        'filterModel'   => $filterModel,
+        'columns'       => $columns,
+        'panel'         => [
             'type' => 'default',
         ],
         'pager'         => [
@@ -140,34 +140,34 @@ $columns = [
 			Html::a('Добавить позицию', ['price-element-add', 'ID_Firm' => $ID_Firm], ['class' => 'btn btn-success']),
             "<span class=\"btn-group\">" . Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']) . "</span>",
             ExportMenu::widget([
-			    'dataProvider' 	  => $exportModel,
-				'columns'	   => $columns,
-			    'fontAwesome' 	  => true,
-			    'target' 		  => ExportMenu::TARGET_SELF,
-			    'dropdownOptions' => [
-			        'label' => 'Экспорт прайса',
-			        'class' => 'btn btn-default'
-			    ],
+                'dataProvider'      => $exportModel,
+                'columns'           => $columns,
+                'fontAwesome'       => true,
+                'target'            => ExportMenu::TARGET_SELF,
+                'dropdownOptions'   => [
+                    'label' => 'Экспорт прайса',
+                    'class' => 'btn btn-default',
+                ],
                 'showConfirmAlert' => false,
-                'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
-			    'pdfLibraryPath' => '@vendor/mpdf/mpdf',
-			]),
+                'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
+            ]),
         ],
-        'panelTemplate' => "
-            <div class=\"{prefix}{type}\">
+        'panelTemplate' => '
+            <div class="{prefix}{type}">
                 {panelBefore}
                 {items}
                 {panelAfter}
                 {panelFooter}
             </div>
-        ",
-	]);?>
-	<?php Pjax::end();?>
+        ',
+    ]); ?>
+	<?php Pjax::end(); ?>
 
 </div>
 
 <?php
-$this->registerCss("
+$this->registerCss('
     table > tbody> tr:hover {
         background-color: #b1f1e2 !important;
-    }");
+    }');
