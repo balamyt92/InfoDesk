@@ -378,7 +378,7 @@ class FirmsController extends Controller
     public function actionPriceElementUpdate()
     {
         $params = Yii::$app->request->get();
-        if(count($params) < 11) {
+        if (count($params) < 11) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $model = $this->findPriceElement($params);
@@ -388,6 +388,7 @@ class FirmsController extends Controller
                 $model->save();
             } catch (\yii\db\IntegrityException $e) {
                 $items = $this->getItemForPriceEditForm($params);
+
                 return $this->render('price_update', [
                     'model'   => $model,
                     'err'     => $e,
@@ -398,9 +399,11 @@ class FirmsController extends Controller
                     'engines' => $items['engines'],
                 ]);
             }
+
             return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
         } else {
             $items = $this->getItemForPriceEditForm($params);
+
             return $this->render('price_update', [
                 'model'   => $model,
                 'err'     => false,
@@ -416,10 +419,11 @@ class FirmsController extends Controller
     public function actionPriceElementDelete()
     {
         $params = Yii::$app->request->get();
-        if(count($params) < 11) {
+        if (count($params) < 11) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $this->findPriceElement($params)->delete();
+
         return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
     }
 
@@ -433,9 +437,10 @@ class FirmsController extends Controller
                 $model->save();
             } catch (\yii\db\IntegrityException $e) {
                 $items = $this->getItemForPriceEditForm(Yii::$app->request->post());
+
                 return $this->render('price_add', [
-                    'model' => $model,
-                    'err'   => $e,
+                    'model'   => $model,
+                    'err'     => $e,
                     'names'   => $items['names'],
                     'marks'   => $items['marks'],
                     'models'  => $items['models'],
@@ -443,15 +448,17 @@ class FirmsController extends Controller
                     'engines' => $items['engines'],
                 ]);
             }
+
             return $this->redirect(['firms/price', 'id' => $ID_Firm, 'err' => false]);
         } else {
             $items = $this->getItemForPriceEditForm([
-                'ID_Mark' => false,
+                'ID_Mark'  => false,
                 'ID_Model' => false,
             ]);
+
             return $this->render('price_add', [
-                'model' => $model,
-                'err'   => false,
+                'model'   => $model,
+                'err'     => false,
                 'names'   => $items['names'],
                 'marks'   => $items['marks'],
                 'models'  => $items['models'],
@@ -478,6 +485,7 @@ class FirmsController extends Controller
             ->andFilterWhere(['like', 'TechNumber', $params['TechNumber']])
             ->andFilterWhere(['like', 'Catalog_Number', $params['Catalog_Number']])
             ->one();
+
         return $model;
     }
 
@@ -550,6 +558,7 @@ class FirmsController extends Controller
                     ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
             }
         }
+
         return compact('names', 'marks', 'models', 'bodys', 'engines');
     }
 
@@ -560,9 +569,8 @@ class FirmsController extends Controller
             ->andFilterWhere(['ID_Mark' => $id])
             ->orderBy('Name')->asArray()->all();
 
-        echo "<option></option>";
-        foreach ($models as $value)
-        {
+        echo '<option></option>';
+        foreach ($models as $value) {
             echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
@@ -575,9 +583,8 @@ class FirmsController extends Controller
                 'ID_Model' => $id_models,
             ])->orderBy('Name')->asArray()->all();
 
-        echo "<option></option>";
-        foreach ($boyds as $value)
-        {
+        echo '<option></option>';
+        foreach ($boyds as $value) {
             echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
@@ -590,9 +597,8 @@ class FirmsController extends Controller
                 'ID_Mark' => $id_mark,
             ])->orderBy('Name')->asArray()->all();
 
-        echo "<option></option>";
-        foreach ($engines as $value)
-        {
+        echo '<option></option>';
+        foreach ($engines as $value) {
             echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
@@ -612,9 +618,8 @@ class FirmsController extends Controller
             'id' => $links,
         ])->orderBy('Name')->asArray()->all();
 
-        echo "<option></option>";
-        foreach ($engines as $value)
-        {
+        echo '<option></option>';
+        foreach ($engines as $value) {
             echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
@@ -634,9 +639,8 @@ class FirmsController extends Controller
                 'id' => $links,
             ])->orderBy('Name')->asArray()->all();
 
-        echo "<option></option>";
-        foreach ($engines as $value)
-        {
+        echo '<option></option>';
+        foreach ($engines as $value) {
             echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }

@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\CarPresenceEN */
@@ -14,14 +13,16 @@ use yii\helpers\Html;
 $this->title = 'Изменеие позиции в прайсе:';
 ?>
 <div class="row" style="margin-top: 15px;">
-    <?php if($err) {?>
+    <?php if ($err) {
+    ?>
         <div class="col-md-3"></div>
         <div class="col-md-6 alert alert-danger">
             <strong>Ошибка!</strong> Не могу изменить позицию. <br><br>
             <?= $err->getName()?><br>
             <?= $err->getMessage()?>
         </div>
-    <?php }?>
+    <?php 
+}?>
 </div>
 <div class="service-update" style="margin-top: 10px;">
     <?= $this->render('_price_form', [

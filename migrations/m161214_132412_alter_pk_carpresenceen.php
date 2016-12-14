@@ -8,8 +8,8 @@ class m161214_132412_alter_pk_carpresenceen extends Migration
     {
         $dns = explode('=', Yii::$app->getDb()->dsn);
         $dbname = end($dns);
-        echo "Dump table CarPresenceEN in base {$dbname}". PHP_EOL;
-        exec('mysqldump --user=root --host=localhost --no-create-info '. $dbname .' CarPresenceEN > ' . __DIR__ . '/tmp.sql');
+        echo "Dump table CarPresenceEN in base {$dbname}".PHP_EOL;
+        exec('mysqldump --user=root --host=localhost --no-create-info '.$dbname.' CarPresenceEN > '.__DIR__.'/tmp.sql');
         $this->dropTable('CarPresenceEN');
         $this->createTable('CarPresenceEN', [
             'ID_Mark'        => $this->integer()->notNull(),
@@ -29,7 +29,7 @@ class m161214_132412_alter_pk_carpresenceen extends Migration
         $this->addPrimaryKey('presence_pk', 'CarPresenceEN',
             ['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear',
                 'ID_Body', 'ID_Engine', 'Catalog_Number', 'TechNumber(100)',
-                'Hash_Comment(255)', 'Cost']);
+                'Hash_Comment(255)', 'Cost', ]);
 
         $this->addForeignKey('presence_to_mark', 'CarPresenceEN', 'ID_Mark',
             'CarMarksEN', 'id', 'RESTRICT', 'NO ACTION');
@@ -44,9 +44,9 @@ class m161214_132412_alter_pk_carpresenceen extends Migration
         $this->addForeignKey('presence_to_engine', 'CarPresenceEN', 'ID_Engine',
             'CarEngineModelsEN', 'id', 'RESTRICT', 'NO ACTION');
 
-        echo "Load data to base". PHP_EOL;
-        exec('mysql -uroot '. $dbname .' < ' . __DIR__ . '/tmp.sql');
-        unlink(__DIR__ . '/tmp.sql');
+        echo 'Load data to base'.PHP_EOL;
+        exec('mysql -uroot '.$dbname.' < '.__DIR__.'/tmp.sql');
+        unlink(__DIR__.'/tmp.sql');
     }
 
     public function down()
