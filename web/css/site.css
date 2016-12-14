@@ -141,3 +141,7 @@ pre {
 .table-bordered {
     border: 1px solid #4e4e4e;
 }
+
+.glyphicon {
+    font-size: large;
+}

@@ -14,7 +14,7 @@ class m160929_040920_create_stat_firms_query_table extends Migration
     {
         $this->createTable('stat_firms_query', [
             'id'          => $this->primaryKey(),
-            'date_time'   => $this->timestamp(14),
+            'date_time'   => 'timestamp(14) default current_timestamp',
             'id_operator' => $this->integer(4),
             'search'      => $this->char(255),
         ]);

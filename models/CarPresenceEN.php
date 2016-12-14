@@ -61,18 +61,18 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     public function attributeLabels()
     {
         return [
-            'ID_Mark'        => 'Id  Mark',
-            'ID_Model'       => 'Id  Model',
-            'ID_Name'        => 'Id  Name',
-            'ID_Firm'        => 'Id  Firm',
-            'CarYear'        => 'Car Year',
-            'ID_Body'        => 'Id  Body',
-            'ID_Engine'      => 'Id  Engine',
-            'Comment'        => 'Comment',
-            'Hash_Comment'   => 'Hash  Comment',
-            'TechNumber'     => 'Tech Number',
-            'Catalog_Number' => 'Catalog  Number',
-            'Cost'           => 'Cost',
+            'ID_Mark'        => 'Марка',
+            'ID_Model'       => 'Модель',
+            'ID_Name'        => 'Деталь',
+            'ID_Firm'        => 'Фирма',
+            'CarYear'        => 'Год',
+            'ID_Body'        => 'Кузов',
+            'ID_Engine'      => 'Двигатель',
+            'Comment'        => 'Комментарий',
+            'Hash_Comment'   => 'Hash',
+            'TechNumber'     => 'Фото',
+            'Catalog_Number' => 'Номер',
+            'Cost'           => 'Цена',
         ];
     }
 

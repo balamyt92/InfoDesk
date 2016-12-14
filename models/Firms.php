@@ -42,8 +42,7 @@ class Firms extends ActiveRecord implements iLegacyImport
             [['Name', 'Enabled', 'Identifier', 'Priority'], 'required'],
             [['Address', 'Comment', 'ActivityType', 'OperatingMode'], 'string'],
             [['Enabled', 'Priority'], 'integer'],
-            [['Name'], 'string', 'max' => 75],
-            [['Phone', 'District'], 'string', 'max' => 200],
+            [['Name', 'Phone', 'District'], 'string', 'max' => 200],
             [['OrganizationType', 'Fax', 'Email', 'URL', 'Identifier'], 'string', 'max' => 100],
         ];
     }
@@ -55,20 +54,20 @@ class Firms extends ActiveRecord implements iLegacyImport
     {
         return [
             'id'               => 'ID',
-            'Name'             => 'Name',
-            'Address'          => 'Address',
-            'Phone'            => 'Phone',
-            'Comment'          => 'Comment',
-            'Enabled'          => 'Enabled',
-            'ActivityType'     => 'Activity Type',
-            'OrganizationType' => 'Organization Type',
-            'District'         => 'District',
-            'Fax'              => 'Fax',
-            'Email'            => 'Email',
-            'URL'              => 'Url',
-            'OperatingMode'    => 'Operating Mode',
-            'Identifier'       => 'Identifier',
-            'Priority'         => 'Priority',
+            'Name'             => 'Название организации',
+            'Address'          => 'Фактический адрес',
+            'Phone'            => 'Телефоны',
+            'Comment'          => 'Комментарий',
+            'Enabled'          => 'В поиске',
+            'ActivityType'     => 'Профиль деятельности',
+            'OrganizationType' => 'Юридическое лицо',
+            'District'         => 'Район города',
+            'Fax'              => 'Факс',
+            'Email'            => 'Электронная почта',
+            'URL'              => 'Сайт',
+            'OperatingMode'    => 'Режим работы',
+            'Identifier'       => 'Идентификатор',
+            'Priority'         => 'Приоритет',
         ];
     }
 

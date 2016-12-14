@@ -16,7 +16,8 @@ class FirmsSearch extends Firms
     public function rules()
     {
         return [
-            [['id', 'Enabled', 'Priority'], 'integer'],
+            [['id', 'Priority'], 'integer'],
+            [['Enabled'], 'boolean'],
             [['Name', 'Address', 'Phone', 'Comment', 'ActivityType', 'OrganizationType', 'District', 'Fax', 'Email', 'URL', 'OperatingMode', 'Identifier'], 'safe'],
         ];
     }
@@ -44,7 +45,10 @@ class FirmsSearch extends Firms
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query'      => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
         ]);
 
         $this->load($params);
@@ -57,8 +61,8 @@ class FirmsSearch extends Firms
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id'       => $this->id,
             'Enabled'  => $this->Enabled,
+            'id'       => $this->id,
             'Priority' => $this->Priority,
         ]);
 

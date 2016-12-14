@@ -1,21 +1,13 @@
 <?php
 
-use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Firms */
 
-$this->title = 'Update Firms: '.$model->Name;
-$this->params['breadcrumbs'][] = ['label' => 'Firms', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->Name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Изменеие фирмы:';
 ?>
-<div class="firms-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+<div class="firms-update" style="margin-top: 10px;">
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>

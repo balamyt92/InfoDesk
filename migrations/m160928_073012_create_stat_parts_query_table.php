@@ -14,7 +14,7 @@ class m160928_073012_create_stat_parts_query_table extends Migration
     {
         $this->createTable('stat_parts_query', [
             'id'          => $this->primaryKey(),
-            'date_time'   => $this->timestamp(14),
+            'date_time'   => 'timestamp(14) default current_timestamp',
             'id_operator' => $this->integer(4),
             'detail_id'   => $this->integer(8),
             'mark_id'     => $this->integer(8),

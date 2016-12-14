@@ -1,9 +1,8 @@
 <?php
-/*
- * @var $this yii\web\View
- * @var $model \app\models\statistic\ParamForm
- */
+ /* @var $this yii\web\View */
+ /* @var $model app\models\statistic\ParamForm */
 
+use kartik\export\ExportMenu;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
@@ -291,7 +290,19 @@ HTML;
                     "<span class=\"btn-group\">
                         <h3 style=\"margin-top: 5px; float: rigth;\">Запчасти {$opened_firms} из {$count}</h3>
                     </span>",
-                    '{export}',
+                    ExportMenu::widget([
+                        'dataProvider'    => $dataProviderParts,
+                        'columns'         => $columns,
+                        'fontAwesome'     => true,
+                        'target'          => ExportMenu::TARGET_SELF,
+                        'dropdownOptions' => [
+                            'label' => 'Экспорт',
+                            'class' => 'btn btn-default',
+                        ],
+                        'showConfirmAlert' => false,
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
+                    ]),
                     '{toggleData}',
                 ];
 
@@ -420,7 +431,19 @@ HTML;
                     "<span class=\"btn-group\">
                         <h3 style=\"margin-top: 5px;\">Услуги {$opened_firms} из {$count}</h3>
                     </span>",
-                    '{export}',
+                    ExportMenu::widget([
+                        'dataProvider'    => $dataProviderService,
+                        'columns'         => $columns,
+                        'fontAwesome'     => true,
+                        'target'          => ExportMenu::TARGET_SELF,
+                        'dropdownOptions' => [
+                            'label' => 'Экспорт',
+                            'class' => 'btn btn-default',
+                        ],
+                        'showConfirmAlert' => false,
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
+                    ]),
                     '{toggleData}',
                 ];
 
@@ -548,7 +571,19 @@ HTML;
                     "<span class=\"btn-group\">
                         <h3 style=\"margin-top: 5px;\"> Каталог фирм {$opened_firms} из {$count}</h3>
                     </span>",
-                    '{export}',
+                    ExportMenu::widget([
+                        'dataProvider'    => $dataProviderFirms,
+                        'columns'         => $columns,
+                        'fontAwesome'     => true,
+                        'target'          => ExportMenu::TARGET_SELF,
+                        'dropdownOptions' => [
+                            'label' => 'Экспорт',
+                            'class' => 'btn btn-default',
+                        ],
+                        'showConfirmAlert' => false,
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
+                    ]),
                     '{toggleData}',
                 ];
 
