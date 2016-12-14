@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\CarPresenceEN;
+use app\models\CarENDetailNames;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -152,19 +153,22 @@ class CarPresenceSearch extends CarPresenceEN
 
     public function getDetailNames($firm_id)
     {
-        return ArrayHelper::map(
+        $details_id = ArrayHelper::getColumn(
             CarPresenceEN::find()
-                ->select('*')
-                ->joinWith('iDName n')
-                ->andFilterWhere([
-                    'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-                    'CarPresenceEN.ID_Model' => $this->ID_Model,
-                    'CarPresenceEN.ID_Firm' => $firm_id,
-                    'CarPresenceEN.ID_Body' => $this->ID_Body,
-                    'CarPresenceEN.ID_Engine' => $this->ID_Engine,
-                ])
-                ->orderBy('Name')
-                ->asArray()->all(),
+            ->select('ID_Name')
+            ->andFilterWhere([
+                'ID_Firm'   => $firm_id,
+            ])
+            ->groupBy('ID_Name')
+            ->asArray()
+            ->all(), 'ID_Name');
+
+        return ArrayHelper::map(
+            CarENDetailNames::find()
+            ->select('id, Name')
+            ->andFilterWhere(['id' => $details_id])
+            ->orderBy('Name')
+            ->asArray()->all(),
             'id', 'Name');
     }
 
