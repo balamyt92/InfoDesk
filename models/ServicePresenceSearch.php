@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\ServicePresence;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -14,8 +12,9 @@ use yii\helpers\ArrayHelper;
 class ServicePresenceSearch extends ServicePresence
 {
     public $iDservice;
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -26,7 +25,7 @@ class ServicePresenceSearch extends ServicePresence
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -35,14 +34,14 @@ class ServicePresenceSearch extends ServicePresence
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      * @param array $pagination
      *
      * @return ActiveDataProvider
      */
-    public function search($params, array $pagination = [ 'pageSize' => 100 ])
+    public function search($params, array $pagination = ['pageSize' => 100])
     {
         $query = ServicePresence::find()
             ->joinWith(['iDService'])
@@ -50,7 +49,7 @@ class ServicePresenceSearch extends ServicePresence
                 'ServicePresence.ID_Service',
                 'ServicePresence.Comment',
                 'ServicePresence.CarList',
-            ]);;
+            ]);
 
         $config = [
             'query' => $query,
@@ -62,15 +61,15 @@ class ServicePresenceSearch extends ServicePresence
         $dataProvider->setSort([
             'attributes' => [
                 'ID_Service' => [
-                    'asc' => ['Services.Name' => SORT_ASC],
-                    'desc' => ['Services.Name' => SORT_DESC],
-                    'label' => 'Услуга',
-                    'default' => SORT_ASC
+                    'asc'     => ['Services.Name' => SORT_ASC],
+                    'desc'    => ['Services.Name' => SORT_DESC],
+                    'label'   => 'Услуга',
+                    'default' => SORT_ASC,
                 ],
                 'Comment',
                 'CarList',
-                'Coast'
-            ]
+                'Coast',
+            ],
         ]);
 
         $this->load($params);
@@ -84,7 +83,7 @@ class ServicePresenceSearch extends ServicePresence
         // grid filtering conditions
         $query->andFilterWhere([
             'ID_Service' => $this->ID_Service,
-            'ID_Firm' => $params['id'],
+            'ID_Firm'    => $params['id'],
         ]);
 
         $query->andFilterWhere(['like', 'Comment', $this->Comment])

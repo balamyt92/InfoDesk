@@ -14,7 +14,7 @@ if (YII_DEBUG) {
 }
 
 require __DIR__.'/../vendor/yiisoft/yii2/Yii.php';
-require_once(__DIR__.'/../vendor/phpoffice/phpexcel/Classes/PHPExcel.php');
+require_once __DIR__.'/../vendor/phpoffice/phpexcel/Classes/PHPExcel.php';
 
 $config = require __DIR__.'/../config/web.php';
 

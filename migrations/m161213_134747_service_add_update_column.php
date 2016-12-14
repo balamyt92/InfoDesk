@@ -13,6 +13,7 @@ class m161213_134747_service_add_update_column extends Migration
     {
         echo "m161213_134747_service_add_update_column cannot be reverted.\n";
         $this->dropColumn('ServicePresence', 'update_at');
+
         return false;
     }
 

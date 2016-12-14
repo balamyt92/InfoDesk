@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\ServicePresence */
@@ -15,7 +15,7 @@ use yii\bootstrap\ActiveForm;
 
     <?= $form->field($model, 'ID_Service', ['inputOptions' => ['autofocus' => 'autofocus']])
         ->widget(\kartik\select2\Select2::className(), [
-            'data' => $items,
+            'data'          => $items,
             'pluginOptions' => [
                 'allowClear' => true,
                 'focus'      => true,
@@ -37,7 +37,7 @@ use yii\bootstrap\ActiveForm;
     </div>
 
     <?php ActiveForm::end();
-    if($model->isNewRecord) {
+    if ($model->isNewRecord) {
         $this->registerJs("$('select').select2('open');");
     }
     ?>

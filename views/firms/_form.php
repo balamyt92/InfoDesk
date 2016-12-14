@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Firms */
@@ -32,7 +32,7 @@ use yii\bootstrap\ActiveForm;
 
     <?= $form->field($model, 'OperatingMode')->textarea(['rows' => 3]) ?>
 
-    <?= $form->field($model, 'Enabled')->dropDownList([ 1 => 'Да',  0 => 'Нет']) ?>
+    <?= $form->field($model, 'Enabled')->dropDownList([1 => 'Да',  0 => 'Нет']) ?>
 
     <?= $form->field($model, 'Identifier')->textInput(['maxlength' => true]) ?>
 
@@ -47,7 +47,7 @@ use yii\bootstrap\ActiveForm;
             <?= Html::a('Отмена', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
             <?php
             \yii\bootstrap\Modal::begin([
-                'header' => '<h3 id="firmName" style="margin: 0px;"></h3>',
+                'header'       => '<h3 id="firmName" style="margin: 0px;"></h3>',
                 'toggleButton' => [
                     'label' => 'Предпросмотр',
                     'class' => 'btn btn-default',
@@ -55,62 +55,62 @@ use yii\bootstrap\ActiveForm;
                 ],
             ]);
 
-            echo "
-                <table class=\"table table-condensed\">
+            echo '
+                <table class="table table-condensed">
                 <tbody>
                     <tr>
-                        <td style=\"border-top: none\"><label>Организация</label></td>
-                        <td  style=\"border-top: none\" id=\"firmOrganizationType\"></td>
+                        <td style="border-top: none"><label>Организация</label></td>
+                        <td  style="border-top: none" id="firmOrganizationType"></td>
                     </tr>
                     <tr>
                         <td><label>Профиль деятельности</label></td>
-                        <td id=\"firmActivityType\"></td>
+                        <td id="firmActivityType"></td>
                     </tr>
                     <tr>
                         <td><label>Район</label></td>
-                        <td id=\"firmDistrict\"></td>
+                        <td id="firmDistrict"></td>
                     </tr>
                     <tr>
                         <td><label>Адрес</label></td>
-                        <td id=\"firmAddress\"></td>
+                        <td id="firmAddress"></td>
                     </tr>
                     <tr>
                         <td><label>Телефон</label></td>
-                        <td id=\"firmPhone\"></td>
+                        <td id="firmPhone"></td>
                     </tr>
                     <tr>
                         <td><label>Факс</label></td>
-                        <td id=\"firmFax\"></td>
+                        <td id="firmFax"></td>
                     </tr>
                     <tr>
                         <td><label>Email</label></td>
-                        <td id=\"firmEmail\"></td>
+                        <td id="firmEmail"></td>
                     </tr>
                     <tr>
                         <td><label>Сайт</label></td>
-                        <td id=\"firmURL\"></td>
+                        <td id="firmURL"></td>
                     </tr>
                     <tr>
                         <td><label>Режим работы</label></td>
-                        <td id=\"firmOperatingMode\"></td>
+                        <td id="firmOperatingMode"></td>
                     </tr>
                     <tr>
                         <td><label>Примечание</label></td>
-                        <td id=\"firmComment\"></td>
+                        <td id="firmComment"></td>
                     </tr>
                 </tbody>
             </table>
-            ";
-            \yii\bootstrap\Modal::end();?>
+            ';
+            \yii\bootstrap\Modal::end(); ?>
         </div>
     </div>
 
     <?php ActiveForm::end();
 
-    $this->registerCss("
+    $this->registerCss('
         .form-group {
             margin-bottom: 0px; 
-        }");
+        }');
 
     $this->registerJs("
     $('#prew')[0].onclick = function () {
