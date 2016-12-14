@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\CarPresenceEN */
@@ -20,32 +20,32 @@ use yii\bootstrap\ActiveForm;
     <?= $form->field($model, 'ID_Name')->dropDownList($names) ?>
 
     <?= $form->field($model, 'ID_Mark')->dropDownList($marks, [
-        'onchange'=>'
+        'onchange'=> '
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-models').'&id="+$(this).val(), function( data ) {
               $( "select#models" ).html( data );
             });
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-engines-by-mark').'&id_mark="+$(this).val(), function( data ) {
               $( "select#engines" ).html( data );
-            });'
+            });',
     ]) ?>
 
     <?= $form->field($model, 'ID_Model')->dropDownList($models ? $models : [], [
-        'id' => 'models',
-        'onchange'=>'
+        'id'      => 'models',
+        'onchange'=> '
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-bodys').'&id_models="+$(this).val(), function( data ) {
               $( "select#bodys" ).html( data );
             });
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-engines-by-model').'&id_model="+$(this).val(), function( data ) {
               $( "select#engines" ).html( data );
-            });'
+            });',
     ]) ?>
 
     <?= $form->field($model, 'ID_Body')->dropDownList($bodys ? $bodys : [], [
-        'id' => 'bodys',
-        'onchange'=>'
+        'id'      => 'bodys',
+        'onchange'=> '
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-engines-by-body').'&id_body="+$(this).val(), function( data ) {
               $( "select#engines" ).html( data );
-            });'
+            });',
     ]) ?>
 
     <?= $form->field($model, 'ID_Engine')->dropDownList($engines ? $engines : [], ['id' => 'engines']) ?>
@@ -68,5 +68,5 @@ use yii\bootstrap\ActiveForm;
         </div>
     </div>
 
-    <?php ActiveForm::end();?>
+    <?php ActiveForm::end(); ?>
 </div>
