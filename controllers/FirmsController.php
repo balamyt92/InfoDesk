@@ -368,6 +368,13 @@ class FirmsController extends Controller
         return $this->redirect(['firms/service', 'id' => $ID_Firm]);
     }
 
+    /**
+     * Delete all services in firm
+     *
+     * @param  int $ID_Firm
+     *
+     * @return mixed
+     */
     public function actionServiceDeleteAll($ID_Firm)
     {
         ServicePresence::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
@@ -399,6 +406,11 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Edit elemet in price list
+     *
+     * @return mixed
+     */
     public function actionPriceElementUpdate()
     {
         $params = Yii::$app->request->get();
@@ -441,6 +453,11 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Delete element in price
+     *
+     * @return mixed
+     */
     public function actionPriceElementDelete()
     {
         $params = Yii::$app->request->get();
@@ -452,12 +469,26 @@ class FirmsController extends Controller
         return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
     }
 
+    /**
+     * Delete all elements in price
+     *
+     * @param  int $ID_Firm
+     *
+     * @return mixed
+     */
     public function actionPriceDeleteAll($ID_Firm)
     {
         CarPresenceEN::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
         return $this->redirect(['firms/price', 'id' => $ID_Firm]);
     }
 
+    /**
+     * Add element in price
+     *
+     * @param  int $ID_Firm
+     *
+     * @return mixed
+     */
     public function actionPriceElementAdd($ID_Firm)
     {
         $model = new CarPresenceEN();
@@ -500,6 +531,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Finde element in price list
+     *
+     * @param  array $params
+     *
+     * @return app/models/CarPresenceEN
+     */
     protected function findPriceElement($params)
     {
         $model = CarPresenceEN::find()
@@ -521,6 +559,14 @@ class FirmsController extends Controller
         return $model;
     }
 
+    /**
+     * Get detals names, marks, models, bodys, engines list
+     * for edit form elemet of price list
+     *
+     * @param  array $param
+     *
+     * @return array
+     */
     protected function getItemForPriceEditForm($param)
     {
         $names = ArrayHelper::map(
@@ -594,6 +640,13 @@ class FirmsController extends Controller
         return compact('names', 'marks', 'models', 'bodys', 'engines');
     }
 
+    /**
+     * Get Models list for <select> field for _price_form from AJAX
+     *
+     * @param  int $id  Mark id
+     *
+     * @return string html
+     */
     public function actionGetModels($id)
     {
         $models = CarModelsEN::find()
@@ -607,6 +660,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Get Bodys list for <select> field for _price_form from AJAX
+     *
+     * @param  int $id_models
+     *
+     * @return string html
+     */
     public function actionGetBodys($id_models)
     {
         $boyds = CarBodyModelsEN::find()
@@ -621,6 +681,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX
+     *
+     * @param  int $id_mark
+     *
+     * @return string html
+     */
     public function actionGetEnginesByMark($id_mark)
     {
         $engines = CarEngineModelsEN::find()
@@ -635,6 +702,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX
+     *
+     * @param  int $id_model
+     *
+     * @return string html
+     */
     public function actionGetEnginesByModel($id_model)
     {
         $links = ArrayHelper::getColumn(
@@ -656,6 +730,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX
+     *
+     * @param  int $id_body
+     *
+     * @return string html
+     */
     public function actionGetEnginesByBody($id_body)
     {
         $links = ArrayHelper::getColumn(
