@@ -2,11 +2,9 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\CarPresenceEN;
-use app\models\CarENDetailNames;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -21,20 +19,20 @@ class CarPresenceSearch extends CarPresenceEN
     public $iDName;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'ID_Body', 'ID_Engine'], 'integer'],
             [['CarYear', 'Comment', 'Hash_Comment', 'TechNumber', 'Catalog_Number',
-                'iDMark', 'iDModel', 'iDBody', 'iDEngine', 'iDName'], 'safe'],
+                'iDMark', 'iDModel', 'iDBody', 'iDEngine', 'iDName', ], 'safe'],
             [['Cost'], 'number'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -43,14 +41,14 @@ class CarPresenceSearch extends CarPresenceEN
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      * @param array $pagination
      *
      * @return ActiveDataProvider
      */
-    public function search($params, array $pagination = [ 'pageSize' => 100 ])
+    public function search($params, array $pagination = ['pageSize' => 100])
     {
         $this->load($params);
 
@@ -75,13 +73,13 @@ class CarPresenceSearch extends CarPresenceEN
             ]);
 
         $query->andFilterWhere([
-            'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-            'CarPresenceEN.ID_Model' => $this->ID_Model,
-            'CarPresenceEN.ID_Name' => $this->ID_Name,
-            'CarPresenceEN.ID_Firm' => $params['id'],
-            'CarPresenceEN.ID_Body' => $this->ID_Body,
+            'CarPresenceEN.ID_Mark'   => $this->ID_Mark,
+            'CarPresenceEN.ID_Model'  => $this->ID_Model,
+            'CarPresenceEN.ID_Name'   => $this->ID_Name,
+            'CarPresenceEN.ID_Firm'   => $params['id'],
+            'CarPresenceEN.ID_Body'   => $this->ID_Body,
             'CarPresenceEN.ID_Engine' => $this->ID_Engine,
-            'Cost' => $this->Cost,
+            'Cost'                    => $this->Cost,
         ]);
 
         $query->andFilterWhere(['like', 'CarYear', $this->CarYear])
@@ -92,13 +90,13 @@ class CarPresenceSearch extends CarPresenceEN
 
         $totalCount = CarPresenceEN::find()
             ->andFilterWhere([
-                'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-                'CarPresenceEN.ID_Model' => $this->ID_Model,
-                'CarPresenceEN.ID_Name' => $this->ID_Name,
-                'CarPresenceEN.ID_Firm' => $params['id'],
-                'CarPresenceEN.ID_Body' => $this->ID_Body,
+                'CarPresenceEN.ID_Mark'   => $this->ID_Mark,
+                'CarPresenceEN.ID_Model'  => $this->ID_Model,
+                'CarPresenceEN.ID_Name'   => $this->ID_Name,
+                'CarPresenceEN.ID_Firm'   => $params['id'],
+                'CarPresenceEN.ID_Body'   => $this->ID_Body,
                 'CarPresenceEN.ID_Engine' => $this->ID_Engine,
-                'Cost' => $this->Cost,
+                'Cost'                    => $this->Cost,
             ]);
 
         $totalCount->andFilterWhere(['like', 'CarYear', $this->CarYear])
@@ -117,35 +115,35 @@ class CarPresenceSearch extends CarPresenceEN
         $dataProvider->setSort([
             'attributes' => [
                 'ID_Name' => [
-                    'asc' => ['n.Name' => SORT_ASC],
-                    'desc' => ['n.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['n.Name' => SORT_ASC],
+                    'desc'    => ['n.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Mark' => [
-                    'asc' => ['ma.Name' => SORT_ASC],
-                    'desc' => ['ma.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['ma.Name' => SORT_ASC],
+                    'desc'    => ['ma.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Model' => [
-                    'asc' => ['mo.Name' => SORT_ASC],
-                    'desc' => ['mo.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['mo.Name' => SORT_ASC],
+                    'desc'    => ['mo.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Body' => [
-                    'asc' => ['b.Name' => SORT_ASC],
-                    'desc' => ['b.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['b.Name' => SORT_ASC],
+                    'desc'    => ['b.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Engine' => [
-                    'asc' => ['e.Name' => SORT_ASC],
-                    'desc' => ['e.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['e.Name' => SORT_ASC],
+                    'desc'    => ['e.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'Cost',
                 'Comment',
                 'TechNumber',
                 'Catalog_Number',
-            ]
+            ],
         ]);
 
         return $dataProvider;
@@ -153,22 +151,19 @@ class CarPresenceSearch extends CarPresenceEN
 
     public function getDetailNames($firm_id)
     {
-        $details_id = ArrayHelper::getColumn(
-            CarPresenceEN::find()
-            ->select('ID_Name')
-            ->andFilterWhere([
-                'ID_Firm'   => $firm_id,
-            ])
-            ->groupBy('ID_Name')
-            ->asArray()
-            ->all(), 'ID_Name');
-
         return ArrayHelper::map(
-            CarENDetailNames::find()
-            ->select('id, Name')
-            ->andFilterWhere(['id' => $details_id])
-            ->orderBy('Name')
-            ->asArray()->all(),
+            CarPresenceEN::find()
+                ->select('*')
+                ->joinWith('iDName n')
+                ->andFilterWhere([
+                    'CarPresenceEN.ID_Mark'   => $this->ID_Mark,
+                    'CarPresenceEN.ID_Model'  => $this->ID_Model,
+                    'CarPresenceEN.ID_Firm'   => $firm_id,
+                    'CarPresenceEN.ID_Body'   => $this->ID_Body,
+                    'CarPresenceEN.ID_Engine' => $this->ID_Engine,
+                ])
+                ->orderBy('Name')
+                ->asArray()->all(),
             'id', 'Name');
     }
 
@@ -179,10 +174,10 @@ class CarPresenceSearch extends CarPresenceEN
                 ->select('*')
                 ->joinWith('iDMark m')
                 ->andFilterWhere([
-                    'CarPresenceEN.ID_Model' => $this->ID_Model,
-                    'CarPresenceEN.ID_Name' => $this->ID_Name,
-                    'CarPresenceEN.ID_Firm' => $firm_id,
-                    'CarPresenceEN.ID_Body' => $this->ID_Body,
+                    'CarPresenceEN.ID_Model'  => $this->ID_Model,
+                    'CarPresenceEN.ID_Name'   => $this->ID_Name,
+                    'CarPresenceEN.ID_Firm'   => $firm_id,
+                    'CarPresenceEN.ID_Body'   => $this->ID_Body,
                     'CarPresenceEN.ID_Engine' => $this->ID_Engine,
                 ])
                 ->groupBy('id')
@@ -198,10 +193,10 @@ class CarPresenceSearch extends CarPresenceEN
                 ->select('*')
                 ->joinWith('iDModel m')
                 ->andFilterWhere([
-                    'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-                    'CarPresenceEN.ID_Name' => $this->ID_Name,
-                    'CarPresenceEN.ID_Firm' => $firm_id,
-                    'CarPresenceEN.ID_Body' => $this->ID_Body,
+                    'CarPresenceEN.ID_Mark'   => $this->ID_Mark,
+                    'CarPresenceEN.ID_Name'   => $this->ID_Name,
+                    'CarPresenceEN.ID_Firm'   => $firm_id,
+                    'CarPresenceEN.ID_Body'   => $this->ID_Body,
                     'CarPresenceEN.ID_Engine' => $this->ID_Engine,
                 ])
                 ->groupBy('Name')
@@ -217,10 +212,10 @@ class CarPresenceSearch extends CarPresenceEN
                 ->select('*')
                 ->joinWith('iDBody b')
                 ->andFilterWhere([
-                    'CarPresenceEN.ID_Model' => $this->ID_Model,
-                    'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-                    'CarPresenceEN.ID_Name' => $this->ID_Name,
-                    'CarPresenceEN.ID_Firm' => $firm_id,
+                    'CarPresenceEN.ID_Model'  => $this->ID_Model,
+                    'CarPresenceEN.ID_Mark'   => $this->ID_Mark,
+                    'CarPresenceEN.ID_Name'   => $this->ID_Name,
+                    'CarPresenceEN.ID_Firm'   => $firm_id,
                     'CarPresenceEN.ID_Engine' => $this->ID_Engine,
                 ])
                 ->groupBy('Name')
@@ -237,10 +232,10 @@ class CarPresenceSearch extends CarPresenceEN
                 ->joinWith('iDEngine e')
                 ->andFilterWhere([
                     'CarPresenceEN.ID_Model' => $this->ID_Model,
-                    'CarPresenceEN.ID_Mark' => $this->ID_Mark,
-                    'CarPresenceEN.ID_Name' => $this->ID_Name,
-                    'CarPresenceEN.ID_Body' => $this->ID_Body,
-                    'CarPresenceEN.ID_Firm' => $firm_id,
+                    'CarPresenceEN.ID_Mark'  => $this->ID_Mark,
+                    'CarPresenceEN.ID_Name'  => $this->ID_Name,
+                    'CarPresenceEN.ID_Body'  => $this->ID_Body,
+                    'CarPresenceEN.ID_Firm'  => $firm_id,
                 ])
                 ->groupBy('Name')
                 ->orderBy('Name')

@@ -2,11 +2,11 @@
  /* @var $this yii\web\View */
  /* @var $model app\models\statistic\ParamForm */
 
+use kartik\export\ExportMenu;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
-use kartik\export\ExportMenu;
 
 $this->title = 'Статистика';
 
@@ -295,11 +295,11 @@ HTML;
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
                             'label' => 'Экспорт',
-                            'class' => 'btn btn-default'
+                            'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath' => '@vendor/mpdf/mpdf',
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];
@@ -436,11 +436,11 @@ HTML;
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
                             'label' => 'Экспорт',
-                            'class' => 'btn btn-default'
+                            'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath' => '@vendor/mpdf/mpdf',
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];
@@ -576,11 +576,11 @@ HTML;
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
                             'label' => 'Экспорт',
-                            'class' => 'btn btn-default'
+                            'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary' => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath' => '@vendor/mpdf/mpdf',
+                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
+                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];
