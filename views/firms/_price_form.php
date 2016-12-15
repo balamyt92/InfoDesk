@@ -26,7 +26,8 @@ use yii\helpers\Html;
             });
             $.get( "'.Yii::$app->urlManager->createUrl('firms/get-engines-by-mark').'&id_mark="+$(this).val(), function( data ) {
               $( "select#engines" ).html( data );
-            });',
+            });
+            $( "select#bodys" ).html( "<option></option>" );',
     ]) ?>
 
     <?= $form->field($model, 'ID_Model')->dropDownList($models ? $models : [], [
