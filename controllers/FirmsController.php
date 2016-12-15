@@ -405,7 +405,8 @@ class FirmsController extends Controller
             try {
                 $model->save();
             } catch (\yii\db\IntegrityException $e) {
-                $items = $this->getItemForPriceEditForm($params);
+                $param = Yii::$app->request->post();
+                $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
 
                 return $this->render('price_update', [
                     'model'   => $model,
@@ -454,7 +455,8 @@ class FirmsController extends Controller
                 $model->Hash_Comment = md5($model->Comment);
                 $model->save();
             } catch (\yii\db\IntegrityException $e) {
-                $items = $this->getItemForPriceEditForm(Yii::$app->request->post());
+                $param = Yii::$app->request->post();
+                $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
 
                 return $this->render('price_add', [
                     'model'   => $model,
