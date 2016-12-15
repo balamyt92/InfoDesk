@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 $this->title = 'Фирмы';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="firms-index">
+<div class="firms-index" style="padding-top: 10px;">
         <?php  $create_button = Html::a('Новая фирма', ['create'], ['class' => 'btn btn-success']) ?>
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            '<span class="btn-group">{summary}</span>',
+            '<span class="btn-group" style="padding-top: 10px;">{summary}</span>',
             "<span class=\"btn-group\">{$create_button}</span>",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,

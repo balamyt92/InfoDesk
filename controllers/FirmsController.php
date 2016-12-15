@@ -368,6 +368,12 @@ class FirmsController extends Controller
         return $this->redirect(['firms/service', 'id' => $ID_Firm]);
     }
 
+    public function actionServiceDeleteAll($ID_Firm)
+    {
+        ServicePresence::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+        return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+    }
+
     /**
      * Find service in firm
      *
@@ -444,6 +450,12 @@ class FirmsController extends Controller
         $this->findPriceElement($params)->delete();
 
         return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
+    }
+
+    public function actionPriceDeleteAll($ID_Firm)
+    {
+        CarPresenceEN::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+        return $this->redirect(['firms/price', 'id' => $ID_Firm]);
     }
 
     public function actionPriceElementAdd($ID_Firm)

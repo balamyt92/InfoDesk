@@ -107,7 +107,11 @@ $columns = [
                 $options = array_merge([
                     'title'      => $title,
                     'aria-label' => $title,
-                    'data-pjax'  => '0',
+                    'data' => [
+                        'method' => 'get',
+                        'confirm' => 'Удалить позицию?',
+                        'pjax'=> '0',
+                    ],
                 ]);
                 $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-trash']);
 
@@ -121,7 +125,7 @@ $columns = [
 ];
 ?>
 
-<div class="price-firm">
+<div class="price-firm" style="margin-top: 10px;">
 	<?php Pjax::begin(); ?>
 	<?= GridView::widget([
         'dataProvider'  => $model,
@@ -138,8 +142,18 @@ $columns = [
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            '<span class="btn-group">{summary}</span>',
+            '<span class="btn-group" style="margin-top: 10px;">{summary}</span>',
             Html::a('Добавить позицию', ['price-element-add', 'ID_Firm' => $ID_Firm], ['class' => 'btn btn-success']),
+            Html::a('Удалить все позиции',
+                ['price-delete-all', 'ID_Firm' => $ID_Firm],
+                [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'method' => 'get',
+                        'confirm' => 'Удалить весь прайс?',
+                        'pjax'=> '0',
+                    ],
+                ]),
             '<span class="btn-group">'.Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']).'</span>',
             ExportMenu::widget([
                 'dataProvider'      => $exportModel,
