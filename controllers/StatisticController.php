@@ -85,12 +85,12 @@ class StatisticController extends Controller
     }
 
     /**
-     * Searsh firms
+     * Search firms
      *
      * @param  string $q
      * @param  int    $id
      *
-     * @return json
+     * @return array
      */
     public function actionSearchFirm($q = null, $id = null)
     {
@@ -107,7 +107,7 @@ class StatisticController extends Controller
             $data = $command->queryAll();
             $out['results'] = array_values($data);
         } elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'text' => Firms::find($id)->name];
+            $out['results'] = ['id' => $id, 'text' => Firms::find()->name];
         }
 
         return $out;
