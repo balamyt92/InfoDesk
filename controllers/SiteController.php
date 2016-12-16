@@ -320,7 +320,7 @@ class SiteController extends Controller
      * @param $engine_id
      * @param $number string номер детали
      *
-     * @var $page integer какая страница результата нас интересует
+     * @var $page  integer какая страница результата нас интересует
      * @var $limit integer соклько строк результатов нам надо
      *
      * @return array возвращаем JSON

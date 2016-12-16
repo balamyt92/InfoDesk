@@ -92,9 +92,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Select firm price
+     * Select firm price.
      *
-     * @param  int $id firm
+     * @param int $id firm
      *
      * @return mixed
      */
@@ -135,9 +135,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Select firm services
+     * Select firm services.
      *
-     * @param  int $id firm
+     * @param int $id firm
      *
      * @return mixed
      */
@@ -304,9 +304,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Add new service in firm
+     * Add new service in firm.
      *
-     * @param  int $ID_Firm
+     * @param int $ID_Firm
      *
      * @return mixed
      */
@@ -355,11 +355,11 @@ class FirmsController extends Controller
     }
 
     /**
-     * Delete service in firm
+     * Delete service in firm.
      *
-     * @param  int $ID_Service
-     * @param  int $ID_Firm
-     * @param  string $Comment
+     * @param int    $ID_Service
+     * @param int    $ID_Firm
+     * @param string $Comment
      *
      * @return mixed
      */
@@ -371,27 +371,29 @@ class FirmsController extends Controller
     }
 
     /**
-     * Delete all services in firm
+     * Delete all services in firm.
      *
-     * @param  int $ID_Firm
+     * @param int $ID_Firm
      *
      * @return mixed
      */
     public function actionServiceDeleteAll($ID_Firm)
     {
         ServicePresence::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+
         return $this->redirect(['firms/service', 'id' => $ID_Firm]);
     }
 
     /**
-     * Find service in firm
+     * Find service in firm.
      *
-     * @param  int $ID_Service
-     * @param  int $ID_Firm
-     * @param  string $Comment
+     * @param int    $ID_Service
+     * @param int    $ID_Firm
+     * @param string $Comment
+     *
+     * @throws NotFoundHttpException
      *
      * @return ActiveRecord
-     * @throws NotFoundHttpException
      */
     protected function findService($ID_Service, $ID_Firm, $Comment)
     {
@@ -410,10 +412,11 @@ class FirmsController extends Controller
     }
 
     /**
-     * Edit element in price list
+     * Edit element in price list.
+     *
+     * @throws NotFoundHttpException
      *
      * @return mixed
-     * @throws NotFoundHttpException
      */
     public function actionPriceElementUpdate()
     {
@@ -459,10 +462,11 @@ class FirmsController extends Controller
     }
 
     /**
-     * Delete element in price
+     * Delete element in price.
+     *
+     * @throws NotFoundHttpException
      *
      * @return mixed
-     * @throws NotFoundHttpException
      */
     public function actionPriceElementDelete()
     {
@@ -476,22 +480,23 @@ class FirmsController extends Controller
     }
 
     /**
-     * Delete all elements in price
+     * Delete all elements in price.
      *
-     * @param  int $ID_Firm
+     * @param int $ID_Firm
      *
      * @return mixed
      */
     public function actionPriceDeleteAll($ID_Firm)
     {
         CarPresenceEN::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+
         return $this->redirect(['firms/price', 'id' => $ID_Firm]);
     }
 
     /**
-     * Add element in price
+     * Add element in price.
      *
-     * @param  int $ID_Firm
+     * @param int $ID_Firm
      *
      * @return Response
      */
@@ -538,9 +543,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Find element in price list
+     * Find element in price list.
      *
-     * @param  array $params
+     * @param array $params
      *
      * @return array|\yii\db\ActiveRecord
      */
@@ -567,9 +572,9 @@ class FirmsController extends Controller
 
     /**
      * Get details names, marks, models, bodys, engines list
-     * for edit form element of price list
+     * for edit form element of price list.
      *
-     * @param  array $param
+     * @param array $param
      *
      * @return array
      */
@@ -647,9 +652,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get Models list for <select> field for _price_form from AJAX
+     * Get Models list for <select> field for _price_form from AJAX.
      *
-     * @param  int $id  Mark id
+     * @param int $id Mark id
      */
     public function actionGetModels($id)
     {
@@ -665,9 +670,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get Bodys list for <select> field for _price_form from AJAX
+     * Get Bodys list for <select> field for _price_form from AJAX.
      *
-     * @param  int $id_models
+     * @param int $id_models
      */
     public function actionGetBodys($id_models)
     {
@@ -684,9 +689,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get Engines list for <select> field for _price_form from AJAX
+     * Get Engines list for <select> field for _price_form from AJAX.
      *
-     * @param  int $id_mark
+     * @param int $id_mark
      */
     public function actionGetEnginesByMark($id_mark)
     {
@@ -703,9 +708,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get Engines list for <select> field for _price_form from AJAX
+     * Get Engines list for <select> field for _price_form from AJAX.
      *
-     * @param  int $id_model
+     * @param int $id_model
      */
     public function actionGetEnginesByModel($id_model)
     {
@@ -729,9 +734,9 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get Engines list for <select> field for _price_form from AJAX
+     * Get Engines list for <select> field for _price_form from AJAX.
      *
-     * @param  int $id_body
+     * @param int $id_body
      */
     public function actionGetEnginesByBody($id_body)
     {

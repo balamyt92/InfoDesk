@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Firms;
 use app\models\statistic\ParamForm;
 use app\models\User;
-use app\models\Firms;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\db\Query;
 
 class StatisticController extends Controller
 {
@@ -85,10 +85,10 @@ class StatisticController extends Controller
     }
 
     /**
-     * Search firms
+     * Search firms.
      *
-     * @param  string $q
-     * @param  int    $id
+     * @param string $q
+     * @param int    $id
      *
      * @return array
      */
