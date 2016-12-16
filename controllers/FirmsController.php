@@ -15,9 +15,11 @@ use app\models\Firms;
 use app\models\FirmsSearch;
 use app\models\ServicePresence;
 use app\models\ServicePresenceSearch;
+use app\models\Services;
 use app\models\User;
 use Yii;
-use yii\db\Query;
+use yii\db\ActiveRecord;
+use yii\db\IntegrityException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -143,7 +145,7 @@ class FirmsController extends Controller
     {
         $filterModel = new ServicePresenceSearch();
 
-        $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
+        $query = ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
 
         $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
@@ -271,9 +273,9 @@ class FirmsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             try {
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $items = ArrayHelper::map(
-                    \app\models\Services::find()
+                    Services::find()
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
@@ -288,7 +290,7 @@ class FirmsController extends Controller
             return $this->redirect(['firms/service', 'id' => $ID_Firm]);
         } else {
             $items = ArrayHelper::map(
-                \app\models\Services::find()
+                Services::find()
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
@@ -315,9 +317,9 @@ class FirmsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             try {
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $items = ArrayHelper::map(
-                    \app\models\Services::find()
+                    Services::find()
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
@@ -339,7 +341,7 @@ class FirmsController extends Controller
             $model->Coast = $last->Coast;
 
             $items = ArrayHelper::map(
-                \app\models\Services::find()
+                Services::find()
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
@@ -388,7 +390,8 @@ class FirmsController extends Controller
      * @param  int $ID_Firm
      * @param  string $Comment
      *
-     * @return mixed
+     * @return ActiveRecord
+     * @throws NotFoundHttpException
      */
     protected function findService($ID_Service, $ID_Firm, $Comment)
     {
@@ -407,9 +410,10 @@ class FirmsController extends Controller
     }
 
     /**
-     * Edit elemet in price list
+     * Edit element in price list
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionPriceElementUpdate()
     {
@@ -421,8 +425,9 @@ class FirmsController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             try {
+                $model->Hash_Comment = md5($model->Comment);
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $param = Yii::$app->request->post();
                 $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
 
@@ -457,6 +462,7 @@ class FirmsController extends Controller
      * Delete element in price
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionPriceElementDelete()
     {
@@ -487,7 +493,7 @@ class FirmsController extends Controller
      *
      * @param  int $ID_Firm
      *
-     * @return mixed
+     * @return Response
      */
     public function actionPriceElementAdd($ID_Firm)
     {
@@ -497,7 +503,7 @@ class FirmsController extends Controller
             try {
                 $model->Hash_Comment = md5($model->Comment);
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $param = Yii::$app->request->post();
                 $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
 
@@ -532,11 +538,11 @@ class FirmsController extends Controller
     }
 
     /**
-     * Finde element in price list
+     * Find element in price list
      *
      * @param  array $params
      *
-     * @return app/models/CarPresenceEN
+     * @return array|\yii\db\ActiveRecord
      */
     protected function findPriceElement($params)
     {
@@ -560,8 +566,8 @@ class FirmsController extends Controller
     }
 
     /**
-     * Get detals names, marks, models, bodys, engines list
-     * for edit form elemet of price list
+     * Get details names, marks, models, bodys, engines list
+     * for edit form element of price list
      *
      * @param  array $param
      *
@@ -644,8 +650,6 @@ class FirmsController extends Controller
      * Get Models list for <select> field for _price_form from AJAX
      *
      * @param  int $id  Mark id
-     *
-     * @return string html
      */
     public function actionGetModels($id)
     {
@@ -664,8 +668,6 @@ class FirmsController extends Controller
      * Get Bodys list for <select> field for _price_form from AJAX
      *
      * @param  int $id_models
-     *
-     * @return string html
      */
     public function actionGetBodys($id_models)
     {
@@ -685,8 +687,6 @@ class FirmsController extends Controller
      * Get Engines list for <select> field for _price_form from AJAX
      *
      * @param  int $id_mark
-     *
-     * @return string html
      */
     public function actionGetEnginesByMark($id_mark)
     {
@@ -706,8 +706,6 @@ class FirmsController extends Controller
      * Get Engines list for <select> field for _price_form from AJAX
      *
      * @param  int $id_model
-     *
-     * @return string html
      */
     public function actionGetEnginesByModel($id_model)
     {
@@ -734,8 +732,6 @@ class FirmsController extends Controller
      * Get Engines list for <select> field for _price_form from AJAX
      *
      * @param  int $id_body
-     *
-     * @return string html
      */
     public function actionGetEnginesByBody($id_body)
     {
