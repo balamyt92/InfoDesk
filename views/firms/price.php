@@ -107,10 +107,10 @@ $columns = [
                 $options = array_merge([
                     'title'      => $title,
                     'aria-label' => $title,
-                    'data' => [
-                        'method' => 'get',
+                    'data'       => [
+                        'method'  => 'get',
                         'confirm' => 'Удалить позицию?',
-                        'pjax'=> '0',
+                        'pjax'    => '0',
                     ],
                 ]);
                 $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-trash']);
@@ -148,10 +148,10 @@ $columns = [
                 ['price-delete-all', 'ID_Firm' => $ID_Firm],
                 [
                     'class' => 'btn btn-danger',
-                    'data' => [
-                        'method' => 'get',
+                    'data'  => [
+                        'method'  => 'get',
                         'confirm' => 'Удалить весь прайс?',
-                        'pjax'=> '0',
+                        'pjax'    => '0',
                     ],
                 ]),
             '<span class="btn-group">'.Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']).'</span>',
