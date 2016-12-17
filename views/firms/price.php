@@ -1,7 +1,6 @@
 <?php
 /**
- * @var app\models\CarPresenceEN
- * @var $exportModel             app\models\CarPresenceEN
+ * @var $model                   app\models\CarPresenceEN
  * @var $filterModel             app\models\CarPresenceSearch
  * @var $names                   array
  * @var $marks                   array
@@ -127,7 +126,7 @@ $columns = [
 
 <div class="price-firm" style="margin-top: 10px;">
 	<?php Pjax::begin(); ?>
-	<?= GridView::widget([
+    <?= GridView::widget([
         'dataProvider'  => $model,
         'filterModel'   => $filterModel,
         'columns'       => $columns,

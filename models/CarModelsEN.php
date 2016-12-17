@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "CarModelsEN".
@@ -11,7 +12,7 @@ namespace app\models;
  * @property int $ID_Type
  * @property ModelTypes $iDType
  */
-class CarModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
+class CarModelsEN extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}
@@ -41,9 +42,9 @@ class CarModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return [
             'id'      => 'ID',
-            'ID_Mark' => 'Id  Mark',
-            'Name'    => 'Name',
-            'ID_Type' => 'Id  Type',
+            'ID_Mark' => 'Марка',
+            'Name'    => 'Наименование',
+            'ID_Type' => 'Тип',
         ];
     }
 
