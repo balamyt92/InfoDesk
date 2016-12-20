@@ -119,9 +119,41 @@ class MarksController extends Controller
         return $this->redirect(['index']);
     }
 
+    /**
+     * Display models of marks
+     *
+     * @param  int $id  mark id
+     *
+     * @return mixed
+     */
     public function actionModels($id)
     {
         return $this->redirect(['models/index', 'ID_Mark' => $id]);
+    }
+
+    /**
+     * Display body of marks
+     *
+     * @param  int $id  mark id
+     *
+     * @return mixed
+     */
+    public function actionBodys($id)
+    {
+        return $this->redirect(['body/index', 'ID_Mark' => $id]);
+    }
+
+
+    /**
+     * Display engine of marks
+     *
+     * @param  int $id  mark id
+     *
+     * @return mixed
+     */
+    public function actionEngines($id)
+    {
+        return $this->redirect(['engine/index', 'ID_Mark' => $id]);
     }
 
     /**

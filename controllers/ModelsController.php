@@ -143,4 +143,29 @@ class ModelsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * Display body of model
+     *
+     * @param  int $id  model id
+     *
+     * @return mixed
+     */
+    public function actionBodys($id)
+    {
+        return $this->redirect(['body/by-model', 'ID_Model' => $id]);
+    }
+
+
+    /**
+     * Display engine of model
+     *
+     * @param  int $id  model id
+     *
+     * @return mixed
+     */
+    public function actionEngines($id)
+    {
+        return $this->redirect(['engine/by-model', 'ID_Model' => $id]);
+    }
 }

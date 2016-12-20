@@ -8,10 +8,10 @@ namespace app\models;
  * @property int $id
  * @property int $ID_Mark
  * @property string $Name
- * @property int $ID_Type
  * @property CarEngineModelGroupsEN[] $carEngineModelGroupsENs
  * @property CarEngineModelGroupsEN[] $carEngineModelGroupsENs0
  * @property CarMarksEN $iDMark
+ * @property ModelTypes $ID_Type
  */
 class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
 {
@@ -33,6 +33,7 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
             [['ID_Mark', 'ID_Type'], 'integer'],
             [['Name'], 'string', 'max' => 255],
             [['ID_Mark'], 'exist', 'skipOnError' => true, 'targetClass' => CarMarksEN::className(), 'targetAttribute' => ['ID_Mark' => 'id']],
+            [['ID_Type'], 'exist', 'skipOnError' => true, 'targetClass' => ModelTypes::className(), 'targetAttribute' => ['ID_Type' => 'id']],
         ];
     }
 
@@ -43,9 +44,9 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     {
         return [
             'id'      => 'ID',
-            'ID_Mark' => 'Id  Mark',
-            'Name'    => 'Name',
-            'ID_Type' => 'Id  Type',
+            'ID_Mark' => 'Марка',
+            'Name'    => 'Наименование',
+            'ID_Type' => 'Тип',
         ];
     }
 
@@ -71,6 +72,14 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
     public function getIDMark()
     {
         return $this->hasOne(CarMarksEN::className(), ['id' => 'ID_Mark']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIDType()
+    {
+        return $this->hasOne(ModelTypes::className(), ['id' => 'ID_Type']);
     }
 
     public function loadData($data)

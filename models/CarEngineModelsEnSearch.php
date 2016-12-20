@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CarModelsEN;
+use app\models\CarEngineModelsEN;
 
 /**
- * CarModelsEnSearch represents the model behind the search form of `app\models\CarModelsEN`.
+ * CarEngineModelsEnSearch represents the model behind the search form of `app\models\CarEngineModelsEN`.
  */
-class CarModelsEnSearch extends CarModelsEN
+class CarEngineModelsEnSearch extends CarEngineModelsEN
 {
     /**
      * @inheritdoc
@@ -41,14 +41,16 @@ class CarModelsEnSearch extends CarModelsEN
      */
     public function search($params)
     {
-        $query = CarModelsEN::find()->joinWith('iDType t');
+        $query = CarEngineModelsEN::find()
+            ->joinWith('iDMark m')
+            ->joinWith('iDType t');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => false,
+                'pageSize' => 500,
             ],
         ]);
 
@@ -62,14 +64,12 @@ class CarModelsEnSearch extends CarModelsEN
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'CarModelsEN.id' => $this->id,
-            'CarModelsEN.ID_Mark' => $params['ID_Mark'],
-            'CarModelsEN.ID_Type' => $this->ID_Type,
+            'id' => $this->id,
+            'ID_Mark' => $params['ID_Mark'],
+            'ID_Type' => $this->ID_Type,
         ]);
 
-        $query->andFilterWhere(['like', 'CarModelsEN.Name', $this->Name]);
-
-        $query->orderBy(['Name' => SORT_ASC]);
+        $query->andFilterWhere(['like', 'Name', $this->Name]);
 
         return $dataProvider;
     }

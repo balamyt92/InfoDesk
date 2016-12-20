@@ -29,7 +29,33 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                 'value'          => 'iDType.Name',
                 'filter'         => $model_types,
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class'          => 'yii\grid\ActionColumn',
+                'template'       => '{update} {delete} {bodys} {engines}',
+                'buttons'        => [
+                    'bodys' => function ($url, $model, $key) {
+                        $title = 'Кузова';
+                        $options = array_merge([
+                            'title'      => $title,
+                            'aria-label' => $title,
+                            'data-pjax'  => '0',
+                        ]);
+                        return Html::a($title, $url, $options);
+                    },
+                    'engines' => function ($url, $model, $key) {
+                        $title = 'Двигатели';
+                        $options = array_merge([
+                            'title'      => $title,
+                            'aria-label' => $title,
+                            'data-pjax'  => '0',
+                        ]);
+                        return Html::a($title, $url, $options);
+                    },
+                ],
+                'contentOptions' => [
+                    'style' => 'max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
+                ],
+            ],
         ],
         'panel'         => [
             'type' => 'default',

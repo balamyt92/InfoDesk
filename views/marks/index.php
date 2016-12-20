@@ -39,9 +39,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        $icon = Html::tag('button', $title, ['class' => 'btn btn-default']);
-
-                        return Html::a($icon, $url, $options);
+                        return Html::a($title, $url, $options);;
                     },
                     'bodys' => function ($url, $model, $key) {
                         $title = 'Кузова';
@@ -50,9 +48,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        $icon = Html::tag('button', $title, ['class' => 'btn btn-default']);
-
-                        return Html::a($icon, $url, $options);
+                        return Html::a($title, $url, $options);
                     },
                     'engines' => function ($url, $model, $key) {
                         $title = 'Двигатели';
@@ -61,9 +57,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        $icon = Html::tag('button', $title, ['class' => 'btn btn-default']);
-
-                        return Html::a($icon, $url, $options);
+                        return Html::a($title, $url, $options);
                     },
                 ],
                 'contentOptions' => [
