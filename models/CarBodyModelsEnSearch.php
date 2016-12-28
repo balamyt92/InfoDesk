@@ -49,9 +49,12 @@ class CarBodyModelsEnSearch extends CarBodyModelsEN
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query'      => $query,
             'pagination' => [
                 'pageSize' => 500,
+            ],
+            'sort'       => [
+                'defaultOrder' => ['ID_Model' => SORT_ASC,'Name' => SORT_ASC],
             ],
         ]);
 
