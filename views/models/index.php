@@ -40,7 +40,15 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        return Html::a($title, $url, $options);
+                        return Html::a($title, [
+                                'body/index',
+                                'ID_Mark' => $model->ID_Mark,
+                                'CarBodyModelsEnSearch' => [
+                                    'ID_Model' => $model->id,
+                                    'Name' => '',
+                                    'ID_Type' => '',
+                                ],
+                            ], $options);
                     },
                     'engines' => function ($url, $model, $key) {
                         $title = 'Двигатели';
@@ -49,7 +57,15 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        return Html::a($title, $url, $options);
+                        return Html::a($title, [
+                                'engine/index',
+                                'ID_Mark' => $model->ID_Mark,
+                                'CarBodyModelsEnSearch' => [
+                                    'ID_Model' => $model->id,
+                                    'Name' => '',
+                                    'ID_Type' => '',
+                                ],
+                            ], $options);
                     },
                 ],
                 'contentOptions' => [
