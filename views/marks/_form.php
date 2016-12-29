@@ -21,6 +21,7 @@ use yii\bootstrap\ActiveForm;
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
             <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Обновить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::a('Отмена', 'javascript:history.back()', ['class' => 'btn btn-warning']) ?>
         </div>
     </div>
 
