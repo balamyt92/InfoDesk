@@ -15,16 +15,25 @@ use yii\widgets\Pjax;
 $this->title = 'Кузова';
 $this->params['breadcrumbs'][] = $this->title;
 
+$ID_Model = isset($_GET['CarBodyModelsEnSearch']['ID_Model']) ? $_GET['CarBodyModelsEnSearch']['ID_Model'] : null;
+
 $add_button = Html::a('Добавить кузов',
     [
         'create',
         'ID_Mark' => $ID_Mark,
-        'ID_Model' => isset($_GET['CarBodyModelsEnSearch']['ID_Model']) ? $_GET['CarBodyModelsEnSearch']['ID_Model'] : null
+        'ID_Model' => $ID_Model,
     ],
     ['class' => 'btn btn-success']);
 
-$back_button = Html::a('Назад в марки', [
-        'marks/index'
+$back_button = Html::a('Назад в модели', [
+        'models/index',
+        'ID_Mark' => $ID_Mark
+    ], ['class' => 'btn btn-warning']);
+
+$engines_button = Html::a('Двигатели', [
+        'engine/index',
+        'ID_Mark' => $ID_Mark,
+        'ID_Model' => $ID_Model,
     ], ['class' => 'btn btn-warning']);
 
 $style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
@@ -78,6 +87,7 @@ $columns = [
         'toolbar'      => [
             "{$add_button}",
             "{$back_button}",
+            "{$engines_button}",
             ExportMenu::widget([
                 'dataProvider'      => $dataProvider,
                 'columns'           => $columns,
