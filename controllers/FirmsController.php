@@ -85,6 +85,9 @@ class FirmsController extends Controller
         $searchModel = new FirmsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $session = Yii::$app->session;
+        $session['firms-list-filter'] = isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '';
+
         return $this->render('index', [
             'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
@@ -194,10 +197,11 @@ class FirmsController extends Controller
         $model = new Firms();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',
             ]);
         }
     }
@@ -213,9 +217,10 @@ class FirmsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $session = Yii::$app->session;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'FirmsSearch' => isset($session['firms-list-filter']) ? $session['firms-list-filter'] : '']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -234,8 +239,9 @@ class FirmsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        $session = Yii::$app->session;
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'FirmsSearch' => isset($session['firms-list-filter']) ? $session['firms-list-filter'] : '']);
     }
 
     /**
