@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\CarBodyModelsEN;
-use app\models\ModelTypes;
-use app\models\CarModelsEN;
 use app\models\CarBodyModelsEnSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use app\models\CarModelsEN;
+use app\models\ModelTypes;
+use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * BodyController implements the CRUD actions for CarBodyModelsEN model.
@@ -18,13 +18,13 @@ use yii\helpers\ArrayHelper;
 class BodyController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -34,6 +34,7 @@ class BodyController extends Controller
 
     /**
      * Lists all CarBodyModelsEN models.
+     *
      * @return mixed
      */
     public function actionIndex($ID_Mark)
@@ -57,9 +58,11 @@ class BodyController extends Controller
 
     /**
      * Displays a single CarBodyModelsEN model.
-     * @param integer $id
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
+     *
+     * @param int $id
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionView($id, $ID_Mark, $ID_Model)
@@ -72,6 +75,7 @@ class BodyController extends Controller
     /**
      * Creates a new CarBodyModelsEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate($ID_Mark, $ID_Model = null)
@@ -85,6 +89,7 @@ class BodyController extends Controller
                 'Name'     => $model->Name,
                 'ID_Type'  => $model->ID_Type,
             ];
+
             return $this->redirect([
                 'index',
                 'ID_Mark'               => $model->ID_Mark,
@@ -92,7 +97,7 @@ class BodyController extends Controller
                     'ID_Model' => $model->ID_Model,
                     'Name'     => '',
                     'ID_Type'  => '',
-                ]
+                ],
             ]);
         } else {
             $models = ArrayHelper::map(CarModelsEN::find()
@@ -103,13 +108,14 @@ class BodyController extends Controller
 
             if ($session->has('add-body-by-model')) {
                 $model->ID_Model = $session['add-body-by-model']['ID_Model'];
-                $model->Name     = $session['add-body-by-model']['Name'];
-                $model->ID_Type  = $session['add-body-by-model']['ID_Type'];
+                $model->Name = $session['add-body-by-model']['Name'];
+                $model->ID_Type = $session['add-body-by-model']['ID_Type'];
             }
-            if($ID_Model) {
+            if ($ID_Model) {
                 $model->ID_Model = $ID_Model;
             }
             $model->ID_Mark = $ID_Mark;
+
             return $this->render('create', [
                 'model'  => $model,
                 'types'  => $types,
@@ -121,9 +127,11 @@ class BodyController extends Controller
     /**
      * Updates an existing CarBodyModelsEN model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
+     *
+     * @param int $id
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionUpdate($id, $ID_Mark, $ID_Model)
@@ -138,7 +146,7 @@ class BodyController extends Controller
                     'ID_Model' => $model->ID_Model,
                     'Name'     => '',
                     'ID_Type'  => '',
-                ]
+                ],
             ]);
         } else {
             $models = ArrayHelper::map(CarModelsEN::find()
@@ -158,37 +166,43 @@ class BodyController extends Controller
     /**
      * Deletes an existing CarBodyModelsEN model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
+     *
+     * @param int $id
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionDelete($id, $ID_Mark, $ID_Model)
     {
         try {
-           $this->findModel($id, $ID_Mark, $ID_Model)->delete();
+            $this->findModel($id, $ID_Mark, $ID_Model)->delete();
         } catch (\Exception $e) {
-           Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::$app->session->setFlash('error', $e->getMessage());
         }
+
         return $this->redirect([
             'index',
             'ID_Mark'               => $ID_Mark,
             'CarBodyModelsEnSearch' => [
                 'ID_Model' => $ID_Model,
-                'Name' => '',
-                'ID_Type' => '',
-            ]
+                'Name'     => '',
+                'ID_Type'  => '',
+            ],
         ]);
     }
 
     /**
      * Finds the CarBodyModelsEN model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
-     * @return CarBodyModelsEN the loaded model
+     *
+     * @param int $id
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return CarBodyModelsEN the loaded model
      */
     protected function findModel($id, $ID_Mark, $ID_Model)
     {

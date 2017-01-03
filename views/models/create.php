@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-
 
 /* @var $this yii\web\View */
 /* @var $model app\models\CarModelsEN */
@@ -15,9 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="car-models-en-create"  style="padding-top: 10px;">
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'model'       => $model,
         'model_types' => $model_types,
-        'marks_list' => $marks_list,
+        'marks_list'  => $marks_list,
     ]) ?>
 
 </div>

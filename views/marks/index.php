@@ -1,9 +1,10 @@
 <?php
 
 use kartik\export\ExportMenu;
-use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CarMarksEnSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -19,8 +20,8 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
+        'filterModel'  => $searchModel,
+        'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
             'Name',
             [
@@ -39,7 +40,8 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
-                        return Html::a($title, $url, $options);;
+
+                        return Html::a($title, $url, $options);
                     },
                     'bodys' => function ($url, $model, $key) {
                         $title = 'Кузова';
@@ -48,6 +50,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
+
                         return Html::a($title, $url, $options);
                     },
                     'engines' => function ($url, $model, $key) {
@@ -57,6 +60,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
+
                         return Html::a($title, $url, $options);
                     },
                 ],

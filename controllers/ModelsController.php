@@ -3,14 +3,14 @@
 namespace app\controllers;
 
 use app\models\CarMarksEN;
-use app\models\ModelTypes;
-use Yii;
 use app\models\CarModelsEN;
 use app\models\CarModelsEnSearch;
+use app\models\ModelTypes;
+use Yii;
+use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ModelsController implements the CRUD actions for CarModelsEN model.
@@ -18,13 +18,13 @@ use yii\filters\VerbFilter;
 class ModelsController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -34,6 +34,7 @@ class ModelsController extends Controller
 
     /**
      * Lists all CarModelsEN models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,22 +44,24 @@ class ModelsController extends Controller
         $dataProvider = $searchModel->search($param);
         $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
 
-        if(isset($param['CarModelsEnSearch'])) {
+        if (isset($param['CarModelsEnSearch'])) {
             $session = Yii::$app->session;
             $session['find-models'] = $param['CarModelsEnSearch'];
         }
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
             'model_types'  => $types,
-            'ID_Mark'      => $param['ID_Mark']
+            'ID_Mark'      => $param['ID_Mark'],
         ]);
     }
 
     /**
      * Displays a single CarModelsEN model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -71,6 +74,7 @@ class ModelsController extends Controller
     /**
      * Creates a new CarModelsEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -86,9 +90,10 @@ class ModelsController extends Controller
                 goto input;
             }
             $session['last-add-model'] = Yii::$app->request->post();
+
             return $this->redirect([
                 'index',
-                'ID_Mark' => $model->ID_Mark,
+                'ID_Mark'           => $model->ID_Mark,
                 'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
             ]);
         } else {
@@ -96,14 +101,15 @@ class ModelsController extends Controller
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
             $params = Yii::$app->request->queryParams;
-            if(!Yii::$app->request->post() && $session->has('last-add-model')) {
+            if (!Yii::$app->request->post() && $session->has('last-add-model')) {
                 $model->load($session['last-add-model']);
             }
             $model->ID_Mark = $params['ID_Mark'];
+
             return $this->render('create', [
-                'model' => $model,
+                'model'       => $model,
                 'model_types' => $types,
-                'marks_list' => $marks_list,
+                'marks_list'  => $marks_list,
             ]);
         }
     }
@@ -111,7 +117,9 @@ class ModelsController extends Controller
     /**
      * Updates an existing CarModelsEN model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -126,19 +134,21 @@ class ModelsController extends Controller
                 goto input;
             }
             $session = Yii::$app->session;
+
             return $this->redirect([
                 'index',
-                'ID_Mark' => $model->ID_Mark,
+                'ID_Mark'           => $model->ID_Mark,
                 'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
             ]);
         } else {
             input:
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
+
             return $this->render('update', [
-                'model' => $model,
+                'model'       => $model,
                 'model_types' => $types,
-                'marks_list' => $marks_list,
+                'marks_list'  => $marks_list,
             ]);
         }
     }
@@ -146,7 +156,9 @@ class ModelsController extends Controller
     /**
      * Deletes an existing CarModelsEN model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -159,9 +171,10 @@ class ModelsController extends Controller
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
         $session = Yii::$app->session;
+
         return $this->redirect([
             'index',
-            'ID_Mark' => $mark,
+            'ID_Mark'           => $mark,
             'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
         ]);
     }
@@ -169,9 +182,12 @@ class ModelsController extends Controller
     /**
      * Finds the CarModelsEN model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return CarModelsEN the loaded model
+     *
+     * @param int $id
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return CarModelsEN the loaded model
      */
     protected function findModel($id)
     {
@@ -183,9 +199,9 @@ class ModelsController extends Controller
     }
 
     /**
-     * Display body of model
+     * Display body of model.
      *
-     * @param  int $id  model id
+     * @param int $id model id
      *
      * @return mixed
      */
@@ -194,11 +210,10 @@ class ModelsController extends Controller
         return $this->redirect(['body/by-model', 'ID_Model' => $id]);
     }
 
-
     /**
-     * Display engine of model
+     * Display engine of model.
      *
-     * @param  int $id  model id
+     * @param int $id model id
      *
      * @return mixed
      */

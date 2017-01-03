@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\CarMarksEN */
 /* @var $mark_types array */
 
-$this->title = 'Редактирование марки: ' . $model->Name;
+$this->title = 'Редактирование марки: '.$model->Name;
 $this->params['breadcrumbs'][] = ['label' => 'Редактирование марки', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->Name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Изменение';
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = 'Изменение';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'model'      => $model,
         'mark_types' => $mark_types,
     ]) ?>
 

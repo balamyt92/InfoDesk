@@ -1,8 +1,8 @@
 <?php
 
 use kartik\export\ExportMenu;
-use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -21,20 +21,20 @@ $session = Yii::$app->session;
 $add_button = Html::a('Добавить кузов',
     [
         'create',
-        'ID_Mark' => $ID_Mark,
+        'ID_Mark'  => $ID_Mark,
         'ID_Model' => $ID_Model,
     ],
     ['class' => 'btn btn-success']);
 
 $back_button = Html::a('Назад в модели', [
         'models/index',
-        'ID_Mark' => $ID_Mark,
+        'ID_Mark'           => $ID_Mark,
         'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
     ], ['class' => 'btn btn-warning']);
 
 $engines_button = Html::a('Двигатели', [
         'engine/index',
-        'ID_Mark' => $ID_Mark,
+        'ID_Mark'  => $ID_Mark,
         'ID_Model' => $ID_Model,
     ], ['class' => 'btn btn-warning']);
 
@@ -62,7 +62,7 @@ $columns = [
         'filter'         => $types,
     ],
     [
-        'class' => 'yii\grid\ActionColumn',
+        'class'          => 'yii\grid\ActionColumn',
         'contentOptions' => [
             'style' => $style,
         ],

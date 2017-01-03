@@ -1,8 +1,7 @@
 <?php
 
-use kartik\export\ExportMenu;
-use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -20,8 +19,8 @@ $add_button = Html::a('Добавить двигатель', ['create'], ['class
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
+        'filterModel'  => $searchModel,
+        'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute'      => 'ID_Mark',

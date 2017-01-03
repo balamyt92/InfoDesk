@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CarEngineModelsEN;
 
 /**
  * CarEngineModelsEnSearch represents the model behind the search form of `app\models\CarEngineModelsEN`.
@@ -13,7 +11,7 @@ use app\models\CarEngineModelsEN;
 class CarEngineModelsEnSearch extends CarEngineModelsEN
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +22,7 @@ class CarEngineModelsEnSearch extends CarEngineModelsEN
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +31,7 @@ class CarEngineModelsEnSearch extends CarEngineModelsEN
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -48,7 +46,7 @@ class CarEngineModelsEnSearch extends CarEngineModelsEN
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query'      => $query,
             'pagination' => [
                 'pageSize' => 500,
             ],
@@ -64,7 +62,7 @@ class CarEngineModelsEnSearch extends CarEngineModelsEN
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'id'      => $this->id,
             'ID_Mark' => $params['ID_Mark'],
             'ID_Type' => $this->ID_Type,
         ]);
