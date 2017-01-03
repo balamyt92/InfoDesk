@@ -6,14 +6,14 @@ class m160807_103336_create_fulltext_index extends Migration
 {
     public function up()
     {
-        $this->execute('ALTER TABLE `CarPresenceEN` 
-                        ADD FULLTEXT INDEX `full_text_index` (`Comment` ASC, `Catalog_Number` ASC)');
+        //        $this->execute('ALTER TABLE `CarPresenceEN`
+//                        ADD FULLTEXT INDEX `full_text_index` (`Comment` ASC, `Catalog_Number` ASC)');
     }
 
     public function down()
     {
-        echo "m160807_103336_create_fulltext_index cannot be reverted.\n";
-        $this->execute('ALTER TABLE `CarPresenceEN` DROP INDEX full_text_index');
+        //        echo "m160807_103336_create_fulltext_index cannot be reverted.\n";
+//        $this->execute('ALTER TABLE `CarPresenceEN` DROP INDEX full_text_index');
     }
 
     /*

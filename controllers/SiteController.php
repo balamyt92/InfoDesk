@@ -3,7 +3,9 @@
 namespace app\controllers;
 
 use app\models\CarBodyModelsEN;
+use app\models\CarENDetailNames;
 use app\models\CarEngineModelsEN;
+use app\models\CarMarksEN;
 use app\models\CarModelsEN;
 use app\models\Firms;
 use app\models\LoginForm;
@@ -199,7 +201,7 @@ class SiteController extends Controller
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return \app\models\CarENDetailNames::find()->orderBy('Name')->all();
+        return CarENDetailNames::find()->orderBy('Name')->all();
     }
 
     /**
@@ -211,7 +213,7 @@ class SiteController extends Controller
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return \app\models\CarMarksEN::find()->orderBy('Name')->all();
+        return CarMarksEN::find()->orderBy('Name')->all();
     }
 
     /**
@@ -223,9 +225,10 @@ class SiteController extends Controller
      */
     public function actionGetModels($id)
     {
-        $carModels = CarModelsEN::find()->where(['=', 'ID_Mark', $id])->
-                                        OrderBy(['Name' => SORT_ASC])->
-                                        asArray()->all();
+        $carModels = CarModelsEN::find()
+            ->where(['=', 'ID_Mark', $id])
+            ->orderBy(['Name' => SORT_ASC])
+            ->asArray()->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -241,9 +244,10 @@ class SiteController extends Controller
      */
     public function actionGetBodys($id)
     {
-        $carBodys = CarBodyModelsEN::find()->where(['=', 'ID_Model', $id])->
-                                            OrderBy(['Name' => SORT_ASC])->
-                                            asArray()->all();
+        $carBodys = CarBodyModelsEN::find()
+            ->where(['=', 'ID_Model', $id])
+            ->orderBy(['Name' => SORT_ASC])
+            ->asArray()->all();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -264,9 +268,10 @@ class SiteController extends Controller
         $carEngine = [];
 
         if ($model_id === 'false' && $body_id === 'false') {
-            $carEngine = CarEngineModelsEN::find()->where(['=', 'ID_Mark', $mark_id])->
-                                                    OrderBy(['Name' => SORT_ASC])->
-                                                    asArray()->all();
+            $carEngine = CarEngineModelsEN::find()
+                ->where(['=', 'ID_Mark', $mark_id])
+                ->orderBy(['Name' => SORT_ASC])
+                ->asArray()->all();
         } elseif ($body_id === 'false') {
             $sql = 'SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A '.
                    'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
@@ -313,9 +318,10 @@ class SiteController extends Controller
      * @param $model_id
      * @param $body_id
      * @param $engine_id
-     * @param $page integer какая страница результата нас интересует
-     * @param $limit integer соклько строк результатов нам надо
      * @param $number string номер детали
+     *
+     * @var $page  integer какая страница результата нас интересует
+     * @var $limit integer соклько строк результатов нам надо
      *
      * @return array возвращаем JSON
      */

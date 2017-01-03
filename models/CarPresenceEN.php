@@ -40,7 +40,7 @@ class CarPresenceEN extends \yii\db\ActiveRecord implements iLegacyImport
     public function rules()
     {
         return [
-            [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear', 'ID_Body', 'ID_Engine', 'Hash_Comment', 'TechNumber', 'Catalog_Number'], 'required'],
+            [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear', 'ID_Body', 'ID_Engine', 'Hash_Comment', 'TechNumber', 'Catalog_Number', 'Cost'], 'required'],
             [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'ID_Body', 'ID_Engine'], 'integer'],
             [['Comment', 'TechNumber'], 'string'],
             [['Cost'], 'number'],

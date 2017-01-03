@@ -43,6 +43,7 @@ AppAsset::register($this);
     } else {
         if (\app\models\User::isUserAdmin(Yii::$app->user->identity->username)) {
             $menuItems[] = ['label' => 'Фирмы', 'url' => ['/firms/index']];
+            $menuItems[] = ['label' => 'Марки', 'url' => ['/marks/index']];
             $menuItems[] = ['label' => 'Статистика', 'url' => ['/statistic/index']];
         }
 
@@ -68,7 +69,9 @@ AppAsset::register($this);
     ?>
 
     <div class="container-fluid">
-
+        <div class="row">
+            <?php echo \app\common\Alert::widget(); ?>
+        </div>
         <?= $content ?>
     </div>
 </div>

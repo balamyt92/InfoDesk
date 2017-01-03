@@ -1,13 +1,13 @@
 <?php
 /**
  * @var app\models\CarPresenceEN
- * @var $exportModel             app\models\CarPresenceEN
  * @var $filterModel             app\models\CarPresenceSearch
  * @var $names                   array
  * @var $marks                   array
  * @var $models                  array
  * @var $bodys                   array
  * @var $engines                 array
+ * @var $ID_Firm                 integer
  */
 use kartik\export\ExportMenu;
 use kartik\grid\GridView;
@@ -86,12 +86,47 @@ $columns = [
             'style' => $style,
         ],
     ],
+    [
+        'class'          => 'yii\grid\ActionColumn',
+        'template'       => '{price-element-update} {price-element-delete}',
+        'buttons'        => [
+            'price-element-update' => function ($url, $model, $key) {
+                $title = 'Изменить';
+                $options = array_merge([
+                    'title'      => $title,
+                    'aria-label' => $title,
+                    'data-pjax'  => '0',
+                ]);
+                $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-pencil']);
+
+                return Html::a($icon, $url, $options);
+            },
+            'price-element-delete' => function ($url, $model, $key) {
+                $title = 'Удалить';
+                $options = array_merge([
+                    'title'      => $title,
+                    'aria-label' => $title,
+                    'data'       => [
+                        'method'  => 'get',
+                        'confirm' => 'Удалить позицию?',
+                        'pjax'    => '0',
+                    ],
+                ]);
+                $icon = Html::tag('span', '', ['class' => 'glyphicon glyphicon-trash']);
+
+                return Html::a($icon, $url, $options);
+            },
+        ],
+        'contentOptions' => [
+            'style' => 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
+        ],
+    ],
 ];
 ?>
 
-<div class="price-firm">
+<div class="price-firm" style="margin-top: 10px;">
 	<?php Pjax::begin(); ?>
-	<?= GridView::widget([
+    <?= GridView::widget([
         'dataProvider'  => $model,
         'filterModel'   => $filterModel,
         'columns'       => $columns,
@@ -106,7 +141,18 @@ $columns = [
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            '<span class="btn-group">{summary}</span>',
+            '<span class="btn-group" style="margin-top: 10px;">{summary}</span>',
+            Html::a('Добавить позицию', ['price-element-add', 'ID_Firm' => $ID_Firm], ['class' => 'btn btn-success']),
+            Html::a('Удалить все позиции',
+                ['price-delete-all', 'ID_Firm' => $ID_Firm],
+                [
+                    'class' => 'btn btn-danger',
+                    'data'  => [
+                        'method'  => 'get',
+                        'confirm' => 'Удалить весь прайс?',
+                        'pjax'    => '0',
+                    ],
+                ]),
             '<span class="btn-group">'.Html::a('Назад', 'javascript:history.back()', ['class' => 'btn btn-warning']).'</span>',
             ExportMenu::widget([
                 'dataProvider'      => $exportModel,

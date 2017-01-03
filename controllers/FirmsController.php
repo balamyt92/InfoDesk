@@ -2,14 +2,24 @@
 
 namespace app\controllers;
 
+use app\models\CarBodyModelsEN;
+use app\models\CarENDetailNames;
+use app\models\CarEngineAndBodyCorrespondencesEN;
+use app\models\CarEngineAndModelCorrespondencesEN;
+use app\models\CarEngineModelsEN;
+use app\models\CarMarksEN;
+use app\models\CarModelsEN;
+use app\models\CarPresenceEN;
 use app\models\CarPresenceSearch;
 use app\models\Firms;
 use app\models\FirmsSearch;
 use app\models\ServicePresence;
 use app\models\ServicePresenceSearch;
+use app\models\Services;
 use app\models\User;
 use Yii;
-use yii\db\Query;
+use yii\db\ActiveRecord;
+use yii\db\IntegrityException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -75,12 +85,22 @@ class FirmsController extends Controller
         $searchModel = new FirmsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $session = Yii::$app->session;
+        $session['firms-list-filter'] = isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '';
+
         return $this->render('index', [
             'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
+    /**
+     * Select firm price.
+     *
+     * @param int $id firm
+     *
+     * @return mixed
+     */
     public function actionPrice($id)
     {
         $filterModel = new CarPresenceSearch();
@@ -113,14 +133,22 @@ class FirmsController extends Controller
             'models'        => $models,
             'bodys'         => $bodys,
             'engines'       => $engines,
+            'ID_Firm'       => $id,
         ]);
     }
 
+    /**
+     * Select firm services.
+     *
+     * @param int $id firm
+     *
+     * @return mixed
+     */
     public function actionService($id)
     {
         $filterModel = new ServicePresenceSearch();
 
-        $query = \app\models\ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
+        $query = ServicePresence::find()->where('ID_Firm = :id', [':id' => $id]);
 
         $renderDataProvider = $filterModel->search(Yii::$app->request->queryParams);
 
@@ -160,7 +188,7 @@ class FirmsController extends Controller
 
     /**
      * Creates a new Firms model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      *
      * @return mixed
      */
@@ -169,17 +197,18 @@ class FirmsController extends Controller
         $model = new Firms();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '']);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model'       => $model,
+                'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',
             ]);
         }
     }
 
     /**
      * Updates an existing Firms model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      *
      * @param int $id
      *
@@ -188,9 +217,10 @@ class FirmsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $session = Yii::$app->session;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'FirmsSearch' => isset($session['firms-list-filter']) ? $session['firms-list-filter'] : '']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -209,29 +239,9 @@ class FirmsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        $session = Yii::$app->session;
 
-        return $this->redirect(['index']);
-    }
-
-    public function actionSearch($q = null, $id = null)
-    {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        $out = ['results' => ['id' => '', 'text' => '']];
-        if (!is_null($q)) {
-            $query = new Query();
-            $query->select('id, name AS text, address')
-                ->from('Firms')
-                ->where(['like', 'name', $q])
-                ->orderBy(['name' => SORT_ASC])
-                ->limit(50);
-            $command = $query->createCommand();
-            $data = $command->queryAll();
-            $out['results'] = array_values($data);
-        } elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'text' => Firms::find($id)->name];
-        }
-
-        return $out;
+        return $this->redirect(['index', 'FirmsSearch' => isset($session['firms-list-filter']) ? $session['firms-list-filter'] : '']);
     }
 
     /**
@@ -269,9 +279,9 @@ class FirmsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             try {
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $items = ArrayHelper::map(
-                    \app\models\Services::find()
+                    Services::find()
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
@@ -286,7 +296,7 @@ class FirmsController extends Controller
             return $this->redirect(['firms/service', 'id' => $ID_Firm]);
         } else {
             $items = ArrayHelper::map(
-                \app\models\Services::find()
+                Services::find()
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
@@ -299,6 +309,13 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Add new service in firm.
+     *
+     * @param int $ID_Firm
+     *
+     * @return mixed
+     */
     public function actionServiceAdd($ID_Firm)
     {
         $model = new ServicePresence();
@@ -306,9 +323,9 @@ class FirmsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             try {
                 $model->save();
-            } catch (\yii\db\IntegrityException $e) {
+            } catch (IntegrityException $e) {
                 $items = ArrayHelper::map(
-                    \app\models\Services::find()
+                    Services::find()
                         ->where('ID_Parent IS NOT NULL')
                         ->orderBy('Name')
                         ->asArray()->all(), 'id', 'Name');
@@ -330,7 +347,7 @@ class FirmsController extends Controller
             $model->Coast = $last->Coast;
 
             $items = ArrayHelper::map(
-                \app\models\Services::find()
+                Services::find()
                     ->where('ID_Parent IS NOT NULL')
                     ->orderBy('Name')
                     ->asArray()->all(), 'id', 'Name');
@@ -343,6 +360,15 @@ class FirmsController extends Controller
         }
     }
 
+    /**
+     * Delete service in firm.
+     *
+     * @param int    $ID_Service
+     * @param int    $ID_Firm
+     * @param string $Comment
+     *
+     * @return mixed
+     */
     public function actionServiceDelete($ID_Service, $ID_Firm, $Comment)
     {
         $this->findService($ID_Service, $ID_Firm, $Comment)->delete();
@@ -350,6 +376,31 @@ class FirmsController extends Controller
         return $this->redirect(['firms/service', 'id' => $ID_Firm]);
     }
 
+    /**
+     * Delete all services in firm.
+     *
+     * @param int $ID_Firm
+     *
+     * @return mixed
+     */
+    public function actionServiceDeleteAll($ID_Firm)
+    {
+        ServicePresence::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+
+        return $this->redirect(['firms/service', 'id' => $ID_Firm]);
+    }
+
+    /**
+     * Find service in firm.
+     *
+     * @param int    $ID_Service
+     * @param int    $ID_Firm
+     * @param string $Comment
+     *
+     * @throws NotFoundHttpException
+     *
+     * @return ActiveRecord
+     */
     protected function findService($ID_Service, $ID_Firm, $Comment)
     {
         $model = ServicePresence::find()
@@ -363,6 +414,354 @@ class FirmsController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    /**
+     * Edit element in price list.
+     *
+     * @throws NotFoundHttpException
+     *
+     * @return mixed
+     */
+    public function actionPriceElementUpdate()
+    {
+        $params = Yii::$app->request->get();
+        if (count($params) < 11) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $model = $this->findPriceElement($params);
+
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->Hash_Comment = md5($model->Comment);
+                $model->save();
+            } catch (IntegrityException $e) {
+                $param = Yii::$app->request->post();
+                $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
+
+                return $this->render('price_update', [
+                    'model'   => $model,
+                    'err'     => $e,
+                    'names'   => $items['names'],
+                    'marks'   => $items['marks'],
+                    'models'  => $items['models'],
+                    'bodys'   => $items['bodys'],
+                    'engines' => $items['engines'],
+                ]);
+            }
+
+            return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
+        } else {
+            $items = $this->getItemForPriceEditForm($params);
+
+            return $this->render('price_update', [
+                'model'   => $model,
+                'err'     => false,
+                'names'   => $items['names'],
+                'marks'   => $items['marks'],
+                'models'  => $items['models'],
+                'bodys'   => $items['bodys'],
+                'engines' => $items['engines'],
+            ]);
+        }
+    }
+
+    /**
+     * Delete element in price.
+     *
+     * @throws NotFoundHttpException
+     *
+     * @return mixed
+     */
+    public function actionPriceElementDelete()
+    {
+        $params = Yii::$app->request->get();
+        if (count($params) < 11) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $this->findPriceElement($params)->delete();
+
+        return $this->redirect(['firms/price', 'id' => $params['ID_Firm']]);
+    }
+
+    /**
+     * Delete all elements in price.
+     *
+     * @param int $ID_Firm
+     *
+     * @return mixed
+     */
+    public function actionPriceDeleteAll($ID_Firm)
+    {
+        CarPresenceEN::deleteAll('ID_Firm=:id', [':id' => $ID_Firm]);
+
+        return $this->redirect(['firms/price', 'id' => $ID_Firm]);
+    }
+
+    /**
+     * Add element in price.
+     *
+     * @param int $ID_Firm
+     *
+     * @return Response
+     */
+    public function actionPriceElementAdd($ID_Firm)
+    {
+        $model = new CarPresenceEN();
+        $model->ID_Firm = $ID_Firm;
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->Hash_Comment = md5($model->Comment);
+                $model->save();
+            } catch (IntegrityException $e) {
+                $param = Yii::$app->request->post();
+                $items = $this->getItemForPriceEditForm($param['CarPresenceEN']);
+
+                return $this->render('price_add', [
+                    'model'   => $model,
+                    'err'     => $e,
+                    'names'   => $items['names'],
+                    'marks'   => $items['marks'],
+                    'models'  => $items['models'],
+                    'bodys'   => $items['bodys'],
+                    'engines' => $items['engines'],
+                ]);
+            }
+
+            return $this->redirect(['firms/price', 'id' => $ID_Firm, 'err' => false]);
+        } else {
+            $items = $this->getItemForPriceEditForm([
+                'ID_Mark'  => false,
+                'ID_Model' => false,
+            ]);
+
+            return $this->render('price_add', [
+                'model'   => $model,
+                'err'     => false,
+                'names'   => $items['names'],
+                'marks'   => $items['marks'],
+                'models'  => $items['models'],
+                'bodys'   => $items['bodys'],
+                'engines' => $items['engines'],
+            ]);
+        }
+    }
+
+    /**
+     * Find element in price list.
+     *
+     * @param array $params
+     *
+     * @return array|\yii\db\ActiveRecord
+     */
+    protected function findPriceElement($params)
+    {
+        $model = CarPresenceEN::find()
+            ->andFilterWhere([
+                'ID_Mark'   => $params['ID_Mark'],
+                'ID_Model'  => $params['ID_Model'],
+                'ID_Name'   => $params['ID_Name'],
+                'ID_Firm'   => $params['ID_Firm'],
+                'ID_Body'   => $params['ID_Body'],
+                'ID_Engine' => $params['ID_Engine'],
+                'Cost'      => $params['Cost'],
+            ])
+            ->andFilterWhere(['like', 'CarYear', $params['CarYear']])
+            ->andFilterWhere(['like', 'Hash_Comment', $params['Hash_Comment']])
+            ->andFilterWhere(['like', 'TechNumber', $params['TechNumber']])
+            ->andFilterWhere(['like', 'Catalog_Number', $params['Catalog_Number']])
+            ->one();
+
+        return $model;
+    }
+
+    /**
+     * Get details names, marks, models, bodys, engines list
+     * for edit form element of price list.
+     *
+     * @param array $param
+     *
+     * @return array
+     */
+    protected function getItemForPriceEditForm($param)
+    {
+        $names = ArrayHelper::map(
+            CarENDetailNames::find()
+                ->select('id, Name')
+                ->orderBy('Name')
+                ->asArray()->all(),
+            'id', 'Name');
+
+        $marks = ArrayHelper::map(
+            CarMarksEN::find()
+                ->select('id, Name')
+                ->orderBy('Name')->asArray()->all(),
+            'id', 'Name');
+
+        $models = false;
+        if ($param['ID_Mark']) {
+            $models = ArrayHelper::map(CarModelsEN::find()
+                ->select('id, Name')
+                ->andFilterWhere(['ID_Mark' => $param['ID_Mark']])
+                ->orderBy('Name')->asArray()->all(), 'id', 'Name');
+        }
+
+        $bodys = false;
+        if ($param['ID_Model']) {
+            $bodys = ArrayHelper::map(CarBodyModelsEN::find()
+                ->select('id, Name')
+                ->andFilterWhere([
+                    'ID_Mark'  => $param['ID_Mark'],
+                    'ID_Model' => $param['ID_Model'],
+                ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+        }
+
+        // need refactor... :(
+        // very bad code
+        $engines = false;
+        if ($param['ID_Mark']) {
+            if ($param['ID_Model']) {
+                if ($param['ID_Body']) {
+                    $links = ArrayHelper::getColumn(
+                        CarEngineAndBodyCorrespondencesEN::find()
+                        ->select('ID_Engine')
+                        ->andFilterWhere([
+                            'ID_Mark'  => $param['ID_Mark'],
+                            'ID_Model' => $param['ID_Model'],
+                            'ID_Body'  => $param['ID_Body'],
+                        ])->asArray()->all(), 'ID_Engine');
+                } else {
+                    $links = ArrayHelper::getColumn(
+                        CarEngineAndModelCorrespondencesEN::find()
+                        ->select('ID_Engine')
+                        ->andFilterWhere([
+                            'ID_Mark'  => $param['ID_Mark'],
+                            'ID_Model' => $param['ID_Model'],
+                        ])->asArray()->all(), 'ID_Engine');
+                }
+                $engines = ArrayHelper::map(CarEngineModelsEN::find()
+                    ->select('id, Name')
+                    ->andFilterWhere([
+                        'id' => $links,
+                    ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+            } else {
+                $engines = ArrayHelper::map(CarEngineModelsEN::find()
+                    ->select('id, Name')
+                    ->andFilterWhere([
+                        'ID_Mark' => $param['ID_Mark'],
+                    ])->orderBy('Name')->asArray()->all(), 'id', 'Name');
+            }
+        }
+
+        return compact('names', 'marks', 'models', 'bodys', 'engines');
+    }
+
+    /**
+     * Get Models list for <select> field for _price_form from AJAX.
+     *
+     * @param int $id Mark id
+     */
+    public function actionGetModels($id)
+    {
+        $models = CarModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere(['ID_Mark' => $id])
+            ->orderBy('Name')->asArray()->all();
+
+        echo '<option></option>';
+        foreach ($models as $value) {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    /**
+     * Get Bodys list for <select> field for _price_form from AJAX.
+     *
+     * @param int $id_models
+     */
+    public function actionGetBodys($id_models)
+    {
+        $boyds = CarBodyModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'ID_Model' => $id_models,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo '<option></option>';
+        foreach ($boyds as $value) {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX.
+     *
+     * @param int $id_mark
+     */
+    public function actionGetEnginesByMark($id_mark)
+    {
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'ID_Mark' => $id_mark,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo '<option></option>';
+        foreach ($engines as $value) {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX.
+     *
+     * @param int $id_model
+     */
+    public function actionGetEnginesByModel($id_model)
+    {
+        $links = ArrayHelper::getColumn(
+            CarEngineAndModelCorrespondencesEN::find()
+                ->select('ID_Engine')
+                ->andFilterWhere([
+                    'ID_Model' => $id_model,
+                ])->asArray()->all(), 'ID_Engine');
+
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+            'id' => $links,
+        ])->orderBy('Name')->asArray()->all();
+
+        echo '<option></option>';
+        foreach ($engines as $value) {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
+        }
+    }
+
+    /**
+     * Get Engines list for <select> field for _price_form from AJAX.
+     *
+     * @param int $id_body
+     */
+    public function actionGetEnginesByBody($id_body)
+    {
+        $links = ArrayHelper::getColumn(
+            CarEngineAndBodyCorrespondencesEN::find()
+                ->select('ID_Engine')
+                ->andFilterWhere([
+                    'ID_Body' => $id_body,
+                ])->asArray()->all(), 'ID_Engine');
+
+        $engines = CarEngineModelsEN::find()
+            ->select('id, Name')
+            ->andFilterWhere([
+                'id' => $links,
+            ])->orderBy('Name')->asArray()->all();
+
+        echo '<option></option>';
+        foreach ($engines as $value) {
+            echo "<option value='{$value['id']}'>{$value['Name']}</option>";
         }
     }
 }

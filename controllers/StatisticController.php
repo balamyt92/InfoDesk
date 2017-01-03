@@ -2,12 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Firms;
 use app\models\statistic\ParamForm;
 use app\models\User;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\Response;
 
 class StatisticController extends Controller
 {
@@ -66,6 +69,7 @@ class StatisticController extends Controller
                 'model' => $model,
             ]);
         } else {
+            // default select operators
             $model->operators = [
                 0 => '2',
                 1 => '3',
@@ -78,5 +82,34 @@ class StatisticController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Search firms.
+     *
+     * @param string $q
+     * @param int    $id
+     *
+     * @return array
+     */
+    public function actionSearchFirm($q = null, $id = null)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'text' => '']];
+        if (!is_null($q)) {
+            $query = new Query();
+            $query->select('id, name AS text, address')
+                ->from('Firms')
+                ->where(['like', 'name', $q])
+                ->orderBy(['name' => SORT_ASC])
+                ->limit(50);
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+            $out['results'] = array_values($data);
+        } elseif ($id > 0) {
+            $out['results'] = ['id' => $id, 'text' => Firms::find()->name];
+        }
+
+        return $out;
     }
 }
