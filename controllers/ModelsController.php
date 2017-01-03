@@ -76,19 +76,30 @@ class ModelsController extends Controller
     public function actionCreate()
     {
         $model = new CarModelsEN();
+        $session = Yii::$app->session;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $session = Yii::$app->session;
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
+            $session['last-add-model'] = Yii::$app->request->post();
             return $this->redirect([
                 'index',
                 'ID_Mark' => $model->ID_Mark,
                 'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
             ]);
         } else {
+            input:
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
             $params = Yii::$app->request->queryParams;
             $model->ID_Mark = $params['ID_Mark'];
+            if(!Yii::$app->request->post() && $session->has('last-add-model')) {
+                $model->load($session['last-add-model']);
+            }
             return $this->render('create', [
                 'model' => $model,
                 'model_types' => $types,
@@ -107,7 +118,13 @@ class ModelsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
             $session = Yii::$app->session;
             return $this->redirect([
                 'index',
@@ -115,6 +132,7 @@ class ModelsController extends Controller
                 'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
             ]);
         } else {
+            input:
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
             return $this->render('update', [
