@@ -46,7 +46,6 @@ class MarksController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'mark_types' => $types,
-            'err' => false,
         ]);
     }
 
@@ -71,9 +70,16 @@ class MarksController extends Controller
     {
         $model = new CarMarksEN();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
             return $this->redirect(['index']);
         } else {
+            input:
             $types = ArrayHelper::map(MarkTypes::find()->asArray()->all(), 'id', 'Name');
             return $this->render('create', [
                 'model' => $model,
@@ -92,9 +98,16 @@ class MarksController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
             return $this->redirect(['index']);
         } else {
+            input:
             $types = ArrayHelper::map(MarkTypes::find()->asArray()->all(), 'id', 'Name');
             return $this->render('update', [
                 'model' => $model,
