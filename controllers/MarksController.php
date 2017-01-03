@@ -38,9 +38,15 @@ class MarksController extends Controller
      */
     public function actionIndex()
     {
+        $param = Yii::$app->request->queryParams;
         $searchModel = new CarMarksEnSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($param);
         $types = ArrayHelper::map(MarkTypes::find()->asArray()->all(), 'id', 'Name');
+
+        if(isset($param['CarMarksEnSearch'])) {
+            $session = Yii::$app->session;
+            $session['find-marks'] = $param['CarMarksEnSearch'];
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -69,6 +75,7 @@ class MarksController extends Controller
     public function actionCreate()
     {
         $model = new CarMarksEN();
+        $session = Yii::$app->session;
 
         if ($model->load(Yii::$app->request->post())) {
             try {
@@ -77,10 +84,21 @@ class MarksController extends Controller
                 Yii::$app->session->setFlash('error', $e->getMessage());
                 goto input;
             }
-            return $this->redirect(['index']);
+            $session['last-add-marks'] = Yii::$app->request->post();
+
+            $redirected = [
+                'index',
+            ];
+            if ($session->has('find-marks')) {
+                $redirected['CarMarksEnSearch'] = $session['find-marks'];
+            }
+            return $this->redirect($redirected);
         } else {
             input:
             $types = ArrayHelper::map(MarkTypes::find()->asArray()->all(), 'id', 'Name');
+            if(!Yii::$app->request->post() && $session->has('last-add-marks')) {
+                $model->load($session['last-add-marks']);
+            }
             return $this->render('create', [
                 'model' => $model,
                 'mark_types' => $types,
@@ -105,7 +123,14 @@ class MarksController extends Controller
                 Yii::$app->session->setFlash('error', $e->getMessage());
                 goto input;
             }
-            return $this->redirect(['index']);
+            $session = Yii::$app->session;
+            $redirected = [
+                'index',
+            ];
+            if ($session->has('find-marks')) {
+                $redirected['CarMarksEnSearch'] = $session['find-marks'];
+            }
+            return $this->redirect($redirected);
         } else {
             input:
             $types = ArrayHelper::map(MarkTypes::find()->asArray()->all(), 'id', 'Name');
@@ -124,12 +149,16 @@ class MarksController extends Controller
      */
     public function actionDelete($id)
     {
+        $session = Yii::$app->session;
         try {
            $this->findModel($id)->delete();
         } catch (\Exception $e) {
-           Yii::$app->session->setFlash('error', $e->getMessage());
+            $session->setFlash('error', $e->getMessage());
         }
-        return $this->redirect(['index']);
+        return $this->redirect([
+            'index',
+            'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+        ]);
     }
 
     /**
