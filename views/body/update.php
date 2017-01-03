@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $types array */
 /* @var $models array */
 
-$this->title = 'Изменить кузов: ' . $model->Name;
+$this->title = 'Изменить кузов: '.$model->Name;
 $this->params['breadcrumbs'][] = ['label' => 'Изменить кузов', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->Name, 'url' => ['view', 'id' => $model->id, 'ID_Mark' => $model->ID_Mark, 'ID_Model' => $model->ID_Model]];
 $this->params['breadcrumbs'][] = 'Update';

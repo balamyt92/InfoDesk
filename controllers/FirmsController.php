@@ -197,10 +197,10 @@ class FirmsController extends Controller
         $model = new Firms();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',]);
+            return $this->redirect(['index', 'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '']);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model'       => $model,
                 'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',
             ]);
         }

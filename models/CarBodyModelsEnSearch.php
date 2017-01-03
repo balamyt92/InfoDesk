@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CarBodyModelsEN;
 
 /**
  * CarBodyModelsEnSearch represents the model behind the search form of `app\models\CarBodyModelsEN`.
@@ -13,7 +11,7 @@ use app\models\CarBodyModelsEN;
 class CarBodyModelsEnSearch extends CarBodyModelsEN
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +22,7 @@ class CarBodyModelsEnSearch extends CarBodyModelsEN
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +31,7 @@ class CarBodyModelsEnSearch extends CarBodyModelsEN
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -54,7 +52,7 @@ class CarBodyModelsEnSearch extends CarBodyModelsEN
                 'pageSize' => 500,
             ],
             'sort'       => [
-                'defaultOrder' => ['ID_Model' => SORT_ASC,'Name' => SORT_ASC],
+                'defaultOrder' => ['ID_Model' => SORT_ASC, 'Name' => SORT_ASC],
             ],
         ]);
 
@@ -68,10 +66,10 @@ class CarBodyModelsEnSearch extends CarBodyModelsEN
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'CarBodyModelsEN.id' => $this->id,
-            'CarBodyModelsEN.ID_Mark' => $params['ID_Mark'],
+            'CarBodyModelsEN.id'       => $this->id,
+            'CarBodyModelsEN.ID_Mark'  => $params['ID_Mark'],
             'CarBodyModelsEN.ID_Model' => $this->ID_Model,
-            'CarBodyModelsEN.ID_Type' => $this->ID_Type,
+            'CarBodyModelsEN.ID_Type'  => $this->ID_Type,
         ]);
 
         $query->andFilterWhere(['like', 'CarBodyModelsEN.Name', $this->Name]);

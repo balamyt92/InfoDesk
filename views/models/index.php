@@ -1,8 +1,8 @@
 <?php
 
 use kartik\export\ExportMenu;
-use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -20,8 +20,8 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
+        'filterModel'  => $searchModel,
+        'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
             'Name',
             [
@@ -40,13 +40,14 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
+
                         return Html::a($title, [
                                 'body/index',
-                                'ID_Mark' => $model->ID_Mark,
+                                'ID_Mark'               => $model->ID_Mark,
                                 'CarBodyModelsEnSearch' => [
                                     'ID_Model' => $model->id,
-                                    'Name' => '',
-                                    'ID_Type' => '',
+                                    'Name'     => '',
+                                    'ID_Type'  => '',
                                 ],
                             ], $options);
                     },
@@ -57,13 +58,14 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                             'aria-label' => $title,
                             'data-pjax'  => '0',
                         ]);
+
                         return Html::a($title, [
                                 'engine/index',
-                                'ID_Mark' => $model->ID_Mark,
+                                'ID_Mark'               => $model->ID_Mark,
                                 'CarBodyModelsEnSearch' => [
                                     'ID_Model' => $model->id,
-                                    'Name' => '',
-                                    'ID_Type' => '',
+                                    'Name'     => '',
+                                    'ID_Type'  => '',
                                 ],
                             ], $options);
                     },

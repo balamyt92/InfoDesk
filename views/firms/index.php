@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $create_button = Html::a('Новая фирма',
     [
         'create',
-        'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : ''
+        'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',
     ],
     ['class' => 'btn btn-success']
 );

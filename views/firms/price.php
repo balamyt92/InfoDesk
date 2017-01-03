@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $model                   app\models\CarPresenceEN
+ * @var app\models\CarPresenceEN
  * @var $filterModel             app\models\CarPresenceSearch
  * @var $names                   array
  * @var $marks                   array
