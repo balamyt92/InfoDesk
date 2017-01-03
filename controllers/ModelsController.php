@@ -96,10 +96,10 @@ class ModelsController extends Controller
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
             $params = Yii::$app->request->queryParams;
-            $model->ID_Mark = $params['ID_Mark'];
             if(!Yii::$app->request->post() && $session->has('last-add-model')) {
                 $model->load($session['last-add-model']);
             }
+            $model->ID_Mark = $params['ID_Mark'];
             return $this->render('create', [
                 'model' => $model,
                 'model_types' => $types,
