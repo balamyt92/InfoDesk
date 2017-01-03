@@ -11,9 +11,16 @@ use yii\widgets\Pjax;
 
 $this->title = 'Фирмы';
 $this->params['breadcrumbs'][] = $this->title;
+
+$create_button = Html::a('Новая фирма',
+    [
+        'create',
+        'FirmsSearch' => isset($_GET['FirmsSearch']) ? $_GET['FirmsSearch'] : '',
+    ],
+    ['class' => 'btn btn-success']
+);
 ?>
 <div class="firms-index" style="padding-top: 10px;">
-        <?php  $create_button = Html::a('Новая фирма', ['create'], ['class' => 'btn btn-success']) ?>
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel'  => $searchModel,

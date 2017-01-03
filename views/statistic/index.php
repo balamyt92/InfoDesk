@@ -193,6 +193,7 @@ HTML;
                 ];
 
                 $group_parts = ' GROUP BY q.id';
+                $exportColumns = $columns;
                 if ($model->id_firm) {
                     $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
@@ -201,6 +202,7 @@ HTML;
                         'attribute' => 'position',
                         'label'     => 'Позиция',
                     ];
+                    $exportColumns = $columns;
                     $columns[] = [
                         'class'      => 'kartik\grid\BooleanColumn',
                         'attribute'  => 'opened',
@@ -208,6 +210,10 @@ HTML;
                         'vAlign'     => 'middle',
                         'trueLabel'  => 'Да',
                         'falseLabel' => 'Нет',
+                    ];
+                    $exportColumns[] = [
+                        'label'      => 'Открыт',
+                        'attribute'  => 'opened',
                     ];
                     $group_parts = '';
                 }
@@ -290,7 +296,7 @@ HTML;
                     </span>",
                     ExportMenu::widget([
                         'dataProvider'    => $dataProviderParts,
-                        'columns'         => $columns,
+                        'columns'         => $exportColumns,
                         'fontAwesome'     => true,
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
@@ -341,7 +347,7 @@ HTML;
                         'label'     => 'Услуга',
                     ],
                 ];
-
+                $exportColumns = $columns;
                 if ($model->id_firm) {
                     $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
@@ -350,6 +356,7 @@ HTML;
                         'attribute' => 'position',
                         'label'     => 'Позиция',
                     ];
+                    $exportColumns = $columns;
                     $columns[] = [
                         'class'      => 'kartik\grid\BooleanColumn',
                         'attribute'  => 'opened',
@@ -357,6 +364,10 @@ HTML;
                         'vAlign'     => 'middle',
                         'trueLabel'  => 'Да',
                         'falseLabel' => 'Нет',
+                    ];
+                    $exportColumns[] = [
+                        'label'      => 'Открыт',
+                        'attribute'  => 'opened',
                     ];
                     $setting_service['showPageSummary'] = true;
                 }
@@ -431,7 +442,7 @@ HTML;
                     </span>",
                     ExportMenu::widget([
                         'dataProvider'    => $dataProviderService,
-                        'columns'         => $columns,
+                        'columns'         => $exportColumns,
                         'fontAwesome'     => true,
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
@@ -483,6 +494,7 @@ HTML;
                     ],
                 ];
 
+                $exportColumns = $columns;
                 if ($model->id_firm) {
                     $id_firm = ' AND f.id_firm='.$model->id_firm.' ';
                     $position = ', f.position + 1 as position, f.opened ';
@@ -491,6 +503,7 @@ HTML;
                         'attribute' => 'position',
                         'label'     => 'Позиция',
                     ];
+                    $exportColumns = $columns;
                     $columns[] = [
                         'class'      => 'kartik\grid\BooleanColumn',
                         'attribute'  => 'opened',
@@ -498,6 +511,10 @@ HTML;
                         'vAlign'     => 'middle',
                         'trueLabel'  => 'Да',
                         'falseLabel' => 'Нет',
+                    ];
+                    $exportColumns[] = [
+                        'label'      => 'Открыт',
+                        'attribute'  => 'opened',
                     ];
                     $setting_firms['showPageSummary'] = true;
                 }
@@ -571,7 +588,7 @@ HTML;
                     </span>",
                     ExportMenu::widget([
                         'dataProvider'    => $dataProviderFirms,
-                        'columns'         => $columns,
+                        'columns'         => $exportColumns,
                         'fontAwesome'     => true,
                         'target'          => ExportMenu::TARGET_SELF,
                         'dropdownOptions' => [
