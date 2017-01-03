@@ -43,6 +43,11 @@ class ModelsController extends Controller
         $dataProvider = $searchModel->search($param);
         $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
 
+        if(isset($param['CarModelsEnSearch'])) {
+            $session = Yii::$app->session;
+            $session['find-models'] = $param['CarModelsEnSearch'];
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -73,7 +78,12 @@ class ModelsController extends Controller
         $model = new CarModelsEN();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'ID_Mark' => $model->ID_Mark]);
+            $session = Yii::$app->session;
+            return $this->redirect([
+                'index',
+                'ID_Mark' => $model->ID_Mark,
+                'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
+            ]);
         } else {
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
@@ -98,7 +108,12 @@ class ModelsController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'ID_Mark' => $model->ID_Mark]);
+            $session = Yii::$app->session;
+            return $this->redirect([
+                'index',
+                'ID_Mark' => $model->ID_Mark,
+                'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
+            ]);
         } else {
             $marks_list = ArrayHelper::map(CarMarksEN::find()->orderBy('Name')->all(), 'id', 'Name');
             $types = ArrayHelper::map(ModelTypes::find()->all(), 'id', 'Name');
@@ -125,7 +140,12 @@ class ModelsController extends Controller
         } catch (\Exception $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
-        return $this->redirect(['index', 'ID_Mark' => $mark]);
+        $session = Yii::$app->session;
+        return $this->redirect([
+            'index',
+            'ID_Mark' => $mark,
+            'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
+        ]);
     }
 
     /**

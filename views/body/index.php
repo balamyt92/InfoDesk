@@ -16,6 +16,7 @@ $this->title = 'Кузова';
 $this->params['breadcrumbs'][] = $this->title;
 
 $ID_Model = isset($_GET['CarBodyModelsEnSearch']['ID_Model']) ? $_GET['CarBodyModelsEnSearch']['ID_Model'] : null;
+$session = Yii::$app->session;
 
 $add_button = Html::a('Добавить кузов',
     [
@@ -27,7 +28,8 @@ $add_button = Html::a('Добавить кузов',
 
 $back_button = Html::a('Назад в модели', [
         'models/index',
-        'ID_Mark' => $ID_Mark
+        'ID_Mark' => $ID_Mark,
+        'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
     ], ['class' => 'btn btn-warning']);
 
 $engines_button = Html::a('Двигатели', [
