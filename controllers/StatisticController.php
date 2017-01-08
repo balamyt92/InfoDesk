@@ -3,12 +3,16 @@
 namespace app\controllers;
 
 use app\models\Firms;
+use app\models\StatFirmsQuery;
 use app\models\statistic\ParamForm;
+use app\models\StatPartsQuery;
+use app\models\StatServiceQuery;
 use app\models\User;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -63,10 +67,12 @@ class StatisticController extends Controller
     public function actionIndex()
     {
         $model = new ParamForm();
-
-        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
+        $param = Yii::$app->request->get();
+        if ($model->load($param) && $model->validate()) {
+            $graphics = $this->getGraphicsModel($model);
             return $this->render('index', [
-                'model' => $model,
+                'model'    => $model,
+                'graphics' => $graphics,
             ]);
         } else {
             // default select operators
@@ -80,6 +86,7 @@ class StatisticController extends Controller
 
             return $this->render('index', [
                 'model' => $model,
+                'graphics' => null,
             ]);
         }
     }
@@ -111,5 +118,85 @@ class StatisticController extends Controller
         }
 
         return $out;
+    }
+
+    /**
+     * @param $model \app\models\statistic\ParamForm
+     * @return array
+     */
+    private function getGraphicsModel($model)
+    {
+        $series = [];
+        $date_start = date('Y-m-d H:i:s', strtotime($model->date_start));
+        $date_end = date('Y-m-d H:i:s', strtotime($model->date_end));
+
+        // select all days in between date
+        $sql = "select * from 
+            (select adddate('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) selected_date from
+             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t0,
+             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1,
+             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2,
+             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3,
+             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t4) v
+            where selected_date between :day_start - INTERVAL 1 DAY and :day_end
+        ";
+        $connection = Yii::$app->getDb();
+        $categories = ArrayHelper::getColumn($connection->createCommand(
+            $sql,
+            [
+                ':day_start' =>$date_start,
+                ':day_end' => $date_end,
+            ]
+        )->queryAll(), 'selected_date');
+
+        // запчасти
+        if (in_array('0', $model->sections)) {
+            $parts = ArrayHelper::map(StatPartsQuery::find()
+                ->select('DATE(date_time) as date, COUNT(*) as value')
+                ->where(['between', 'date_time', $date_start, $date_end])
+                ->orderBy('date_time')
+                ->groupBy('DAY(date_time)')
+                ->asArray()
+                ->all(), 'date', 'value');
+            $series[] = [
+                'name' => 'Запчасти',
+                'data' => array_map(function ($e) use ($parts) {
+                    return isset($parts[$e]) ? $parts[$e] : 0;
+                }, $categories),
+            ];
+        }
+        // услуги
+        if (in_array('1', $model->sections)) {
+            $service = ArrayHelper::map(StatServiceQuery::find()
+                ->select('DATE(date_time) as date, COUNT(*) as value')
+                ->where(['between', 'date_time', $date_start, $date_end])
+                ->orderBy('date_time')
+                ->groupBy('DAY(date_time)')
+                ->asArray()
+                ->all(), 'date', 'value');
+            $series[] = [
+                'name' => 'Услуги',
+                'data' => array_map(function ($e) use ($service) {
+                    return isset($service[$e]) ? $service[$e] : 0;
+                }, $categories),
+            ];
+        }
+        // поиск
+        if (in_array('2', $model->sections)) {
+            $search = ArrayHelper::map(StatFirmsQuery::find()
+                ->select('DATE(date_time) as date, COUNT(*) as value')
+                ->where(['between', 'date_time', $date_start, $date_end])
+                ->orderBy('date_time')
+                ->groupBy('DAY(date_time)')
+                ->asArray()
+                ->all(), 'date', 'value');
+            $series[] = [
+                'name' => 'Поиск фирм',
+                'data' => array_map(function ($e) use ($search) {
+                    return isset($search[$e]) ? $search[$e] : 0;
+                }, $categories),
+            ];
+        }
+        return ['categories' => $categories, 'series' => $series];
     }
 }
