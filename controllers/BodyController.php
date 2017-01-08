@@ -35,6 +35,7 @@ class BodyController extends Controller
     /**
      * Lists all CarBodyModelsEN models.
      *
+     * @param $ID_Mark
      * @return mixed
      */
     public function actionIndex($ID_Mark)
@@ -75,6 +76,9 @@ class BodyController extends Controller
     /**
      * Creates a new CarBodyModelsEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
+     * @param $ID_Mark
+     * @param null $ID_Model
      *
      * @return mixed
      */
