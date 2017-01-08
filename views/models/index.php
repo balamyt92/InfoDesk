@@ -13,6 +13,13 @@ use yii\widgets\Pjax;
 
 $this->title = 'Модели';
 $this->params['breadcrumbs'][] = $this->title;
+$session = Yii::$app->session;
+
+$back_to_mark_button = Html::a('Назад в марки', [
+    'marks/index',
+    'ID_Mark'          => $ID_Mark,
+    'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+], ['class' => 'btn btn-warning']);
 
 $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $ID_Mark], ['class' => 'btn btn-success']);
 ?>
@@ -87,6 +94,7 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
         ],
         'toolbar'       => [
             '<span class="btn-group" style="padding-top: 10px;">{summary}</span>',
+            "<span class=\"btn-group\">{$back_to_mark_button}</span>",
             "<span class=\"btn-group\">{$add_button}</span>",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,

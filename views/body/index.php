@@ -32,6 +32,12 @@ $back_button = Html::a('Назад в модели', [
         'CarModelsEnSearch' => $session->has('find-models') ? $session['find-models'] : '',
     ], ['class' => 'btn btn-warning']);
 
+$back_to_mark_button = Html::a('Назад в марки', [
+    'marks/index',
+    'ID_Mark'           => $ID_Mark,
+    'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+], ['class' => 'btn btn-warning']);
+
 $engines_button = Html::a('Двигатели', [
         'engine/index',
         'ID_Mark'  => $ID_Mark,
@@ -89,6 +95,7 @@ $columns = [
         'toolbar'      => [
             "{$add_button}",
             "{$back_button}",
+            "{$back_to_mark_button}",
             "{$engines_button}",
             ExportMenu::widget([
                 'dataProvider'      => $dataProvider,
