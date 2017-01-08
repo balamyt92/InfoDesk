@@ -4,8 +4,11 @@ namespace app\controllers;
 
 use app\models\CarEngineModelsEN;
 use app\models\CarEngineModelsEnSearch;
+use app\models\CarMarksEN;
+use app\models\ModelTypes;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -32,16 +35,28 @@ class EngineController extends Controller
     /**
      * Lists all CarEngineModelsEN models.
      *
+     * @param $ID_Mark
+     *
      * @return mixed
      */
     public function actionIndex($ID_Mark)
     {
+        $param = Yii::$app->request->queryParams;
         $searchModel = new CarEngineModelsEnSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($param);
+
+        $types = ArrayHelper::map(ModelTypes::find()->asArray()->all(), 'id', 'Name');
+
+        if (isset($param['CarEngineModelsEnSearch'])) {
+            $session = Yii::$app->session;
+            $session['find-engines'] = $param['CarEngineModelsEnSearch'];
+        }
 
         return $this->render('index', [
             'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
+            'types'        => $types,
+            'ID_Mark'      => $ID_Mark,
         ]);
     }
 
@@ -66,15 +81,49 @@ class EngineController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($ID_Mark)
     {
         $model = new CarEngineModelsEN();
+        $model->ID_Mark = $ID_Mark;
+        $session = Yii::$app->session;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'ID_Mark' => $model->ID_Mark]);
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
+            $session['last-add-engine'] = Yii::$app->request->post()['CarEngineModelsEN'];
+
+            $redirected = [
+                'index',
+                'ID_Mark' => $model->ID_Mark,
+            ];
+            if ($session->has('find-engines')) {
+                $redirected['CarEngineModelsEnSearch'] = $session['find-engines'];
+            }
+
+            return $this->redirect($redirected);
         } else {
+            input:
+            $types = ArrayHelper::map(ModelTypes::find()->asArray()->all(), 'id', 'Name');
+            if (!Yii::$app->request->post() && $session->has('last-add-engine')) {
+                $model->Name = $session['last-add-engine']['Name'];
+                $model->ID_Type = $session['last-add-engine']['ID_Type'];
+            }
+
+            $model->ID_Mark = $ID_Mark;
+
+            $marks = ArrayHelper::map(CarMarksEN::find()
+                ->orderBy('Name')
+                ->asArray()->all(), 'id', 'Name');
+            $types = ArrayHelper::map(ModelTypes::find()->asArray()->all(), 'id', 'Name');
+
             return $this->render('create', [
                 'model' => $model,
+                'marks' => $marks,
+                'types' => $types,
             ]);
         }
     }
@@ -91,12 +140,36 @@ class EngineController extends Controller
     public function actionUpdate($id, $ID_Mark)
     {
         $model = $this->findModel($id, $ID_Mark);
+        $session = Yii::$app->session;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'ID_Mark' => $model->ID_Mark]);
+        if ($model->load(Yii::$app->request->post())) {
+            try {
+                $model->save();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                goto input;
+            }
+
+            $redirected = [
+                'index',
+                'ID_Mark' => $model->ID_Mark,
+            ];
+            if ($session->has('find-engines')) {
+                $redirected['CarEngineModelsEnSearch'] = $session['find-engines'];
+            }
+
+            return $this->redirect($redirected);
         } else {
-            return $this->render('update', [
+            input:
+            $marks = ArrayHelper::map(CarMarksEN::find()
+                ->orderBy('Name')
+                ->asArray()->all(), 'id', 'Name');
+            $types = ArrayHelper::map(ModelTypes::find()->asArray()->all(), 'id', 'Name');
+
+            return $this->render('create', [
                 'model' => $model,
+                'marks' => $marks,
+                'types' => $types,
             ]);
         }
     }
@@ -112,9 +185,18 @@ class EngineController extends Controller
      */
     public function actionDelete($id, $ID_Mark)
     {
-        $this->findModel($id, $ID_Mark)->delete();
+        $session = Yii::$app->session;
+        try {
+            $this->findModel($id, $ID_Mark)->delete();
+        } catch (\Exception $e) {
+            $session->setFlash('error', $e->getMessage());
+        }
 
-        return $this->redirect(['index']);
+        return $this->redirect([
+            'index',
+            'ID_Mark'                 => $ID_Mark,
+            'CarEngineModelsEnSearch' => $session->has('find-engines') ? $session['find-engines'] : '',
+        ]);
     }
 
     /**

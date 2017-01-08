@@ -13,6 +13,13 @@ use yii\widgets\Pjax;
 
 $this->title = 'Модели';
 $this->params['breadcrumbs'][] = $this->title;
+$session = Yii::$app->session;
+
+$back_to_mark_button = Html::a('Назад в марки', [
+    'marks/index',
+    'ID_Mark'          => $ID_Mark,
+    'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+], ['class' => 'btn btn-warning']);
 
 $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $ID_Mark], ['class' => 'btn btn-success']);
 ?>
@@ -60,12 +67,12 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                         ]);
 
                         return Html::a($title, [
-                                'engine/index',
-                                'ID_Mark'               => $model->ID_Mark,
-                                'CarBodyModelsEnSearch' => [
+                                'engine-by-model/index',
+                                'ID_Mark'                                  => $model->ID_Mark,
+                                'ID_Model'                                 => $model->id,
+                                'CarEngineAndModelCorrespondencesENSearch' => [
+                                    'ID_Mark'  => $model->ID_Mark,
                                     'ID_Model' => $model->id,
-                                    'Name'     => '',
-                                    'ID_Type'  => '',
                                 ],
                             ], $options);
                     },
@@ -87,9 +94,19 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
         ],
         'toolbar'       => [
             '<span class="btn-group" style="padding-top: 10px;">{summary}</span>',
+            "<span class=\"btn-group\">{$back_to_mark_button}</span>",
             "<span class=\"btn-group\">{$add_button}</span>",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,
+                'columns'         => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'Name',
+                    [
+                        'attribute'      => 'ID_Type',
+                        'value'          => 'iDType.Name',
+                        'filter'         => $model_types,
+                    ],
+                ],
                 'fontAwesome'     => true,
                 'target'          => ExportMenu::TARGET_SELF,
                 'dropdownOptions' => [
@@ -105,3 +122,8 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+<?php
+$this->registerCss('
+    table > tbody> tr:hover {
+        background-color: #b1f1e2 !important;
+    }');
