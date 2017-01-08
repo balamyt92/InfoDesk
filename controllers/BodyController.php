@@ -35,12 +35,21 @@ class BodyController extends Controller
     /**
      * Lists all CarBodyModelsEN models.
      *
+     * @param $ID_Mark
+     *
      * @return mixed
      */
     public function actionIndex($ID_Mark)
     {
+        $param = Yii::$app->request->queryParams;
         $searchModel = new CarBodyModelsEnSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($param);
+
+        if (isset($param['CarBodyModelsEnSearch'])) {
+            $session = Yii::$app->session;
+            $session['find-bodys'] = $param['CarBodyModelsEnSearch'];
+        }
+
         $models = ArrayHelper::map(CarModelsEN::find()
             ->andFilterWhere(['ID_Mark' => $ID_Mark])
             ->orderBy('Name')
@@ -75,6 +84,9 @@ class BodyController extends Controller
     /**
      * Creates a new CarBodyModelsEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
+     * @param $ID_Mark
+     * @param null $ID_Model
      *
      * @return mixed
      */
