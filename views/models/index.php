@@ -113,3 +113,8 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
     ]); ?>
     <?php Pjax::end(); ?>
 </div>
+<?php
+$this->registerCss('
+    table > tbody> tr:hover {
+        background-color: #b1f1e2 !important;
+    }');
