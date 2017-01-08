@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = 'Update';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'model'     => $model,
         'ID_Mark'   => $ID_Mark,
         'ID_Model'  => $ID_Model,
         'ID_Body'   => $ID_Body,

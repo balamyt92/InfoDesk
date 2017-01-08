@@ -54,9 +54,9 @@ $columns = [
     <?php Pjax::begin(); ?>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel'  => $searchModel,
-        'columns'      => $columns,
+        'dataProvider'  => $dataProvider,
+        'filterModel'   => $searchModel,
+        'columns'       => $columns,
         'panel'         => [
             'type' => 'default',
         ],

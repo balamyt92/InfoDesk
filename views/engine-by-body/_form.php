@@ -30,9 +30,9 @@ use yii\widgets\ActiveForm;
             });',
     ]) ?>
 
-    <?= $form->field($model, 'ID_Body')->dropDownList($bodys ? $bodys : [], [ 'id' => 'models',]) ?>
+    <?= $form->field($model, 'ID_Body')->dropDownList($bodys ? $bodys : [], ['id' => 'models']) ?>
 
-    <?= $form->field($model, 'ID_Engine')->dropDownList($engines ? $engines : [], ['id' => 'engines',]) ?>
+    <?= $form->field($model, 'ID_Engine')->dropDownList($engines ? $engines : [], ['id' => 'engines']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Изменить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

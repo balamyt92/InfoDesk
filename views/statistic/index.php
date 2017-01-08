@@ -4,11 +4,11 @@
  /* @var $graphics array */
 
 use kartik\export\ExportMenu;
+use miloschuman\highcharts\Highcharts;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
-use miloschuman\highcharts\Highcharts;
 
 $this->title = 'Статистика';
 
@@ -112,12 +112,13 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
     <div class="col-sm-8">
         <?php
-        if($graphics) {
+        if ($graphics) {
             $graphics['series'] = array_map(
                 function ($e) {
                     $e['data'] = array_map(function ($e) {
-                        return (integer) $e;
+                        return (int) $e;
                     }, $e['data']);
+
                     return $e;
                 },
                 $graphics['series']
@@ -132,7 +133,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                         'title' => ['text' => 'Кол-во запросов'],
                     ],
                     'series' => $graphics['series'],
-                ]
+                ],
             ];
             echo Highcharts::widget($options);
         }

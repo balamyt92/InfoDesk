@@ -35,7 +35,7 @@ $back_button = Html::a('Назад в модели', [
 $back_to_mark_button = Html::a('Назад в марки', [
     'marks/index',
     'ID_Mark'           => $ID_Mark,
-    'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+    'CarMarksEnSearch'  => $session->has('find-marks') ? $session['find-marks'] : '',
 ], ['class' => 'btn btn-warning']);
 
 $engines_button = Html::a('Двигатели', [
@@ -74,25 +74,25 @@ $columns = [
             'style' => $style,
         ],
         'template'       => '{update} {delete} {engines}',
-        'buttons' => [
+        'buttons'        => [
             'engines' => function ($url, $model, $key) {
                 $title = 'Двигатели';
                 $options = array_merge([
-                    'title' => $title,
+                    'title'      => $title,
                     'aria-label' => $title,
-                    'data-pjax' => '0',
+                    'data-pjax'  => '0',
                 ]);
 
                 return Html::a($title, [
                     'engine-by-body/index',
-                    'ID_Mark'  => $model->ID_Mark,
-                    'ID_Model' => $model->ID_Model,
-                    'ID_Body'  => $model->id,
+                    'ID_Mark'                                 => $model->ID_Mark,
+                    'ID_Model'                                => $model->ID_Model,
+                    'ID_Body'                                 => $model->id,
                     'CarEngineAndBodyCorrespondencesENSearch' => [
-                        'ID_Mark' => $model->ID_Mark,
+                        'ID_Mark'  => $model->ID_Mark,
                         'ID_Model' => $model->ID_Model,
                         'ID_Body'  => $model->id,
-                    ]
+                    ],
                 ], $options);
             },
         ],

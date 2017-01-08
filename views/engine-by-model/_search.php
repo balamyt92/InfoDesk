@@ -11,10 +11,10 @@ use yii\widgets\ActiveForm;
 <div class="car-engine-and-model-correspondences-en-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
+        'action'  => ['index'],
+        'method'  => 'get',
         'options' => [
-            'data-pjax' => 1
+            'data-pjax' => 1,
         ],
     ]); ?>
 

@@ -70,6 +70,7 @@ class StatisticController extends Controller
         $param = Yii::$app->request->get();
         if ($model->load($param) && $model->validate()) {
             $graphics = $this->getGraphicsModel($model);
+
             return $this->render('index', [
                 'model'    => $model,
                 'graphics' => $graphics,
@@ -85,7 +86,7 @@ class StatisticController extends Controller
             ];
 
             return $this->render('index', [
-                'model' => $model,
+                'model'    => $model,
                 'graphics' => null,
             ]);
         }
@@ -122,6 +123,7 @@ class StatisticController extends Controller
 
     /**
      * @param $model \app\models\statistic\ParamForm
+     *
      * @return array
      */
     private function getGraphicsModel($model)
@@ -144,8 +146,8 @@ class StatisticController extends Controller
         $categories = ArrayHelper::getColumn($connection->createCommand(
             $sql,
             [
-                ':day_start' =>$date_start,
-                ':day_end' => $date_end,
+                ':day_start' => $date_start,
+                ':day_end'   => $date_end,
             ]
         )->queryAll(), 'selected_date');
 
@@ -197,6 +199,7 @@ class StatisticController extends Controller
                 }, $categories),
             ];
         }
+
         return ['categories' => $categories, 'series' => $series];
     }
 }

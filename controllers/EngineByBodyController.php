@@ -3,16 +3,15 @@
 namespace app\controllers;
 
 use app\models\CarBodyModelsEN;
-use app\models\CarEngineAndModelCorrespondencesEN;
+use app\models\CarEngineAndBodyCorrespondencesEN;
+use app\models\CarEngineAndBodyCorrespondencesENSearch;
 use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
 use Yii;
-use app\models\CarEngineAndBodyCorrespondencesEN;
-use app\models\CarEngineAndBodyCorrespondencesENSearch;
+use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * EngineByBodyController implements the CRUD actions for CarEngineAndBodyCorrespondencesEN model.
@@ -20,13 +19,13 @@ use yii\filters\VerbFilter;
 class EngineByBodyController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -36,6 +35,7 @@ class EngineByBodyController extends Controller
 
     /**
      * Lists all CarEngineAndBodyCorrespondencesEN models.
+     *
      * @return mixed
      */
     public function actionIndex($ID_Mark, $ID_Model, $ID_Body)
@@ -62,22 +62,24 @@ class EngineByBodyController extends Controller
             ->all(), 'id', 'Name');
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
-            'ID_Mark'  => $ID_Mark,
-            'ID_Model' => $ID_Model,
-            'ID_Body'  => $ID_Body,
-            'models'   => $models,
-            'bodys'    => $bodys,
+            'ID_Mark'      => $ID_Mark,
+            'ID_Model'     => $ID_Model,
+            'ID_Body'      => $ID_Body,
+            'models'       => $models,
+            'bodys'        => $bodys,
         ]);
     }
 
     /**
      * Displays a single CarEngineAndBodyCorrespondencesEN model.
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
-     * @param integer $ID_Body
-     * @param integer $ID_Engine
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     * @param int $ID_Body
+     * @param int $ID_Engine
+     *
      * @return mixed
      */
     public function actionView($ID_Mark, $ID_Model, $ID_Body, $ID_Engine)
@@ -90,9 +92,11 @@ class EngineByBodyController extends Controller
     /**
      * Creates a new CarEngineAndBodyCorrespondencesEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @param $ID_Mark
      * @param $ID_Model
      * @param $ID_Body
+     *
      * @return mixed
      */
     public function actionCreate($ID_Mark, $ID_Model, $ID_Body)
@@ -162,10 +166,12 @@ class EngineByBodyController extends Controller
     /**
      * Updates an existing CarEngineAndBodyCorrespondencesEN model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
-     * @param integer $ID_Body
-     * @param integer $ID_Engine
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     * @param int $ID_Body
+     * @param int $ID_Engine
+     *
      * @return mixed
      */
     public function actionUpdate($ID_Mark, $ID_Model, $ID_Body, $ID_Engine)
@@ -231,10 +237,12 @@ class EngineByBodyController extends Controller
     /**
      * Deletes an existing CarEngineAndBodyCorrespondencesEN model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
-     * @param integer $ID_Body
-     * @param integer $ID_Engine
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     * @param int $ID_Body
+     * @param int $ID_Engine
+     *
      * @return mixed
      */
     public function actionDelete($ID_Mark, $ID_Model, $ID_Body, $ID_Engine)
@@ -276,12 +284,15 @@ class EngineByBodyController extends Controller
     /**
      * Finds the CarEngineAndBodyCorrespondencesEN model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $ID_Mark
-     * @param integer $ID_Model
-     * @param integer $ID_Body
-     * @param integer $ID_Engine
-     * @return CarEngineAndBodyCorrespondencesEN the loaded model
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Model
+     * @param int $ID_Body
+     * @param int $ID_Engine
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return CarEngineAndBodyCorrespondencesEN the loaded model
      */
     protected function findModel($ID_Mark, $ID_Model, $ID_Body, $ID_Engine)
     {
