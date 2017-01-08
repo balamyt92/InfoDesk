@@ -98,6 +98,15 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
             "<span class=\"btn-group\">{$add_button}</span>",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,
+                'columns'         => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'Name',
+                    [
+                        'attribute'      => 'ID_Type',
+                        'value'          => 'iDType.Name',
+                        'filter'         => $model_types,
+                    ]
+                ],
                 'fontAwesome'     => true,
                 'target'          => ExportMenu::TARGET_SELF,
                 'dropdownOptions' => [
