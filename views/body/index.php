@@ -49,7 +49,8 @@ $style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     [
-        'value'          => 'iDMark.Name',
+        'label' => 'Марка',
+        'value' => 'iDMark.Name',
     ],
     [
         'attribute'      => 'ID_Model',
