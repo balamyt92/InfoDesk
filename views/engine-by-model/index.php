@@ -1,9 +1,10 @@
 <?php
 
 use kartik\export\ExportMenu;
-use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CarEngineAndModelCorrespondencesENSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -32,7 +33,7 @@ $back_button = Html::a('Назад в модели', [
 $back_to_mark_button = Html::a('Назад в марки', [
     'marks/index',
     'ID_Mark'           => $ID_Mark,
-    'CarMarksEnSearch' => $session->has('find-marks') ? $session['find-marks'] : '',
+    'CarMarksEnSearch'  => $session->has('find-marks') ? $session['find-marks'] : '',
 ], ['class' => 'btn btn-warning']);
 
 $style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
@@ -40,10 +41,10 @@ $style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     [
-        'label' => 'Марка',
+        'label'     => 'Марка',
         'attribute' => 'ID_Mark',
-        'value' => 'iDMark.Name',
-        'filter' => false,
+        'value'     => 'iDMark.Name',
+        'filter'    => false,
     ],
     [
         'label'     => 'Модель',
@@ -69,7 +70,7 @@ $columns = [
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'filterModel'  => $searchModel,
         'columns'      => $columns,
         'panel'        => [
             'type' => 'default',

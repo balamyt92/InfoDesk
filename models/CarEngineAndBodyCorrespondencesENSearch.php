@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CarEngineAndBodyCorrespondencesEN;
 
 /**
  * CarEngineAndBodyCorrespondencesENSearch represents the model behind the search form of `app\models\CarEngineAndBodyCorrespondencesEN`.
@@ -13,8 +11,9 @@ use app\models\CarEngineAndBodyCorrespondencesEN;
 class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespondencesEN
 {
     public $engine = '';
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -25,7 +24,7 @@ class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespond
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -34,7 +33,7 @@ class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespond
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -51,7 +50,7 @@ class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespond
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query'      => $query,
             'pagination' => [
                 'pageSize' => 500,
             ],
@@ -61,28 +60,28 @@ class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespond
 
         $dataProvider->setSort([
             'defaultOrder' => ['ID_Body' => SORT_ASC, 'engine' => SORT_ASC],
-            'attributes' => [
+            'attributes'   => [
                 'ID_Mark' => [
-                    'asc' => ['ma.Name' => SORT_ASC],
-                    'desc' => ['ma.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['ma.Name' => SORT_ASC],
+                    'desc'    => ['ma.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Model' => [
-                    'asc' => ['mo.Name' => SORT_ASC],
-                    'desc' => ['mo.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['mo.Name' => SORT_ASC],
+                    'desc'    => ['mo.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Body' => [
-                    'asc' => ['b.Name' => SORT_ASC],
-                    'desc' => ['b.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['b.Name' => SORT_ASC],
+                    'desc'    => ['b.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'engine' => [
-                    'asc' => ['e.Name' => SORT_ASC],
-                    'desc' => ['e.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['e.Name' => SORT_ASC],
+                    'desc'    => ['e.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
-            ]
+            ],
         ]);
 
         if (!$this->validate()) {
@@ -93,12 +92,12 @@ class CarEngineAndBodyCorrespondencesENSearch extends CarEngineAndBodyCorrespond
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'CarEngineAndBodyCorrespondencesEN.ID_Mark' => $this->ID_Mark,
-            'CarEngineAndBodyCorrespondencesEN.ID_Model' => $this->ID_Model,
-            'CarEngineAndBodyCorrespondencesEN.ID_Body' => $this->ID_Body,
+            'CarEngineAndBodyCorrespondencesEN.ID_Mark'   => $this->ID_Mark,
+            'CarEngineAndBodyCorrespondencesEN.ID_Model'  => $this->ID_Model,
+            'CarEngineAndBodyCorrespondencesEN.ID_Body'   => $this->ID_Body,
             'CarEngineAndBodyCorrespondencesEN.ID_Engine' => $this->ID_Engine,
         ]);
-        $query->andWhere('e.Name LIKE "%' . $this->engine . '%" ');
+        $query->andWhere('e.Name LIKE "%'.$this->engine.'%" ');
 
         return $dataProvider;
     }

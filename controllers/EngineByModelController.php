@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\CarEngineAndModelCorrespondencesEN;
+use app\models\CarEngineAndModelCorrespondencesENSearch;
 use app\models\CarEngineModelsEN;
 use app\models\CarModelsEN;
 use Yii;
-use app\models\CarEngineAndModelCorrespondencesEN;
-use app\models\CarEngineAndModelCorrespondencesENSearch;
+use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * EngineByModelController implements the CRUD actions for CarEngineAndModelCorrespondencesEN model.
@@ -18,13 +18,13 @@ use yii\filters\VerbFilter;
 class EngineByModelController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -34,8 +34,10 @@ class EngineByModelController extends Controller
 
     /**
      * Lists all CarEngineAndModelCorrespondencesEN models.
+     *
      * @param $ID_Mark
      * @param $ID_Model
+     *
      * @return mixed
      */
     public function actionIndex($ID_Mark, $ID_Model)
@@ -60,15 +62,17 @@ class EngineByModelController extends Controller
             'dataProvider' => $dataProvider,
             'ID_Mark'      => $ID_Mark,
             'ID_Model'     => $ID_Model,
-            'models'       => $models
+            'models'       => $models,
         ]);
     }
 
     /**
      * Displays a single CarEngineAndModelCorrespondencesEN model.
-     * @param integer $ID_Mark
-     * @param integer $ID_Engine
-     * @param integer $ID_Model
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Engine
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionView($ID_Mark, $ID_Engine, $ID_Model)
@@ -81,8 +85,10 @@ class EngineByModelController extends Controller
     /**
      * Creates a new CarEngineAndModelCorrespondencesEN model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @param $ID_Mark
      * @param $ID_Model
+     *
      * @return mixed
      */
     public function actionCreate($ID_Mark, $ID_Model)
@@ -141,9 +147,11 @@ class EngineByModelController extends Controller
     /**
      * Updates an existing CarEngineAndModelCorrespondencesEN model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $ID_Mark
-     * @param integer $ID_Engine
-     * @param integer $ID_Model
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Engine
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionUpdate($ID_Mark, $ID_Engine, $ID_Model)
@@ -197,9 +205,11 @@ class EngineByModelController extends Controller
     /**
      * Deletes an existing CarEngineAndModelCorrespondencesEN model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $ID_Mark
-     * @param integer $ID_Engine
-     * @param integer $ID_Model
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Engine
+     * @param int $ID_Model
+     *
      * @return mixed
      */
     public function actionDelete($ID_Mark, $ID_Engine, $ID_Model)
@@ -213,8 +223,8 @@ class EngineByModelController extends Controller
 
         return $this->redirect([
             'index',
-            'ID_Mark'  => $ID_Mark,
-            'ID_Model' => $ID_Model,
+            'ID_Mark'                                  => $ID_Mark,
+            'ID_Model'                                 => $ID_Model,
             'CarEngineAndModelCorrespondencesENSearch' => $session->has('find-engine-by-model') ? $session['find-engine-by-model'] : '',
         ]);
     }
@@ -222,11 +232,14 @@ class EngineByModelController extends Controller
     /**
      * Finds the CarEngineAndModelCorrespondencesEN model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $ID_Mark
-     * @param integer $ID_Engine
-     * @param integer $ID_Model
-     * @return CarEngineAndModelCorrespondencesEN the loaded model
+     *
+     * @param int $ID_Mark
+     * @param int $ID_Engine
+     * @param int $ID_Model
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return CarEngineAndModelCorrespondencesEN the loaded model
      */
     protected function findModel($ID_Mark, $ID_Engine, $ID_Model)
     {

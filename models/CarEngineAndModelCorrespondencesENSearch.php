@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CarEngineAndModelCorrespondencesEN;
 
 /**
  * CarEngineAndModelCorrespondencesENSearch represents the model behind the search form of `app\models\CarEngineAndModelCorrespondencesEN`.
@@ -13,8 +11,9 @@ use app\models\CarEngineAndModelCorrespondencesEN;
 class CarEngineAndModelCorrespondencesENSearch extends CarEngineAndModelCorrespondencesEN
 {
     public $engine = '';
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -25,7 +24,7 @@ class CarEngineAndModelCorrespondencesENSearch extends CarEngineAndModelCorrespo
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -34,7 +33,7 @@ class CarEngineAndModelCorrespondencesENSearch extends CarEngineAndModelCorrespo
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -58,25 +57,24 @@ class CarEngineAndModelCorrespondencesENSearch extends CarEngineAndModelCorrespo
 
         $dataProvider->setSort([
             'defaultOrder' => ['engine' => SORT_ASC],
-            'attributes' => [
+            'attributes'   => [
                 'ID_Mark' => [
-                    'asc' => ['ma.Name' => SORT_ASC],
-                    'desc' => ['ma.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['ma.Name' => SORT_ASC],
+                    'desc'    => ['ma.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'ID_Model' => [
-                    'asc' => ['mo.Name' => SORT_ASC],
-                    'desc' => ['mo.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['mo.Name' => SORT_ASC],
+                    'desc'    => ['mo.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
                 'engine' => [
-                    'asc' => ['e.Name' => SORT_ASC],
-                    'desc' => ['e.Name' => SORT_DESC],
-                    'default' => SORT_ASC
+                    'asc'     => ['e.Name' => SORT_ASC],
+                    'desc'    => ['e.Name' => SORT_DESC],
+                    'default' => SORT_ASC,
                 ],
-            ]
+            ],
         ]);
-
 
         $this->load($params);
 
@@ -88,11 +86,11 @@ class CarEngineAndModelCorrespondencesENSearch extends CarEngineAndModelCorrespo
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'CarEngineAndModelCorrespondencesEN.ID_Mark' => $this->ID_Mark,
+            'CarEngineAndModelCorrespondencesEN.ID_Mark'   => $this->ID_Mark,
             'CarEngineAndModelCorrespondencesEN.ID_Engine' => $this->ID_Engine,
-            'CarEngineAndModelCorrespondencesEN.ID_Model' => $this->ID_Model,
+            'CarEngineAndModelCorrespondencesEN.ID_Model'  => $this->ID_Model,
         ]);
-        $query->andWhere('e.Name LIKE "%' . $this->engine . '%" ');
+        $query->andWhere('e.Name LIKE "%'.$this->engine.'%" ');
 
         return $dataProvider;
     }

@@ -103,6 +103,7 @@ class EngineController extends Controller
             if ($session->has('find-engines')) {
                 $redirected['CarEngineModelsEnSearch'] = $session['find-engines'];
             }
+
             return $this->redirect($redirected);
         } else {
             input:
@@ -156,6 +157,7 @@ class EngineController extends Controller
             if ($session->has('find-engines')) {
                 $redirected['CarEngineModelsEnSearch'] = $session['find-engines'];
             }
+
             return $this->redirect($redirected);
         } else {
             input:
@@ -192,7 +194,7 @@ class EngineController extends Controller
 
         return $this->redirect([
             'index',
-            'ID_Mark' => $ID_Mark,
+            'ID_Mark'                 => $ID_Mark,
             'CarEngineModelsEnSearch' => $session->has('find-engines') ? $session['find-engines'] : '',
         ]);
     }
