@@ -67,13 +67,13 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                         ]);
 
                         return Html::a($title, [
-                                'engine/by-model',
-                                'ID_Mark'               => $model->ID_Mark,
-                                'CarBodyModelsEnSearch' => [
+                                'engine-by-model/index',
+                                'ID_Mark'  => $model->ID_Mark,
+                                'ID_Model' => $model->id,
+                                'CarEngineAndModelCorrespondencesENSearch' => [
+                                    'ID_Mark'  => $model->ID_Mark,
                                     'ID_Model' => $model->id,
-                                    'Name'     => '',
-                                    'ID_Type'  => '',
-                                ],
+                                ]
                             ], $options);
                     },
                 ],

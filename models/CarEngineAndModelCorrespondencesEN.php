@@ -36,10 +36,34 @@ class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements
     public function attributeLabels()
     {
         return [
-            'ID_Mark'   => 'Id  Mark',
-            'ID_Engine' => 'Id  Engine',
-            'ID_Model'  => 'Id  Model',
+            'ID_Mark'   => 'Марка',
+            'ID_Engine' => 'Двигатель',
+            'ID_Model'  => 'Модель',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIDMark()
+    {
+        return $this->hasOne(CarMarksEN::className(), ['id' => 'ID_Mark']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIDEngine()
+    {
+        return $this->hasOne(CarEngineModelsEN::className(), ['id' => 'ID_Engine', 'ID_Mark' => 'ID_Mark']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIDModel()
+    {
+        return $this->hasOne(CarModelsEN::className(), ['id' => 'ID_Model', 'ID_Mark' => 'ID_Mark']);
     }
 
     public function loadData($data)
