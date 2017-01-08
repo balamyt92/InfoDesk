@@ -1,8 +1,10 @@
 <?php
  /* @var $this yii\web\View */
  /* @var $model app\models\statistic\ParamForm */
+ /* @var $graphics array */
 
 use kartik\export\ExportMenu;
+use miloschuman\highcharts\Highcharts;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
@@ -27,6 +29,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
             <div class="panel-body">
             <?php $form = ActiveForm::begin([
                 'method' => 'get',
+                'action' => ['statistic/index'],
             ]);
                 $url = \yii\helpers\Url::to(['statistic/search-firm']);
             ?>
@@ -109,6 +112,32 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
 
     <div class="col-sm-8">
         <?php
+        if ($graphics) {
+            $graphics['series'] = array_map(
+                function ($e) {
+                    $e['data'] = array_map(function ($e) {
+                        return (int) $e;
+                    }, $e['data']);
+
+                    return $e;
+                },
+                $graphics['series']
+            );
+            $options = [
+                'options' => [
+                    'title' => ['text' => 'Кол-во запросов по дням'],
+                    'xAxis' => [
+                        'categories' => $graphics['categories'],
+                    ],
+                    'yAxis' => [
+                        'title' => ['text' => 'Кол-во запросов'],
+                    ],
+                    'series' => $graphics['series'],
+                ],
+            ];
+            echo Highcharts::widget($options);
+        }
+
 $panelTemplate = <<< 'HTML'
 <div class="{prefix}{type}">
     {panelBefore}
