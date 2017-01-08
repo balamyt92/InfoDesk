@@ -62,12 +62,12 @@ class CarEngineModelsEnSearch extends CarEngineModelsEN
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id'      => $this->id,
-            'ID_Mark' => $params['ID_Mark'],
-            'ID_Type' => $this->ID_Type,
+            'CarEngineModelsEN.id'      => $this->id,
+            'CarEngineModelsEN.ID_Mark' => $params['ID_Mark'],
+            'CarEngineModelsEN.ID_Type' => $this->ID_Type,
         ]);
 
-        $query->andFilterWhere(['like', 'Name', $this->Name]);
+        $query->andFilterWhere(['like', 'CarEngineModelsEN.Name', $this->Name]);
 
         return $dataProvider;
     }

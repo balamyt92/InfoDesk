@@ -4,6 +4,8 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\CarEngineModelsEN */
+/* @var $types array */
+/* @var $marks array */
 
 $this->title = 'Create Car Engine Models En';
 $this->params['breadcrumbs'][] = ['label' => 'Car Engine Models Ens', 'url' => ['index']];
@@ -15,6 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'marks' => $marks,
+        'types' => $types,
     ]) ?>
 
 </div>
