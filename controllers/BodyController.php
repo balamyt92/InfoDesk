@@ -40,8 +40,15 @@ class BodyController extends Controller
      */
     public function actionIndex($ID_Mark)
     {
+        $param = Yii::$app->request->queryParams;
         $searchModel = new CarBodyModelsEnSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($param);
+
+        if (isset($param['CarBodyModelsEnSearch'])) {
+            $session = Yii::$app->session;
+            $session['find-bodys'] = $param['CarBodyModelsEnSearch'];
+        }
+
         $models = ArrayHelper::map(CarModelsEN::find()
             ->andFilterWhere(['ID_Mark' => $ID_Mark])
             ->orderBy('Name')

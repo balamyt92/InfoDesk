@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "CarEngineAndModelCorrespondencesEN".
@@ -9,7 +10,7 @@ namespace app\models;
  * @property int $ID_Engine
  * @property int $ID_Model
  */
-class CarEngineAndModelCorrespondencesEN extends \yii\db\ActiveRecord implements iLegacyImport
+class CarEngineAndModelCorrespondencesEN extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}
