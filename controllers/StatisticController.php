@@ -128,6 +128,11 @@ class StatisticController extends Controller
      */
     private function getGraphicsModel($model)
     {
+        // disable stupid sql mode
+        $sql_set_mode = "set sql_mode = ''";
+        $connection = Yii::$app->getDb();
+        $connection->createCommand($sql_set_mode)->execute();
+
         $series = [];
         $date_start = date('Y-m-d H:i:s', strtotime($model->date_start));
         $date_end = date('Y-m-d H:i:s', strtotime($model->date_end));
@@ -142,7 +147,6 @@ class StatisticController extends Controller
              (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t4) v
             where selected_date between :day_start - INTERVAL 1 DAY and :day_end
         ";
-        $connection = Yii::$app->getDb();
         $categories = ArrayHelper::getColumn($connection->createCommand(
             $sql,
             [
