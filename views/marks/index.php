@@ -80,8 +80,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            '<span class="btn-group" style="padding-top: 10px;">{summary}</span>',
-            "<span class=\"btn-group\">{$marks_create_button}</span>",
+            "{$marks_create_button}",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,
                 'fontAwesome'     => true,

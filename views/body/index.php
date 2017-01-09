@@ -38,10 +38,14 @@ $back_to_mark_button = Html::a('Назад в марки', [
     'CarMarksEnSearch'  => $session->has('find-marks') ? $session['find-marks'] : '',
 ], ['class' => 'btn btn-warning']);
 
-$engines_button = Html::a('Двигатели', [
-        'engine/index',
+$engines_button = Html::a('Двигатели модели', [
+        'engine-by-model/index',
         'ID_Mark'  => $ID_Mark,
         'ID_Model' => $ID_Model,
+        'CarEngineAndModelCorrespondencesENSearch' => [
+            'ID_Model' => $ID_Model,
+            'engine'   => '',
+        ],
     ], ['class' => 'btn btn-warning']);
 
 $style = 'max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
@@ -117,8 +121,8 @@ $columns = [
         ],
         'toolbar'      => [
             "{$add_button}",
-            "{$back_button}",
             "{$back_to_mark_button}",
+            "{$back_button}",
             "{$engines_button}",
             ExportMenu::widget([
                 'dataProvider'      => $dataProvider,
