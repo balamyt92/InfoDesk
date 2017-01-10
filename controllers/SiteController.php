@@ -421,7 +421,7 @@ class SiteController extends Controller
 
         // поиск по номеру
         if (!empty($number)) {
-            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}'))";
+            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('{$number}*' IN BOOLEAN MODE))";
         }
 
         // убираем дубои от JOIN-ов
