@@ -31,7 +31,7 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
             ],
             [
                 'class'          => 'yii\grid\ActionColumn',
-                'template'       => '{update} {delete} {models} {bodys} {engines}',
+                'template'       => '{update} {delete} {models} {bodys} {engines} {group}',
                 'buttons'        => [
                     'models' => function ($url, $model, $key) {
                         $title = 'Модели';
@@ -62,6 +62,18 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                         ]);
 
                         return Html::a($title, $url, $options);
+                    },
+                    'group' => function ($url, $model, $key) {
+                        if($model->ID_Type === 2) {
+                            $title = 'Группа';
+                            $options = array_merge([
+                                'title'      => $title,
+                                'aria-label' => $title,
+                                'data-pjax'  => '0',
+                            ]);
+                            return Html::a($title, $url, $options);
+                        }
+                        return '';
                     },
                 ],
                 'contentOptions' => [
