@@ -15,6 +15,11 @@ $this->title = 'Статистика';
 \app\assets\StatisticAsset::register($this);
 
 $this->registerJs("
+
+$('body').keypress(function (e) {
+window.MY_SELECT_TRIG = false;
+});
+
 $('#paramform-id_firm').select2('focus');
 ", \yii\web\View::POS_LOAD);
 
@@ -64,15 +69,21 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                                 return `${firm.text} ${firm.address}`; 
                             }'),
                     ],
+                    'pluginEvents' => [
+                        "select2:closing" => "function() { 
+                            $('#paramform-id_firm').select2('focus');
+                            window.MY_SELECT_TRIG = true;
+                        }",
+                        "select2:opening" => "function() {
+                            if(window.MY_SELECT_TRIG) {
+                                window.MY_SELECT_TRIG = false;
+                                $('#w0 > div:nth-child(7) > button').click();
+                                return false;
+                            }
+                         }",
+                        "select2:close" => "function() { console.log('close2'); }",
+                    ]
                 ]) ?>
-
-                <?= $form->field($model, 'sections')->checkboxList(
-                    ['Запчасти', 'Услуги', 'Каталог фирм']
-                ) ?>
-
-
-                <?= $form->field($model, 'operators')->checkboxList(
-                    \yii\helpers\ArrayHelper::map(\app\models\User::find()->all(), 'id', 'username')) ?>
 
                 <?= $form->field($model, 'date_start')->widget(\kartik\datetime\DateTimePicker::className(), [
                     'options'       => ['placeholder' => 'Выберите начальную дату...'],
@@ -97,6 +108,14 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                         'autoclose'      => true,
                         'initialDate'    => new JsExpression('new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0)'),
                     ], ]) ?>
+
+                <?= $form->field($model, 'sections')->checkboxList(
+                    ['Запчасти', 'Услуги', 'Каталог фирм']
+                ) ?>
+
+
+                <?= $form->field($model, 'operators')->checkboxList(
+                    \yii\helpers\ArrayHelper::map(\app\models\User::find()->all(), 'id', 'username')) ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
