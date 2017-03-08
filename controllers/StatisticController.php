@@ -169,7 +169,7 @@ class StatisticController extends Controller
                     ->where(['between', 'date_time', $date_start, $date_end])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             } else {
@@ -184,7 +184,7 @@ class StatisticController extends Controller
                     ->andWhere(['id' => $parts_query_ids])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             }
@@ -204,7 +204,7 @@ class StatisticController extends Controller
                     ->where(['between', 'date_time', $date_start, $date_end])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             } else {
@@ -219,7 +219,7 @@ class StatisticController extends Controller
                     ->andWhere(['id' => $services_query_ids])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             }
@@ -238,7 +238,7 @@ class StatisticController extends Controller
                     ->where(['between', 'date_time', $date_start, $date_end])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             } else {
@@ -253,7 +253,7 @@ class StatisticController extends Controller
                     ->andWhere(['id' => $firms_query_ids])
                     ->andWhere(['id_operator' => $model->operators])
                     ->orderBy('date_time')
-                    ->groupBy('DAY(date_time)')
+                    ->groupBy('DATE(date_time)')
                     ->asArray()
                     ->all(), 'date', 'value');
             }
