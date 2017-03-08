@@ -24,18 +24,22 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
 
 <div class="row">
     <div class="col-md-3">
-        <label>Поиск фирм</label>
+        <label><?= \app\models\TextBlock::find()->where(['name' => 'label_firms'])->one()->text ?></label>
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
                 <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action"><i class="fa">Поиск</i></button></span>
             </div>
         </div>
+        
+        <div style="width: 100%; font-size: large; margin-top: 30px; padding: 3px">
+            <?= \app\models\TextBlock::find()->where(['name' => 'inform_message'])->one()->text ?>
+        </div>
     </div>
 
 
     <div class="col-md-4" onkeydown="searchParts.eventStatus(event);">
-        <label>Поиск запчастей</label>
+        <label><?= \app\models\TextBlock::find()->where(['name' => 'label_parts'])->one()->text ?></label>
         <div>
             <label>Деталь</label>
             <input type="text" id="detail-select" style="width: 100%"/>
@@ -54,7 +58,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
     </div>
 
     <div class="col-md-5">
-        <label>Поиск сервисов</label>
+        <label><?= \app\models\TextBlock::find()->where(['name' => 'label_services'])->one()->text ?></label>
         <select class="form-control" name="service-list" id="service" size="37" onkeydown="serviceSearch.open(event);" ondblclick="serviceSearch.open(event);">
             <?php
                 $services = \app\models\Services::find()->where(['IS', 'ID_Parent', null])->orderBy(['Name' => SORT_ASC])->all();

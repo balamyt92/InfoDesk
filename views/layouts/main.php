@@ -45,6 +45,7 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Фирмы', 'url' => ['/firms/index']];
             $menuItems[] = ['label' => 'Марки', 'url' => ['/marks/index']];
             $menuItems[] = ['label' => 'Статистика', 'url' => ['/statistic/index']];
+            $menuItems[] = ['label' => 'Текстовые блоки', 'url' => ['/text-blocks/index']];
         }
 
         $loginMenu[] = '<li>'
