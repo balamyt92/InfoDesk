@@ -28,7 +28,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
         <div class="form-inline" style="margin-top: 35px;">
             <div class="form-group input-group" style="width: 100%;">
                 <input id="search-line" type="text" class="form-control" title="firm-search">
-                <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action"><i class="fa">Поиск</i></button></span>
+                <span class="input-group-btn"><button id="search-firm-button" class="btn btn-default" type="button" value="default action">Поиск</button></span>
             </div>
         </div>
         
@@ -51,7 +51,7 @@ $this->registerCssFile($url.'/css/ui.jqgrid-bootstrap-ui.css');
             <input type="text" id="body-select" style="width: 100%"/>
             <label>Двигатель</label>
             <input type="text" id="engine-select" style="width: 100%"/>
-            <label>Номер</label>
+            <label>Номер / Комментарий</label>
             <input type="text" class="form-control" id="number">
         </div>
         <button id="search-parts-button" type="button" class="btn btn-default" style="margin-top: 5px; float: right;" onclick="searchParts.idPage = 1; searchParts.search();">Поиск</button>

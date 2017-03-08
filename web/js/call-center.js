@@ -262,7 +262,7 @@ var searchParts = {
            this.lastQuery.idModel   == this.idModel     &&
            this.lastQuery.idMark    == this.idMark      &&
            this.lastQuery.idEngine  == this.idEngine    &&
-           this.lastQuery.idNumber  == this.idNumber    && this.gridCreate) {
+           this.lastQuery.idNumber  == document.getElementById('number').value    && this.gridCreate) {
             this.grid.focus();
             return false;
         }
@@ -271,7 +271,7 @@ var searchParts = {
         this.lastQuery.idModel   = this.idModel;
         this.lastQuery.idMark    = this.idMark;
         this.lastQuery.idEngine  = this.idEngine;
-        this.lastQuery.idNumber  = this.idNumber;
+        this.lastQuery.idNumber  = document.getElementById('number').value;
 
         let grid = this.grid;
 

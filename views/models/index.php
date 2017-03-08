@@ -93,9 +93,8 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
             'maxButtonCount' => 20,
         ],
         'toolbar'       => [
-            '<span class="btn-group" style="padding-top: 10px;">{summary}</span>',
-            "<span class=\"btn-group\">{$back_to_mark_button}</span>",
-            "<span class=\"btn-group\">{$add_button}</span>",
+            "{$add_button}",
+            "{$back_to_mark_button}",
             ExportMenu::widget([
                 'dataProvider'    => $dataProvider,
                 'columns'         => [

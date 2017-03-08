@@ -98,8 +98,8 @@ $columns = [
         ],
         'toolbar'      => [
             "{$add_button}",
-            "{$back_button}",
             "{$back_to_mark_button}",
+            "{$back_button}",
             "{$back_to_body_button}",
             ExportMenu::widget([
                 'dataProvider'      => $dataProvider,
