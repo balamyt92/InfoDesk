@@ -14,6 +14,10 @@ $this->title = 'Статистика';
 
 \app\assets\StatisticAsset::register($this);
 
+$this->registerJs("
+$('#paramform-id_firm').select2('focus');
+", \yii\web\View::POS_LOAD);
+
 $sql_set_mode = "set sql_mode = ''";
 
 Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
@@ -136,6 +140,7 @@ Yii::$app->getDb()->createCommand($sql_set_mode)->execute();
                 ],
             ];
             echo Highcharts::widget($options);
+            echo $this->render('total_table', [ 'data' => $graphics]);
         }
 
 $panelTemplate = <<< 'HTML'
@@ -247,7 +252,7 @@ HTML;
                     $group_parts = '';
                 }
 
-                $sql_parts = "
+                $sql_parts ="
                             SELECT
                                 q.date_time,
                                 u.username,

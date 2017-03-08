@@ -85,6 +85,12 @@ class StatisticController extends Controller
                 4 => '6',
             ];
 
+            $model->sections = [
+                0 => '0',
+                1 => '1',
+                2 => '2',
+            ];
+
             return $this->render('index', [
                 'model'    => $model,
                 'graphics' => null,
@@ -140,7 +146,7 @@ class StatisticController extends Controller
              (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2,
              (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3,
              (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t4) v
-            where selected_date between :day_start - INTERVAL 1 DAY and :day_end
+            where selected_date between :day_start - INTERVAL 1 DAY and :day_end 
         ";
         $connection = Yii::$app->getDb();
         $categories = ArrayHelper::getColumn($connection->createCommand(
@@ -153,13 +159,32 @@ class StatisticController extends Controller
 
         // запчасти
         if (in_array('0', $model->sections)) {
-            $parts = ArrayHelper::map(StatPartsQuery::find()
-                ->select('DATE(date_time) as date, COUNT(*) as value')
-                ->where(['between', 'date_time', $date_start, $date_end])
-                ->orderBy('date_time')
-                ->groupBy('DAY(date_time)')
-                ->asArray()
-                ->all(), 'date', 'value');
+            if($model->id_firm === "") {
+                $parts = ArrayHelper::map(StatPartsQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            } else {
+                $parts_query_ids = (new Query())
+                    ->select('id_query')
+                    ->from('stat_parts_firms')
+                    ->where(['id_firm' => $model->id_firm]);
+
+                $parts = ArrayHelper::map(StatPartsQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id' => $parts_query_ids])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            }
+
             $series[] = [
                 'name' => 'Запчасти',
                 'data' => array_map(function ($e) use ($parts) {
@@ -169,13 +194,31 @@ class StatisticController extends Controller
         }
         // услуги
         if (in_array('1', $model->sections)) {
-            $service = ArrayHelper::map(StatServiceQuery::find()
-                ->select('DATE(date_time) as date, COUNT(*) as value')
-                ->where(['between', 'date_time', $date_start, $date_end])
-                ->orderBy('date_time')
-                ->groupBy('DAY(date_time)')
-                ->asArray()
-                ->all(), 'date', 'value');
+            if($model->id_firm === "") {
+                $service = ArrayHelper::map(StatServiceQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            } else {
+                $services_query_ids = (new Query())
+                    ->select('id_query')
+                    ->from('stat_service_firms')
+                    ->where(['id_firm' => $model->id_firm]);
+
+                $service = ArrayHelper::map(StatServiceQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id' => $services_query_ids])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            }
             $series[] = [
                 'name' => 'Услуги',
                 'data' => array_map(function ($e) use ($service) {
@@ -185,13 +228,31 @@ class StatisticController extends Controller
         }
         // поиск
         if (in_array('2', $model->sections)) {
-            $search = ArrayHelper::map(StatFirmsQuery::find()
-                ->select('DATE(date_time) as date, COUNT(*) as value')
-                ->where(['between', 'date_time', $date_start, $date_end])
-                ->orderBy('date_time')
-                ->groupBy('DAY(date_time)')
-                ->asArray()
-                ->all(), 'date', 'value');
+            if($model->id_firm === "") {
+                $search = ArrayHelper::map(StatFirmsQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            } else {
+                $firms_query_ids = (new Query())
+                    ->select('id_query')
+                    ->from('stat_firms_firms')
+                    ->where(['id_firm' => $model->id_firm]);
+
+                $search = ArrayHelper::map(StatFirmsQuery::find()
+                    ->select('DATE(date_time) as date, COUNT(*) as value')
+                    ->where(['between', 'date_time', $date_start, $date_end])
+                    ->andWhere(['id' => $firms_query_ids])
+                    ->andWhere(['id_operator' => $model->operators])
+                    ->orderBy('date_time')
+                    ->groupBy('DAY(date_time)')
+                    ->asArray()
+                    ->all(), 'date', 'value');
+            }
             $series[] = [
                 'name' => 'Поиск фирм',
                 'data' => array_map(function ($e) use ($search) {
