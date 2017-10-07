@@ -3,10 +3,10 @@
  * Объект хранящий в результатах какого поиска мы находимся
  */
 var result = {
-    firms: false,
-    parts: false,
-    service: false,
-    opened: false,
+    firms : false,
+    parts : false,
+    service : false,
+    opened : false,
 };
 
 var KEY = {
@@ -36,21 +36,21 @@ var KEY = {
  * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
  */
 var searcherFirms = {
-    input: false,
-    gridCreate: false,
+    input : false,
+    gridCreate : false,
     pagerToNext: false,
     pagerToBack: false,
-    pagerLastRow: false,
+    pagerLastRow : false,
     modalWindow: false,
-    lastQuery: {
-        response: false,
+    lastQuery : {
+        response : false,
     },
     grid: false,
 
     highlightRow: function () {
         // заглушка
     },
-    render: function (data) {
+    render : function(data) {
         let grid = this.grid;
 
         grid.jqGrid('setGridParam', {data: data});
@@ -65,19 +65,19 @@ var searcherFirms = {
         result.parts = false;
         result.service = false;
     },
-    search: function () {
+    search : function() {
         result.opened = true;
         this.modalWindow.modal({backdrop: false});
         let str = document.getElementById('search-line').value.toString().trim();
 
-        if (str == '') {
+        if(str == '') {
             alert("Введите искомую строку");
             return false;
         }
 
         let grid = this.grid;
         $('#gbox_firm-result-search').show();
-        if (!this.gridCreate) {
+        if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
@@ -98,7 +98,7 @@ var searcherFirms = {
                 responsive: true,
                 loadonce: true,
                 cmTemplate: {sortable: false,},
-                ondblClickRow: function (id) {
+                ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'id'));
                     searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
                 },
@@ -125,16 +125,17 @@ var searcherFirms = {
             method: "GET",
             url: "index.php?r=site/search",
             data: {str: str}
-        }).done(function (data) {
+        }).done(function(data){
             searcherFirms.render(data.message);
             searcherFirms.lastQuery.response = data;
         });
     },
 
+
     /**
      * По энтеру в поле запускаем поиск фирм
      */
-    runSearch: function (e) {
+    runSearch: function(e) {
         if (e.keyCode == KEY.ENTER) {
             this.search();
             $($('#search-line').focus()).select();
@@ -147,13 +148,13 @@ var searcherFirms = {
      * @param  {integer} id фирмы
      * @return {bool}
      */
-    statisticOpenFirm: function (id) {
+    statisticOpenFirm : function(id) {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/stat-firm-open-firm",
             data: {
-                firm_id: id,
-                query_id: this.lastQuery.response.query_id,
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
             }
         });
     },
@@ -163,61 +164,62 @@ var searcherFirms = {
  * Объект отвечающий за работу с фильтром запчастей
  */
 var searchParts = {
-    idDetail: false,
-    idMark: false,
-    idModel: false,
-    idBody: false,
-    idEngine: false,
-    idNumber: false,
-    lastQuery: {
-        idDetail: false,
-        idMark: false,
-        idModel: false,
-        idBody: false,
-        idEngine: false,
-        idNumber: false,
-        response: false,
+    idDetail : false,
+    idMark   : false,
+    idModel  : false,
+    idBody   : false,
+    idEngine : false,
+    idNumber : false,
+    lastQuery : {
+        idDetail : false,
+        idMark   : false,
+        idModel  : false,
+        idBody   : false,
+        idEngine : false,
+        idNumber : false,
+        response : false,
     },
 
-    currentSelect: false,
-    pagerToNext: false,
-    pagerToBack: false,
-    pagerLastRow: false,
+
+    currentSelect : false,
+    pagerToNext : false,
+    pagerToBack : false,
+    pagerLastRow : false,
     gridCreate: false,
     modalWindow: false,
     grid: false,
 
-    highlightRow: function () {
-        let rowInPage = this.grid.jqGrid('getGridParam', 'rowNum');
-        let totalPages = this.grid.jqGrid('getGridParam', 'lastpage');
-        let currentPage = this.grid.jqGrid('getGridParam', 'page');
-        let realRowInLasPage = this.grid.jqGrid('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+    highlightRow : function () {
+        let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
+        let totalPages = this.grid.jqGrid('getGridParam','lastpage');
+        let currentPage = this.grid.jqGrid('getGridParam','page');
+        let realRowInLasPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
         let firmID = this.grid.getCell(1, 'ID_Firm');
         let color = false;
-        for (let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
+        for(let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
             let newId = this.grid.getCell(i, 'ID_Firm');
             if (firmID != newId) {
                 firmID = newId;
                 color = !color;
             }
-            if (color) {
-                this.grid.setCell(i, 1, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 2, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 3, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 4, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 5, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 6, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 7, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 8, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 9, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 10, '', {background: '#dff0d8'});
-                this.grid.setCell(i, 11, '', {background: '#dff0d8'});
+            if(color) {
+                this.grid.setCell(i,1,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,2,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,3,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,4,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,5,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,6,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,7,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,8,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,9,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,10,'',{ background:'#dff0d8'});
+                this.grid.setCell(i,11,'',{ background:'#dff0d8'});
             }
         }
     },
 
     // функция вывода результата запроса
-    render: function (data) {
+    render : function(data) {
         let grid = this.grid;
 
         grid.jqGrid('setGridParam', {data: data});
@@ -235,26 +237,19 @@ var searchParts = {
         result.service = false;
     },
 
-    eventStatus: function (e) {
-        if (e.keyCode == KEY.ENTER) {
+    eventStatus : function(e) {
+        if(e.keyCode == KEY.ENTER) {
             this.search();
         }
     },
-    search: function () {
-        this.idDetail = $('#detail-select').select2("val") || false;
-        this.idMark = $('#mark-select').select2("val") || false;
-        this.idModel = $('#model-select').select2("val") || false;
-        this.idBody = $('#body-select').select2("val") || false;
-        this.idEngine = $('#engine-select').select2("val") || false;
-        this.idNumber = document.getElementById('number').value;
-        if (!this.idBody
+    search : function() {
+        if(!this.idBody
             && !this.idDetail
             && !this.idEngine
             && !this.idMark
-            && !this.idModel
-            && !document.getElementById('number').value
-        ) {
-            alert('Выберите хотябы один из пунктов фильтра');
+            && !this.idModel 
+            && !this.idNumber) {
+            console.log('Выберите хотябы один из пунктов фильтра');
             return false;
         }
         result.opened = true;
@@ -262,28 +257,25 @@ var searchParts = {
         this.modalWindow.modal({backdrop: false});
 
         // "кешируем" запрос
-        if (
-            this.lastQuery.idBody === this.idBody &&
-            this.lastQuery.idDetail === this.idDetail &&
-            this.lastQuery.idModel === this.idModel &&
-            this.lastQuery.idMark === this.idMark &&
-            this.lastQuery.idEngine === this.idEngine &&
-            this.lastQuery.idNumber === this.idNumber &&
-            this.gridCreate
-        ) {
+        if(this.lastQuery.idBody    == this.idBody      &&
+           this.lastQuery.idDetail  == this.idDetail    &&
+           this.lastQuery.idModel   == this.idModel     &&
+           this.lastQuery.idMark    == this.idMark      &&
+           this.lastQuery.idEngine  == this.idEngine    &&
+           this.lastQuery.idNumber  == document.getElementById('number').value    && this.gridCreate) {
             this.grid.focus();
             return false;
         }
-        this.lastQuery.idBody = this.idBody;
-        this.lastQuery.idDetail = this.idDetail;
-        this.lastQuery.idModel = this.idModel;
-        this.lastQuery.idMark = this.idMark;
-        this.lastQuery.idEngine = this.idEngine;
-        this.lastQuery.idNumber = this.idNumber;
+        this.lastQuery.idBody    = this.idBody;
+        this.lastQuery.idDetail  = this.idDetail;
+        this.lastQuery.idModel   = this.idModel;
+        this.lastQuery.idMark    = this.idMark;
+        this.lastQuery.idEngine  = this.idEngine;
+        this.lastQuery.idNumber  = document.getElementById('number').value;
 
         let grid = this.grid;
 
-        if (!this.gridCreate) {
+        if(!this.gridCreate) {
             grid.jqGrid({
                 colModel: [
                     {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
@@ -308,7 +300,7 @@ var searchParts = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-                ondblClickRow: function (id) {
+                ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'ID_Firm'));
                     searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
@@ -334,33 +326,33 @@ var searchParts = {
             method: "GET",
             url: "index.php?r=site/search-parts",
             data: {
-                detail_id: searchParts.idDetail,
-                mark_id: searchParts.idMark,
-                model_id: searchParts.idModel,
-                body_id: searchParts.idBody,
-                engine_id: searchParts.idEngine,
-                number: document.getElementById('number').value,
+                detail_id : searchParts.idDetail,
+                mark_id   : searchParts.idMark,
+                model_id  : searchParts.idModel,
+                body_id   : searchParts.idBody,
+                engine_id : searchParts.idEngine,
+                number    : document.getElementById('number').value,
             }
-        }).done(function (data) {
+        }).done(function(data){
             searchParts.render(data.message);
             searchParts.lastQuery.response = data;
         });
     },
 
-    getDetails: function () {
+    getDetails :  function () {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-details-name",
             data: {}
-        }).done(function (data) {
+        }).done(function(data){
             $('#detail-select').select2({
-                data: {results: data, text: 'Name'},
-                sortResults: searchParts.filterSort,
-                openOnEnter: false,
-                allowClear: true,
-            }).on("select2-selecting", function (e) {
+                data : { results: data, text: 'Name' },
+                sortResults : searchParts.filterSort,
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
                 searchParts.idDetail = e.choice.id;
-            }).on("select2-removed", function (e) {
+            }).on("select2-removed", function(e) {
                 searchParts.idDetail = false;
             }).on("select2-focus", function (e) {
                 searchParts.currentSelect = this;
@@ -368,18 +360,18 @@ var searchParts = {
         });
     },
 
-    getMarks: function () {
+    getMarks :  function () {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-marks",
             data: {}
-        }).done(function (data) {
+        }).done(function(data){
             $('#mark-select').select2({
-                data: {results: data, text: 'Name'},
-                sortResults: searchParts.filterSort,
-                openOnEnter: false,
-                allowClear: true,
-            }).on("select2-selecting", function (e) {
+                data : { results: data, text: 'Name' },
+                sortResults : searchParts.filterSort,
+                openOnEnter : false,
+                allowClear : true,
+            }).on("select2-selecting", function(e) {
                 $('#model-select').select2("enable", true);
                 $('#engine-select').select2("enable", true);
                 $('#body-select').select2("enable", false);
@@ -390,7 +382,7 @@ var searchParts = {
                 searchParts.idEngine = false;
                 searchParts.getModels();
                 searchParts.getEngine();
-            }).on("select2-removed", function (e) {
+            }).on("select2-removed", function(e) {
                 searchParts.idMark = false;
                 searchParts.idModel = false;
                 searchParts.idBody = false;
@@ -407,51 +399,37 @@ var searchParts = {
         });
     },
 
-    getModels: function () {
+    getModels : function() {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-models",
-            data: {id: searchParts.idMark}
-        }).done(function (data) {
+            data: {id : searchParts.idMark}
+        }).done(function(data){
             $('#model-select').select2({
-                data: {results: data, text: 'Name'},
-                sortResults: searchParts.filterSort,
-                openOnEnter: false,
-                allowClear: true,
+                data : { results: data, text: 'Name' },
+                sortResults : searchParts.filterSort,
+                openOnEnter : false,
+                allowClear : true,
             }).select2("val", "");
         });
     },
 
-    getBodys: function () {
+    getBodys : function() {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-bodys",
-            data: {id: searchParts.idModel}
-        }).done(function (data) {
-            let $body = $('#body-select'),
-                flag = false,
-                finded = $body.select2('val');
-
-            if (finded !== '') {
-                data.map(function (el) {
-                    if (el.id == finded) {
-                        flag = true;
-                    }
-                });
-                if (!flag) {
-                    $body.select2('val', '');
-                }
-            }
-            $body.select2({
-                data: {results: data, text: 'Name'},
-                sortResults: searchParts.filterSort,
-                openOnEnter: false,
-                allowClear: true,
-            });
+            data: {id : searchParts.idModel}
+        }).done(function(data){
+            $('#body-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : searchParts.filterSort,
+                openOnEnter : false,
+                allowClear : true,
+            }).select2("val", "");
         });
     },
 
-    getEngine: function () {
+    getEngine : function() {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/get-engine",
@@ -460,28 +438,13 @@ var searchParts = {
                 model_id: searchParts.idModel,
                 body_id: searchParts.idBody,
             }
-        }).done(function (data) {
-            let $engine = $('#engine-select'),
-                flag = false,
-                finded = $engine.select2('val');
-
-            if (finded !== '') {
-                data.map(function (el) {
-                    if (el.id == finded) {
-                        flag = true;
-                    }
-                });
-                if (!flag) {
-                    $engine.select2('val', '');
-                }
-            }
-
-            $engine.select2({
-                data: {results: data, text: 'Name'},
-                sortResults: searchParts.filterSort,
-                openOnEnter: false,
-                allowClear: true,
-            });
+        }).done(function(data){
+            $('#engine-select').select2({
+                data : { results: data, text: 'Name' },
+                sortResults : searchParts.filterSort,
+                openOnEnter : false,
+                allowClear : true,
+            }).select2("val", "");
         });
     },
     /**
@@ -489,29 +452,29 @@ var searchParts = {
      * @param  {integer} id фирмы
      * @return {bool}
      */
-    statisticOpenFirm: function (id) {
+    statisticOpenFirm : function(id) {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/stat-part-open-firm",
             data: {
-                firm_id: id,
-                query_id: this.lastQuery.response.query_id,
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
             }
         });
     },
-    filterSort: function (results, container, query) {
-        if (query.term != undefined && query.term.length > 0) {
-            return results.sort(function (a, b) {
+    filterSort : function(results, container, query) {
+        if(query.term != undefined && query.term.length > 0) {
+            return results.sort(function(a, b) {
                 let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
                 let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
 
                 let x = a.Name.toLowerCase();
                 let y = b.Name.toLowerCase();
-                if (indexA == indexB && indexA == 0) {
+                if(indexA == indexB && indexA == 0) {
                     return x < y ? -1 : x > y ? 1 : 0;
                 } else {
-                    if (indexA == 0) return -1;
-                    if (indexB == 0) return 1;
+                    if(indexA == 0) return -1;
+                    if(indexB == 0) return 1;
                     return x < y ? -1 : x > y ? 1 : 0;
                 }
             });
@@ -530,8 +493,8 @@ var serviceSearch = {
     gridCreate: false,
     inCategory: false,
     modalWindow: false,
-    lastQuery: {
-        response: false,
+    lastQuery : {
+        response : false,
     },
     grid: $("#service-result-search"),
 
@@ -593,7 +556,7 @@ var serviceSearch = {
                 styleUI: 'Bootstrap',
                 responsive: true,
                 cmTemplate: {sortable: false,},
-                ondblClickRow: function (id) {
+                ondblClickRow: function(id) {
                     openFirm(grid.getCell(id, 'ID_Firm'));
                     serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
                 },
@@ -642,13 +605,13 @@ var serviceSearch = {
      * @param  {integer} id фирмы
      * @return {bool}
      */
-    statisticOpenFirm: function (id) {
+    statisticOpenFirm : function(id) {
         $.ajax({
             method: "GET",
             url: "index.php?r=site/stat-service-open-firm",
             data: {
-                firm_id: id,
-                query_id: this.lastQuery.response.query_id,
+                firm_id  : id,
+                query_id : this.lastQuery.response.query_id,
             }
         });
     },
@@ -663,9 +626,9 @@ function openFirm(id) {
         method: "GET",
         url: "index.php?r=site/get-firm",
         data: {
-            firm_id: id,
+            firm_id : id,
         }
-    }).done(function (data) {
+    }).done(function(data) {
         // мапим данные
         $('#firmName').html(data.message[0].Name);
         $('#firmOrganizationType').html(data.message[0].OrganizationType);
@@ -695,9 +658,9 @@ function openFirmInParts(id) {
         method: "GET",
         url: "index.php?r=site/get-firm",
         data: {
-            firm_id: id,
+            firm_id : id,
         }
-    }).done(function (data) {
+    }).done(function(data){
         $('#partsName').html(data.message[0].Name);
         $('#partsDistrict').html(data.message[0].District);
         $('#partsAddress').html(data.message[0].Address);
@@ -706,7 +669,7 @@ function openFirmInParts(id) {
 
         $('#modalParts').draggable({
             handle: ".modal-dialog"
-        }).modal({backdrop: false});
+        }).modal({backdrop : false});
     });
 }
 
@@ -715,33 +678,33 @@ function openFirmInParts(id) {
  */
 function keyNavigate(event) {
     if (!result.opened) {
-        switch (event.keyCode) {
+        switch(event.keyCode) {
             case KEY.F1 :
                 $($('#search-line').focus()).select();
-                result.firms = true;
-                result.parts = false;
+                result.firms   = true;
+                result.parts   = false;
                 result.service = false;
                 event.preventDefault();
                 break;
             case KEY.F2 :
                 $(searchParts.currentSelect).select2("open");
                 $(searchParts.currentSelect).select2("close");
-                result.firms = false;
-                result.parts = true;
+                result.firms   = false;
+                result.parts   = true;
                 result.service = false;
                 event.preventDefault();
                 break;
             case KEY.F3 :
                 $('#service').focus();
                 result.service = true;
-                result.firms = false;
-                result.parts = false;
+                result.firms   = false;
+                result.parts   = false;
                 event.preventDefault();
                 break;
         }
     } else if (event.keyCode == KEY.F1 ||
-        event.keyCode == KEY.F2 ||
-        event.keyCode == KEY.F3) {
+               event.keyCode == KEY.F2 ||
+               event.keyCode == KEY.F3 ) {
         event.preventDefault()
     }
 }
@@ -753,30 +716,30 @@ function keyNavigate(event) {
  * @param  {object} obj  целевой объект
  */
 function gridKeyHandler(e, grid, obj) {
-    let rowInPage = grid.jqGrid('getGridParam', 'rowNum');
-    let totalPages = grid.jqGrid('getGridParam', 'lastpage');
-    let currentPage = grid.jqGrid('getGridParam', 'page');
-    let currentRow = grid.jqGrid('getGridParam', 'selrow');
-    let realRowInLasPage = grid.jqGrid('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+    let rowInPage = grid.jqGrid('getGridParam','rowNum');
+    let totalPages = grid.jqGrid('getGridParam','lastpage');
+    let currentPage = grid.jqGrid('getGridParam','page');
+    let currentRow = grid.jqGrid ('getGridParam', 'selrow');
+    let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
 
-    if (e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)) {
+    if(e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)){
         let i = currentRow;
         let oldID = grid.getCell(i, 'ID_Firm');
         let newID = oldID;
 
-        if (e.keyCode == KEY.DOWN && e.ctrlKey)
-            newID = grid.getCell(Math.abs(i - 1), 'ID_Firm');
+        if(e.keyCode == KEY.DOWN && e.ctrlKey)
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
         else
-            newID = grid.getCell(Math.abs(i - 1), 'ID_Firm');
+            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
 
-        while (newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0) {
-            if (e.keyCode == KEY.DOWN && e.ctrlKey)
+        while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
+            if(e.keyCode == KEY.DOWN && e.ctrlKey)
                 i++;
             else
                 i--;
             newID = grid.getCell(i, 'ID_Firm');
         }
-        if (e.keyCode == KEY.DOWN && e.ctrlKey) {
+        if(e.keyCode == KEY.DOWN && e.ctrlKey) {
             grid.jqGrid('setSelection', i, false);
             i === realRowInLasPage ? obj.pagerLastRow = true : obj.pagerLastRow = false;
         } else {
@@ -796,7 +759,7 @@ function gridKeyHandler(e, grid, obj) {
         currentRow = 1;
     }
     // если вниз и последняя строка последней страницы
-    if (e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow) {
+    if(e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow){
         grid.jqGrid('setSelection', realRowInLasPage, false);
         grid.focus();
         currentRow = realRowInLasPage;
@@ -823,8 +786,8 @@ function gridKeyHandler(e, grid, obj) {
         }, 500);
     }
 
-    if (e.keyCode == KEY.HOME) {
-        if (currentPage > 1) {
+    if(e.keyCode == KEY.HOME) {
+        if(currentPage > 1) {
             grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
             obj.highlightRow();
             currentRow = 1;
@@ -833,8 +796,8 @@ function gridKeyHandler(e, grid, obj) {
         grid.focus();
     }
 
-    if (e.keyCode == KEY.END) {
-        if (currentPage == totalPages) {
+    if(e.keyCode == KEY.END) {
+        if(currentPage == totalPages) {
             grid.jqGrid('setSelection', realRowInLasPage, false);
             currentRow = realRowInLasPage;
         } else {
@@ -845,41 +808,43 @@ function gridKeyHandler(e, grid, obj) {
         grid.focus();
     }
 
-    (currentRow == realRowInLasPage && currentPage == totalPages) ? obj.pagerLastRow = true : obj.pagerLastRow = false;
 
-    currentRow == rowInPage ? obj.pagerToNext = true : obj.pagerToNext = false;
+    (currentRow == realRowInLasPage && currentPage == totalPages)
+    ? obj.pagerLastRow = true : obj.pagerLastRow = false;
 
-    currentRow == 1 ? obj.pagerToBack = true : obj.pagerToBack = false;
+    currentRow == rowInPage
+    ? obj.pagerToNext = true : obj.pagerToNext = false;
+
+    currentRow == 1
+    ? obj.pagerToBack = true : obj.pagerToBack = false;
 }
 
 function ready() {
     // Инициализация
-    searcherFirms.input = $('#search-line');
-    searcherFirms.modalWindow = $('#modalResult');
-    searcherFirms.grid = $("#firm-result-search");
+    searcherFirms.input         = $('#search-line');
+    searcherFirms.modalWindow   = $('#modalResult');
+    searcherFirms.grid          = $("#firm-result-search");
 
-    searchParts.currentSelect = $('#detail-select');
-    searchParts.modalWindow = $('#modalResult');
-    searchParts.grid = $("#part-result-search");
+    searchParts.currentSelect   = $('#detail-select');
+    searchParts.modalWindow     = $('#modalResult');
+    searchParts.grid            = $("#part-result-search");
 
-    serviceSearch.input = $('#service');
-    serviceSearch.groupList = $('#service')[0].innerHTML;
-    serviceSearch.lastGroupId = $('#service')[0][0].value;
-    serviceSearch.modalWindow = $('#modalResult');
+    serviceSearch.input         = $('#service');
+    serviceSearch.groupList     = $('#service')[0].innerHTML;
+    serviceSearch.lastGroupId   = $('#service')[0][0].value;
+    serviceSearch.modalWindow   = $('#modalResult');
 
     $('body').on("keydown", keyNavigate);
 
-    let search = searcherFirms.input;
+    let search = $('#search-line');
     $(search.focus()).select();
-    search.keypress(function (e) {
-        searcherFirms.runSearch(e)
-    });
-    $('#search-firm-button').on("click", function () {
+    search.keypress(function(e) { searcherFirms.runSearch(e) });
+    $('#search-firm-button').on( "click", function () {
         searcherFirms.search();
     });
 
-    $('#search-parts-button').on("keydown", function (e) {
-        if (e.keyCode == KEY.TAB) {
+    $('#search-parts-button').on( "keydown", function (e) {
+        if(e.keyCode == KEY.TAB) {
             let detal = $('#detail-select');
             detal.select2("open");
             detal.select2("close");
@@ -892,9 +857,9 @@ function ready() {
     result.service = false;
 
     $('#modalFirm').on('hidden.bs.modal', function () {
-        if (result.firms) {
+        if(result.firms) {
             $("#firm-result-search").focus();
-        } else if (result.service) {
+        } else if(result.service) {
             $("#service-result-search").focus();
         } else if (result.parts) {
             $("#part-result-search").focus();
@@ -902,7 +867,7 @@ function ready() {
     });
 
     $('#modalParts').on('hidden.bs.modal', function () {
-        if (result.service) {
+        if(result.service) {
             $("#service-result-search").focus();
         } else if (result.parts) {
             $("#part-result-search").focus();
@@ -910,17 +875,17 @@ function ready() {
     });
 
     $('#modalResult').on('hidden.bs.modal', function () {
-        if (result.service) {
+        if(result.service) {
             serviceSearch.pagerLastRow = false;
             $('#service').focus();
             $('#gbox_service-result-search').hide();
         }
-        if (result.firms) {
+        if(result.firms) {
             searcherFirms.pagerLastRow = false;
             $('#search-line').focus();
             $('#gbox_firm-result-search').hide();
         }
-        if (result.parts) {
+        if(result.parts) {
             searchParts.pagerLastRow = false;
             $('#gbox_part-result-search').hide();
             $(searchParts.currentSelect).select2("open");
@@ -932,42 +897,56 @@ function ready() {
     searchParts.getDetails();
     searchParts.getMarks();
 
+
     $('#model-select').select2({
-        data: {results: [{id: 1, Name: 'new'}], text: 'Name'},
-        sortResults: searchParts.filterSort,
-        openOnEnter: false,
-        allowClear: true,
-    }).on("select2-selecting", function (e) {
+        data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
+        sortResults : searchParts.filterSort,
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idModel = e.choice.id;
+        searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", true);
         searchParts.getBodys();
         searchParts.getEngine();
-    }).on("select2-removed", function (e) {
+    }).on("select2-removed", function(e) {
+        searchParts.idModel = false;
+        searchParts.idBody = false;
+        searchParts.idEngine = false;
         $('#body-select').select2("enable", false);
+        $('#body-select').select2("val", "");
         searchParts.getEngine();
     }).on("select2-focus", function (e) {
         searchParts.currentSelect = this;
     });
 
+
     $('#body-select').select2({
-        data: [],
-        sortResults: searchParts.filterSort,
-        openOnEnter: false,
-        allowClear: true,
-    }).on("select2-selecting", function (e) {
+        data : [],
+        sortResults : searchParts.filterSort,
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idBody = e.choice.id;
+        searchParts.idEngine = false;
         searchParts.getEngine();
-    }).on("select2-removed", function (e) {
+    }).on("select2-removed", function(e) {
+        searchParts.idBody = false;
         searchParts.getEngine();
     }).on("select2-focus", function (e) {
         searchParts.currentSelect = this;
     });
 
     $('#engine-select').select2({
-        data: [],
-        sortResults: searchParts.filterSort,
-        openOnEnter: false,
-        allowClear: true,
-    }).on("select2-selecting", function (e) {
-    }).on("select2-removed", function (e) {
+        data : [],
+        sortResults : searchParts.filterSort,
+        openOnEnter : false,
+        allowClear : true,
+    }).on("select2-selecting", function(e) {
+        searchParts.idEngine = e.choice.id;
+    }).on("select2-removed", function(e) {
+        searchParts.idEngine = false;
     }).on("select2-focus", function (e) {
         searchParts.currentSelect = this;
     });

@@ -7,7 +7,6 @@ use app\models\CarENDetailNames;
 use app\models\CarEngineModelsEN;
 use app\models\CarMarksEN;
 use app\models\CarModelsEN;
-use app\models\CarPresenceEN;
 use app\models\Firms;
 use app\models\LoginForm;
 use app\models\Services;
@@ -43,16 +42,16 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
-                            'get-firm', 'get-models', 'get-bodys', 'get-engine',
-                            'search-parts', 'get-service-group',
-                            'service-search', 'stat-part-open-firm',
-                            'stat-service-open-firm', 'stat-firm-open-firm',],
-                        'allow'   => true,
-                        'roles'   => ['@'],
+                                        'get-firm', 'get-models', 'get-bodys', 'get-engine',
+                                        'search-parts', 'get-service-group',
+                                        'service-search', 'stat-part-open-firm',
+                                        'stat-service-open-firm', 'stat-firm-open-firm', ],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
             ],
-            'verbs'  => [
+            'verbs' => [
                 'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
@@ -120,7 +119,7 @@ class SiteController extends Controller
      *
      * @param string $str строка запроса
      *
-     * @return array
+     * @return string
      */
     public function actionSearch($str)
     {
@@ -129,34 +128,34 @@ class SiteController extends Controller
         $search = str_replace('.', "\.", $search);
         $search_array = explode('+', $search);
 
-        $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM ' .
-            '(SELECT @rn := 0) as r, ' .
-            "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' " .
-            "OR Comment LIKE '%{$search_array[0]}%' " .
-            "OR Address LIKE '%{$search_array[0]}%' " .
-            "OR Phone LIKE '%{$search_array[0]}%' " .
-            "OR ActivityType LIKE '%{$search_array[0]}%' " .
-            "OR OrganizationType LIKE '%{$search_array[0]}%' " .
-            "OR District LIKE '%{$search_array[0]}%' " .
-            "OR Fax LIKE '%{$search_array[0]}%' " .
-            "OR Email LIKE '%{$search_array[0]}%' " .
-            "OR URL LIKE '%{$search_array[0]}%' " .
-            "OR OperatingMode LIKE '%{$search_array[0]}%')";
+        $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM '.
+                '(SELECT @rn := 0) as r, '.
+                "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
+                    "OR Comment LIKE '%{$search_array[0]}%' ".
+                    "OR Address LIKE '%{$search_array[0]}%' ".
+                    "OR Phone LIKE '%{$search_array[0]}%' ".
+                    "OR ActivityType LIKE '%{$search_array[0]}%' ".
+                    "OR OrganizationType LIKE '%{$search_array[0]}%' ".
+                    "OR District LIKE '%{$search_array[0]}%' ".
+                    "OR Fax LIKE '%{$search_array[0]}%' ".
+                    "OR Email LIKE '%{$search_array[0]}%' ".
+                    "OR URL LIKE '%{$search_array[0]}%' ".
+                    "OR OperatingMode LIKE '%{$search_array[0]}%')";
 
         if (count($search_array) > 1) {
             $options = explode(' ', $search_array[1]);
             foreach ($options as $key => $value) {
-                $sql .= " AND (Name LIKE '%{$value}%' " .
-                    "OR Address LIKE '%{$value}%' " .
-                    "OR Phone LIKE '%{$value}%' " .
-                    "OR Comment LIKE '%{$value}%' " .
-                    "OR ActivityType LIKE '%{$value}%' " .
-                    "OR OrganizationType LIKE '%{$value}%' " .
-                    "OR District LIKE '%{$value}%' " .
-                    "OR Fax LIKE '%{$value}%' " .
-                    "OR Email LIKE '%{$value}%' " .
-                    "OR URL LIKE '%{$value}%' " .
-                    "OR OperatingMode LIKE '%{$value}%')";
+                $sql .= " AND (Name LIKE '%{$value}%' ".
+                "OR Address LIKE '%{$value}%' ".
+                "OR Phone LIKE '%{$value}%' ".
+                "OR Comment LIKE '%{$value}%' ".
+                "OR ActivityType LIKE '%{$value}%' ".
+                "OR OrganizationType LIKE '%{$value}%' ".
+                "OR District LIKE '%{$value}%' ".
+                "OR Fax LIKE '%{$value}%' ".
+                "OR Email LIKE '%{$value}%' ".
+                "OR URL LIKE '%{$value}%' ".
+                "OR OperatingMode LIKE '%{$value}%')";
             }
         }
         $sql .= ' ORDER BY Name, Address) as d';
@@ -169,8 +168,8 @@ class SiteController extends Controller
 
         // получаем Id запроса
         $id = $stat->find()->andWhere([
-            'id_operator' => \Yii::$app->user->identity->id,
-        ])->select('max(id)')->scalar();
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
 
         // формируем список фирм согласно их позиции
         $stat = new StatFirmsFirms();
@@ -274,16 +273,16 @@ class SiteController extends Controller
                 ->orderBy(['Name' => SORT_ASC])
                 ->asArray()->all();
         } elseif ($body_id === 'false') {
-            $sql = 'SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A ' .
-                'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) ' .
-                "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL " .
-                'ORDER BY Name';
+            $sql = 'SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A '.
+                   'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
+                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL ".
+                   'ORDER BY Name';
             $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
         } else {
-            $sql = 'SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A ' .
-                'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) ' .
-                "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL " .
-                'ORDER BY Name';
+            $sql = 'SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A '.
+                   'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
+                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL ".
+                   'ORDER BY Name';
             $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
         }
 
@@ -336,16 +335,16 @@ class SiteController extends Controller
         $engine_search = $engine_id;
 
         // запрос результирующеё таблицы
-        $sql = 'SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, ' .
-            'BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, ' .
-            'A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm, Firms.Priority ' .
-            'FROM CarPresenceEN AS A ' .
-            'LEFT JOIN CarENDetailNames AS DETAIL ON (DETAIL.id=A.ID_Name) ' .
-            'LEFT JOIN CarMarksEN as MARK ON (MARK.id=A.ID_Mark) ' .
-            'LEFT JOIN CarModelsEN as MODEL ON (MODEL.id=A.ID_Model) ' .
-            'LEFT JOIN CarBodyModelsEN as BODY ON (BODY.id=A.ID_Body) ' .
-            'LEFT JOIN CarEngineModelsEN as ENGINE ON (ENGINE.id=A.ID_Engine) ' .
-            'LEFT JOIN Firms ON (Firms.id=A.ID_Firm) ' .
+        $sql = 'SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, '.
+            'BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, '.
+            'A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm, Firms.Priority '.
+            'FROM CarPresenceEN AS A '.
+            'LEFT JOIN CarENDetailNames AS DETAIL ON (DETAIL.id=A.ID_Name) '.
+            'LEFT JOIN CarMarksEN as MARK ON (MARK.id=A.ID_Mark) '.
+            'LEFT JOIN CarModelsEN as MODEL ON (MODEL.id=A.ID_Model) '.
+            'LEFT JOIN CarBodyModelsEN as BODY ON (BODY.id=A.ID_Body) '.
+            'LEFT JOIN CarEngineModelsEN as ENGINE ON (ENGINE.id=A.ID_Engine) '.
+            'LEFT JOIN Firms ON (Firms.id=A.ID_Firm) '.
             'WHERE Firms.Enabled=1 ';
 
         if (!($detail_id === 'false')) {
@@ -353,7 +352,7 @@ class SiteController extends Controller
             $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = {$detail_id}";
             $link = $this->getLinkedString($link_detail_sql, 'ID_LinkedDetail');
             if ($link) {
-                $detail_search .= ',' . $link;
+                $detail_search .= ','.$link;
                 $sql .= "AND A.ID_Name IN ({$detail_search}) ";
             } else {
                 $sql .= "AND A.ID_Name = {$detail_id} ";
@@ -366,7 +365,7 @@ class SiteController extends Controller
                             (SELECT id FROM CarMarksEN WHERE Name = '***')";
             $link = $this->getLinkedString($link_mar_sql, 'ID_Group');
             if ($link) {
-                $mark_search .= ',' . $link;
+                $mark_search .= ','.$link;
                 $sql .= "AND A.ID_Mark IN ({$mark_search}) ";
             } else {
                 $sql .= "AND A.ID_Mark = {$mark_id} ";
@@ -379,7 +378,7 @@ class SiteController extends Controller
                               (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark IN ({$mark_search}))";
             $link = $this->getLinkedString($link_model_sql, 'ID_Group');
             if ($link) {
-                $model_search .= ',' . $link;
+                $model_search .= ','.$link;
                 $sql .= "AND A.ID_Model IN ({$model_search}) ";
             } else {
                 $sql .= "AND A.ID_Model = {$model_id} ";
@@ -400,7 +399,7 @@ class SiteController extends Controller
                                 ) AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))";
             $link = $this->getLinkedString($link_body_sql, 'ID_BodyGroup');
             if ($link) {
-                $body_search .= ',' . $link;
+                $body_search .= ','.$link;
                 $sql .= "AND A.ID_Body IN ({$body_search}) ";
             } else {
                 $sql .= "AND A.ID_Body = {$body_id} ";
@@ -413,7 +412,7 @@ class SiteController extends Controller
                                 (SELECT id FROM CarEngineModelsEN WHERE Name='***')";
             $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
             if ($link) {
-                $engine_search .= ',' . $link;
+                $engine_search .= ','.$link;
                 $sql .= "AND A.ID_Engine IN ({$engine_search}) ";
             } else {
                 $sql .= "AND A.ID_Engine={$engine_id} ";
@@ -422,9 +421,7 @@ class SiteController extends Controller
 
         // поиск по номеру
         if (!empty($number)) {
-            $num = str_replace('-', '', $number);
-            $num_space = str_replace('-', ' ', $number);
-            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('\"{$number}\" \"{$num}\" \"{$num_space}\"' IN BOOLEAN MODE))";
+            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('*{$number}*' IN BOOLEAN MODE))";
         }
 
         // убираем дубои от JOIN-ов
@@ -439,17 +436,17 @@ class SiteController extends Controller
         // пишем статистику
         $stat = new StatPartsQuery();
         $stat->partStatistic($detail_id == 'false' ? 0 : $detail_id,
-            $mark_id == 'false' ? 0 : $mark_id,
-            $model_id == 'false' ? 0 : $model_id,
-            $body_id == 'false' ? 0 : $body_id,
-            $engine_id == 'false' ? 0 : $engine_id,
-            $number == 'false' ? '' : $number,
-            \Yii::$app->user->identity->id);
+                             $mark_id == 'false' ? 0 : $mark_id,
+                             $model_id == 'false' ? 0 : $model_id,
+                             $body_id == 'false' ? 0 : $body_id,
+                             $engine_id == 'false' ? 0 : $engine_id,
+                             $number == 'false' ? '' : $number,
+                             \Yii::$app->user->identity->id);
 
         // получаем Id запроса
         $id = $stat->find()->andWhere([
-            'id_operator' => \Yii::$app->user->identity->id,
-        ])->select('max(id)')->scalar();
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
 
         // формируем список фирм согласно их позиции
         $stat = new StatPartsFirms();
@@ -475,7 +472,7 @@ class SiteController extends Controller
     /**
      * Функция формируют строку для запроса свзянных id для деталей/марок/моделей/кузовов/двигателей.
      *
-     * @param string $sql запрос которым можно получить список нужных id
+     * @param string $sql    запрос которым можно получить список нужных id
      * @param string $column интересующая нас колонка
      *
      * @return string результат в виде строки со списком id чере запятую
@@ -503,7 +500,7 @@ class SiteController extends Controller
 
         $html = '';
         foreach ($services as $value) {
-            $html .= '<option style="border-bottom: solid 1px;" value="' . $value['id'] . '">' . $value['Name'] . '</option>';
+            $html .= '<option style="border-bottom: solid 1px;" value="'.$value['id'].'">'.$value['Name'].'</option>';
         }
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -535,8 +532,8 @@ class SiteController extends Controller
 
         // получаем Id запроса
         $id_query = $stat->find()->andWhere([
-            'id_operator' => \Yii::$app->user->identity->id,
-        ])->select('max(id)')->scalar();
+                'id_operator' => \Yii::$app->user->identity->id,
+            ])->select('max(id)')->scalar();
 
         // формируем список фирм согласно их позиции
         $stat = new StatServiceFirms();
@@ -571,9 +568,9 @@ class SiteController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         $stat = StatPartsFirms::find()->andWhere([
-            'id_query' => $query_id,
-            'id_firm'  => $firm_id,
-        ])->one();
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
         $stat->opened = 1;
 
         if ($stat->update()) {
@@ -602,9 +599,9 @@ class SiteController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         $stat = StatFirmsFirms::find()->andWhere([
-            'id_query' => $query_id,
-            'id_firm'  => $firm_id,
-        ])->one();
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
         $stat->opened = 1;
 
         if ($stat->update()) {
@@ -633,9 +630,9 @@ class SiteController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
         $stat = StatServiceFirms::find()->andWhere([
-            'id_query' => $query_id,
-            'id_firm'  => $firm_id,
-        ])->one();
+                'id_query' => $query_id,
+                'id_firm'  => $firm_id,
+            ])->one();
         $stat->opened = 1;
 
         if ($stat->update()) {
