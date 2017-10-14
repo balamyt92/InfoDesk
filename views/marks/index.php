@@ -102,8 +102,6 @@ $marks_create_button = Html::a('Добавить марку', ['create'], ['clas
                     'class' => 'btn btn-default',
                 ],
                 'showConfirmAlert' => false,
-                'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                 'enableFormatter'  => false,
             ]),
         ],

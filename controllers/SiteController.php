@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use app\models\CarBodyModelsEN;
 use app\models\CarENDetailNames;
+use app\models\CarEngineAndBodyCorrespondencesEN;
 use app\models\CarEngineModelsEN;
 use app\models\CarMarksEN;
 use app\models\CarModelsEN;
 use app\models\Firms;
 use app\models\LoginForm;
+use app\models\ServicePresence;
 use app\models\Services;
 use app\models\StatFirmsFirms;
 use app\models\StatFirmsQuery;
@@ -17,6 +19,8 @@ use app\models\StatPartsQuery;
 use app\models\StatServiceFirms;
 use app\models\StatServiceQuery;
 use Yii;
+use \Exception;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -41,17 +45,29 @@ class SiteController extends Controller
                         'allow'   => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'search', 'get-details-name', 'get-marks',
-                                        'get-firm', 'get-models', 'get-bodys', 'get-engine',
-                                        'search-parts', 'get-service-group',
-                                        'service-search', 'stat-part-open-firm',
-                                        'stat-service-open-firm', 'stat-firm-open-firm', ],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'actions' => [
+                            'logout',
+                            'index',
+                            'search',
+                            'get-details-name',
+                            'get-marks',
+                            'get-firm',
+                            'get-models',
+                            'get-bodys',
+                            'get-engine',
+                            'search-parts',
+                            'get-service-group',
+                            'service-search',
+                            'stat-part-open-firm',
+                            'stat-service-open-firm',
+                            'stat-firm-open-firm',
+                        ],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
+            'verbs'  => [
                 'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
@@ -119,77 +135,72 @@ class SiteController extends Controller
      *
      * @param string $str строка запроса
      *
-     * @return string
+     * @return array
      */
-    public function actionSearch($str)
+    public function actionSearch($str = '')
     {
-        // Экранируем как можем :)
-        $search = str_replace('%', "\%", $str);
-        $search = str_replace('.', "\.", $search);
-        $search_array = explode('+', $search);
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            $search_array = explode('+', $str);
 
-        $sql = 'SELECT @rn:=@rn+1 as Row, d.* FROM '.
-                '(SELECT @rn := 0) as r, '.
-                "(SELECT * FROM Firms WHERE (Name LIKE '%{$search_array[0]}%' ".
-                    "OR Comment LIKE '%{$search_array[0]}%' ".
-                    "OR Address LIKE '%{$search_array[0]}%' ".
-                    "OR Phone LIKE '%{$search_array[0]}%' ".
-                    "OR ActivityType LIKE '%{$search_array[0]}%' ".
-                    "OR OrganizationType LIKE '%{$search_array[0]}%' ".
-                    "OR District LIKE '%{$search_array[0]}%' ".
-                    "OR Fax LIKE '%{$search_array[0]}%' ".
-                    "OR Email LIKE '%{$search_array[0]}%' ".
-                    "OR URL LIKE '%{$search_array[0]}%' ".
-                    "OR OperatingMode LIKE '%{$search_array[0]}%')";
-
-        if (count($search_array) > 1) {
-            $options = explode(' ', $search_array[1]);
-            foreach ($options as $key => $value) {
-                $sql .= " AND (Name LIKE '%{$value}%' ".
-                "OR Address LIKE '%{$value}%' ".
-                "OR Phone LIKE '%{$value}%' ".
-                "OR Comment LIKE '%{$value}%' ".
-                "OR ActivityType LIKE '%{$value}%' ".
-                "OR OrganizationType LIKE '%{$value}%' ".
-                "OR District LIKE '%{$value}%' ".
-                "OR Fax LIKE '%{$value}%' ".
-                "OR Email LIKE '%{$value}%' ".
-                "OR URL LIKE '%{$value}%' ".
-                "OR OperatingMode LIKE '%{$value}%')";
+            $columns = [
+                'Name', 'Comment', 'Address', 'Phone', 'ActivityType', 'OrganizationType',
+                'District', 'Fax', 'Email', 'URL', 'OperatingMode',
+            ];
+            $where = ['or'];
+            foreach ($columns as $column) {
+                $where[] = ['like', $column, $search_array[0]];
             }
-        }
-        $sql .= ' ORDER BY Name, Address) as d';
 
-        $firms = Firms::findBySql($sql)->all();
+            if (count($search_array) > 1) {
+                $where = ['and', $where];
+                $options = explode(' ', $search_array[1]);
+                foreach ($options as $value) {
+                    $and = ['or'];
+                    foreach ($columns as $column) {
+                        $and[] = ['like', $column, $value];
+                    }
+                    $where[] = $and;
+                }
+            }
 
-        // пишем статистику
-        $stat = new StatFirmsQuery();
-        $stat->firmStatistic($str, \Yii::$app->user->identity->id);
+            $firms = Firms::find()->where($where)->all();
 
-        // получаем Id запроса
-        $id = $stat->find()->andWhere([
-                'id_operator' => \Yii::$app->user->identity->id,
+            // пишем статистику
+            $stat = new StatFirmsQuery();
+            $stat->firmStatistic($str, \Yii::$app->user->identity->getId());
+
+            // получаем Id запроса
+            $id = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->getId(),
             ])->select('max(id)')->scalar();
 
-        // формируем список фирм согласно их позиции
-        $stat = new StatFirmsFirms();
-        $firm_list = [];
-        $last_id = 0;
-        foreach ($firms as $key => $value) {
-            if ($last_id != $value['id']) {
-                $last_id = $value['id'];
-                array_push($firm_list, $last_id);
+            // формируем список фирм согласно их позиции
+            $stat = new StatFirmsFirms();
+            $firm_list = [];
+            $last_id = 0;
+            foreach ($firms as $value) {
+                if ($last_id != $value['id']) {
+                    $last_id = $value['id'];
+                    $firm_list[] = $last_id;
+                }
             }
+            $stat->firmStatistic($firm_list, $id);
+
+            $_SESSION['firms_last_query_id'] = $id;
+
+            return [
+                'success' => true,
+                'data'    => $firms,
+            ];
+        } catch (Exception $e) {
+
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
         }
-        $stat->firmStatistic($firm_list, $id);
-
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-
-        return [
-            'success'  => true,
-            'message'  => $firms,
-            'query_id' => $id,
-        ];
     }
 
     /**
@@ -200,8 +211,19 @@ class SiteController extends Controller
     public function actionGetDetailsName()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
-
-        return CarENDetailNames::find()->orderBy('Name')->all();
+        try {
+            $details = CarENDetailNames::find()->orderBy('Name')->all();
+            return [
+                'success' => true,
+                'data'    => $details,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
     /**
@@ -213,7 +235,19 @@ class SiteController extends Controller
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return CarMarksEN::find()->orderBy('Name')->all();
+        try {
+            $marks = CarMarksEN::find()->orderBy('Name')->all();
+            return [
+                'success' => true,
+                'data'    => $marks,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
     /**
@@ -223,16 +257,26 @@ class SiteController extends Controller
      *
      * @return array
      */
-    public function actionGetModels($id)
+    public function actionGetModels($id = null)
     {
-        $carModels = CarModelsEN::find()
-            ->where(['=', 'ID_Mark', $id])
-            ->orderBy(['Name' => SORT_ASC])
-            ->asArray()->all();
-
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return $carModels;
+        try {
+            $carModels = CarModelsEN::find()
+                ->where(['=', 'ID_Mark', $id])
+                ->orderBy(['Name' => SORT_ASC])
+                ->asArray()->all();
+            return [
+                'success' => true,
+                'data'    => $carModels,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
     /**
@@ -244,14 +288,24 @@ class SiteController extends Controller
      */
     public function actionGetBodys($id)
     {
-        $carBodys = CarBodyModelsEN::find()
-            ->where(['=', 'ID_Model', $id])
-            ->orderBy(['Name' => SORT_ASC])
-            ->asArray()->all();
-
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return $carBodys;
+        try {
+            $carBodes = CarBodyModelsEN::find()
+                ->where(['=', 'ID_Model', $id])
+                ->orderBy(['Name' => SORT_ASC])
+                ->asArray()->all();
+            return [
+                'success' => true,
+                'data'    => $carBodes,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
     /**
@@ -263,32 +317,59 @@ class SiteController extends Controller
      *
      * @return array
      */
-    public function actionGetEngine($mark_id, $model_id, $body_id)
+    public function actionGetEngine($mark_id = null, $model_id = null, $body_id = null)
     {
-        $carEngine = [];
-
-        if ($model_id === 'false' && $body_id === 'false') {
-            $carEngine = CarEngineModelsEN::find()
-                ->where(['=', 'ID_Mark', $mark_id])
-                ->orderBy(['Name' => SORT_ASC])
-                ->asArray()->all();
-        } elseif ($body_id === 'false') {
-            $sql = 'SELECT B.id,B.Name FROM CarEngineAndModelCorrespondencesEN as A '.
-                   'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
-                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND B.Name IS NOT NULL ".
-                   'ORDER BY Name';
-            $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
-        } else {
-            $sql = 'SELECT B.id,B.Name FROM CarEngineAndBodyCorrespondencesEN as A '.
-                   'LEFT JOIN CarEngineModelsEN as B ON (A.ID_Engine = B.id) '.
-                   "WHERE A.ID_Mark={$mark_id} AND A.ID_Model={$model_id} AND A.ID_Body={$body_id} AND B.Name IS NOT NULL ".
-                   'ORDER BY Name';
-            $carEngine = CarEngineModelsEN::findBySql($sql)->asArray()->all();
-        }
-
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            if (!$model_id && !$body_id && $mark_id) {
+                $carEngine = CarEngineModelsEN::find()
+                    ->where(['=', 'ID_Mark', $mark_id])
+                    ->orderBy(['Name' => SORT_ASC])
+                    ->asArray()->all();
+            } elseif (!$body_id && $mark_id && $model_id) {
+                $carEngine = CarEngineAndBodyCorrespondencesEN::find()
+                    ->distinct()
+                    ->alias('A')
+                    ->select('B.*')
+                    ->leftJoin('CarEngineModelsEN as B', 'A.ID_Engine = B.id')
+                    ->where([
+                        'and',
+                        ['=', 'A.ID_Mark', $mark_id],
+                        ['=', 'A.ID_Model', $model_id],
+                        ['not', ['B.Name' => null]],
+                    ])
+                    ->orderBy(['B.Name' => SORT_ASC])
+                    ->asArray()->all();
+            } elseif ($body_id && $mark_id && $model_id) {
+                $carEngine = CarEngineAndBodyCorrespondencesEN::find()
+                    ->distinct()
+                    ->alias('A')
+                    ->select('B.*')
+                    ->leftJoin('CarEngineModelsEN as B', 'A.ID_Engine = B.id')
+                    ->where([
+                        'and',
+                        ['=', 'A.ID_Mark', $mark_id],
+                        ['=', 'A.ID_Model', $model_id],
+                        ['=', 'A.ID_Body', $body_id],
+                        ['not', ['B.Name' => null]],
+                    ])
+                    ->orderBy(['B.Name' => SORT_ASC])
+                    ->asArray()->all();
+            } else {
+                $carEngine = CarEngineModelsEN::find()->asArray()->limit(10000);
+            }
 
-        return $carEngine;
+            return [
+                'success' => true,
+                'data'    => $carEngine,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
     /**
@@ -298,16 +379,29 @@ class SiteController extends Controller
      *
      * @return array
      */
-    public function actionGetFirm($firm_id)
+    public function actionGetFirm($firm_id = null)
     {
-        $firm = Firms::find()->where(['=', 'id', $firm_id])->asArray()->all();
-
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            if (is_null($firm_id)) {
+                throw new Exception('Не казан id фирмы');
+            };
 
-        return [
-            'success' => true,
-            'message' => $firm,
-        ];
+            $firm = Firms::findOne(['=', 'id', $firm_id]);
+
+            return [
+                'success' => true,
+                'firm'    => $firm,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => true,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
+
+
     }
 
     /**
@@ -320,173 +414,246 @@ class SiteController extends Controller
      * @param $engine_id
      * @param $number string номер детали
      *
-     * @var $page  integer какая страница результата нас интересует
-     * @var $limit integer соклько строк результатов нам надо
-     *
      * @return array возвращаем JSON
      */
-    public function actionSearchParts($detail_id, $mark_id, $model_id, $body_id, $engine_id, $number)
-    {
-        $connection = \Yii::$app->getDb();
-        $detail_search = $detail_id;
-        $mark_search = $mark_id;
-        $model_search = $model_id;
-        $body_search = $body_id;
-        $engine_search = $engine_id;
-
-        // запрос результирующеё таблицы
-        $sql = 'SELECT DETAIL.Name as DetailName, MARK.Name as MarkName, MODEL.Name as ModelName, '.
-            'BODY.Name as BodyName, ENGINE.Name as EngineName, A.CarYear, A.Comment, '.
-            'A.Cost, A.Catalog_Number, A.TechNumber, A.ID_Firm, Firms.Priority '.
-            'FROM CarPresenceEN AS A '.
-            'LEFT JOIN CarENDetailNames AS DETAIL ON (DETAIL.id=A.ID_Name) '.
-            'LEFT JOIN CarMarksEN as MARK ON (MARK.id=A.ID_Mark) '.
-            'LEFT JOIN CarModelsEN as MODEL ON (MODEL.id=A.ID_Model) '.
-            'LEFT JOIN CarBodyModelsEN as BODY ON (BODY.id=A.ID_Body) '.
-            'LEFT JOIN CarEngineModelsEN as ENGINE ON (ENGINE.id=A.ID_Engine) '.
-            'LEFT JOIN Firms ON (Firms.id=A.ID_Firm) '.
-            'WHERE Firms.Enabled=1 ';
-
-        if (!($detail_id === 'false')) {
-            // ищем все связанные детали
-            $link_detail_sql = "SELECT ID_LinkedDetail from CarENLinkedDetailNames where ID_GroupDetail = {$detail_id}";
-            $link = $this->getLinkedString($link_detail_sql, 'ID_LinkedDetail');
-            if ($link) {
-                $detail_search .= ','.$link;
-                $sql .= "AND A.ID_Name IN ({$detail_search}) ";
-            } else {
-                $sql .= "AND A.ID_Name = {$detail_id} ";
-            }
-        }
-
-        if (!($mark_id === 'false')) {
-            // ищем связанные марки
-            $link_mar_sql = "(SELECT ID_Group FROM CarMarkGroupsEN WHERE ID_Mark= {$mark_id}) UNION
-                            (SELECT id FROM CarMarksEN WHERE Name = '***')";
-            $link = $this->getLinkedString($link_mar_sql, 'ID_Group');
-            if ($link) {
-                $mark_search .= ','.$link;
-                $sql .= "AND A.ID_Mark IN ({$mark_search}) ";
-            } else {
-                $sql .= "AND A.ID_Mark = {$mark_id} ";
-            }
-        }
-
-        if (!($model_id === 'false')) {
-            // ищем связанные модели
-            $link_model_sql = "(SELECT ID_Group FROM CarModelGroupsEN WHERE ID_Model = {$model_id}) UNION
-                              (SELECT id FROM CarModelsEN WHERE Name = '***' AND ID_Mark IN ({$mark_search}))";
-            $link = $this->getLinkedString($link_model_sql, 'ID_Group');
-            if ($link) {
-                $model_search .= ','.$link;
-                $sql .= "AND A.ID_Model IN ({$model_search}) ";
-            } else {
-                $sql .= "AND A.ID_Model = {$model_id} ";
-            }
-        }
-
-        if (!($body_id === 'false')) {
-            // ищем связанные кузова
-            $link_body_sql = "(SELECT ID_BodyGroup FROM CarBodyModelGroupsEN
-                                WHERE ID_BodyModel = {$body_id} AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))
-                              UNION
-                              (SELECT id FROM CarBodyModelsEN
-                                WHERE Name = '***' AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))
-                              UNION
-                              (SELECT ID_BodyModel FROM CarBodyModelGroupsEN
-                                WHERE ID_BodyGroup IN (
-                                        SELECT id FROM CarBodyModelsEN WHERE Name LIKE CONCAT('',(SELECT Name FROM CarBodyModelsEN WHERE id = {$body_id}),'')
-                                ) AND ID_Mark IN ({$mark_search}) AND ID_Model IN ({$model_search}))";
-            $link = $this->getLinkedString($link_body_sql, 'ID_BodyGroup');
-            if ($link) {
-                $body_search .= ','.$link;
-                $sql .= "AND A.ID_Body IN ({$body_search}) ";
-            } else {
-                $sql .= "AND A.ID_Body = {$body_id} ";
-            }
-        }
-        if (!($engine_id === 'false')) {
-            $link_engine_sql = "(SELECT ID_EngineModel FROM CarEngineModelGroupsEN
-                                  WHERE ID_EngineGroup={$engine_id})
-                                UNION
-                                (SELECT id FROM CarEngineModelsEN WHERE Name='***')";
-            $link = $this->getLinkedString($link_engine_sql, 'ID_EngineModel');
-            if ($link) {
-                $engine_search .= ','.$link;
-                $sql .= "AND A.ID_Engine IN ({$engine_search}) ";
-            } else {
-                $sql .= "AND A.ID_Engine={$engine_id} ";
-            }
-        }
-
-        // поиск по номеру
-        if (!empty($number)) {
-            $sql .= " AND (MATCH (A.Comment,A.Catalog_Number) AGAINST ('*{$number}*' IN BOOLEAN MODE))";
-        }
-
-        // убираем дубои от JOIN-ов
-        $sql .= ' GROUP BY DetailName , MarkName , ModelName , BodyName , EngineName , A.CarYear , A.Comment , A.Cost , A.Catalog_Number , A.TechNumber , A.ID_Firm , Firms.Priority ';
-
-        // сортировка
-        $sql .= ' ORDER BY Firms.Priority, Firms.id, DetailName LIMIT 10000';
-
-        $command = $connection->createCommand($sql);
-        $parts = $command->queryAll();
-
-        // пишем статистику
-        $stat = new StatPartsQuery();
-        $stat->partStatistic($detail_id == 'false' ? 0 : $detail_id,
-                             $mark_id == 'false' ? 0 : $mark_id,
-                             $model_id == 'false' ? 0 : $model_id,
-                             $body_id == 'false' ? 0 : $body_id,
-                             $engine_id == 'false' ? 0 : $engine_id,
-                             $number == 'false' ? '' : $number,
-                             \Yii::$app->user->identity->id);
-
-        // получаем Id запроса
-        $id = $stat->find()->andWhere([
-                'id_operator' => \Yii::$app->user->identity->id,
-            ])->select('max(id)')->scalar();
-
-        // формируем список фирм согласно их позиции
-        $stat = new StatPartsFirms();
-        $firm_list = [];
-        $last_id = 0;
-        foreach ($parts as $key => $value) {
-            if ($last_id != $value['ID_Firm']) {
-                $last_id = $value['ID_Firm'];
-                array_push($firm_list, $last_id);
-            }
-        }
-        $stat->partStatistic($firm_list, $id);
-
+    public function actionSearchParts(
+        $detail_id = null,
+        $mark_id = null,
+        $model_id = null,
+        $body_id = null,
+        $engine_id = null,
+        $number = null
+    ) {
         \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        return [
-            'success'  => true,
-            'message'  => $parts,
-            'query_id' => $id,
-        ];
-    }
+        try {
+            $mark_search = (int)$mark_id;
+            $model_search = (int)$model_id;
 
-    /**
-     * Функция формируют строку для запроса свзянных id для деталей/марок/моделей/кузовов/двигателей.
-     *
-     * @param string $sql    запрос которым можно получить список нужных id
-     * @param string $column интересующая нас колонка
-     *
-     * @return string результат в виде строки со списком id чере запятую
-     */
-    private function getLinkedString($sql, $column)
-    {
-        $link = \Yii::$app->getDb()->createCommand($sql)->queryAll();
-        $tmp = [];
-        foreach ($link as $value) {
-            array_push($tmp, $value[$column]);
+            // запрос результирующеё таблицы
+            $query = (new Query())
+                ->from('CarPresenceEN as A')
+                ->select([
+                    'DETAIL.Name as DetailName',
+                    'MARK.Name as MarkName',
+                    'MODEL.Name as ModelName',
+                    'BODY.Name as BodyName',
+                    'ENGINE.Name as EngineName',
+                    'A.CarYear',
+                    'A.Comment',
+                    'A.Cost',
+                    'A.Catalog_Number',
+                    'A.TechNumber',
+                    'A.ID_Firm as id',
+                    'Firms.Priority',
+                ])
+                ->distinct()
+                ->leftJoin('CarENDetailNames as DETAIL', 'DETAIL.id=A.ID_Name')
+                ->leftJoin('CarMarksEN as MARK', 'MARK.id=A.ID_Mark')
+                ->leftJoin('CarModelsEN as MODEL', 'MODEL.id=A.ID_Model')
+                ->leftJoin('CarBodyModelsEN as BODY', 'BODY.id=A.ID_Body')
+                ->leftJoin('CarEngineModelsEN as ENGINE', 'ENGINE.id=A.ID_Engine')
+                ->leftJoin('Firms', 'Firms.id=A.ID_Firm')
+                ->where('Firms.Enabled = 1');
+
+            if ($detail_id) {
+                // ищем все связанные детали
+                $detail_search = (new Query())
+                    ->from('CarENLinkedDetailNames')
+                    ->select('ID_LinkedDetail')
+                    ->where(['ID_GroupDetail' => (int)$detail_id])
+                    ->all();
+
+                $detail_search = array_reduce($detail_search, function ($acc, $el) {
+                    $acc[] = (int)$el['ID_LinkedDetail'];
+                    return $acc;
+                }, [(int)$detail_id]);
+
+                $query = $query->andWhere([
+                    'in',
+                    'A.ID_Name',
+                    $detail_search,
+                ]);
+            }
+
+            if ($mark_id) {
+                // ищем связанные марки
+                $mark_search = (new Query())
+                    ->from('CarMarkGroupsEN')
+                    ->select('ID_Group')
+                    ->where(['ID_Mark' => (int)$mark_id])
+                    ->union(
+                        (new Query())->from('CarMarksEN')
+                            ->select('id')
+                            ->where(['=', 'Name', '***'])
+                    )
+                    ->all();
+                $mark_search = array_reduce($mark_search, function ($acc, $el) {
+                    $acc[] = (int)$el['ID_Group'];
+                    return $acc;
+                }, [(int)$mark_id]);
+
+                $query = $query->andWhere([
+                    'in',
+                    'A.ID_Mark',
+                    $mark_search,
+                ]);
+            }
+
+            if ($model_id) {
+                $model_search = (new Query())
+                    ->from('CarModelGroupsEN')
+                    ->select('ID_Group')
+                    ->where(['ID_Model' => $model_id])
+                    ->union(
+                        (new Query())
+                            ->from('CarModelsEN')
+                            ->select('id')
+                            ->where(['in', 'ID_Mark', $mark_search])
+                            ->andWhere(['Name' => '***'])
+                    )
+                    ->all();
+                $model_search = array_reduce($model_search, function ($acc, $el) {
+                    $acc[] = (int)$el['ID_Group'];
+                    return $acc;
+                }, [(int)$model_id]);
+
+                $query = $query->andWhere([
+                    'in',
+                    'A.ID_Model',
+                    $model_search,
+                ]);
+            }
+
+            if ($body_id) {
+                $body_search = (new Query())
+                    ->from('CarBodyModelGroupsEN')
+                    ->select('ID_BodyGroup')
+                    ->where(['ID_BodyModel' => (int)$body_id])
+                    ->andWhere(['ID_Mark' => $mark_search])
+                    ->andWhere(['ID_Model' => $model_search])
+                    ->union(
+                        (new Query())
+                            ->from('CarBodyModelsEN')
+                            ->select('id')
+                            ->where([
+                                'or',
+                                ['Name' => '***'],
+                                ['Name' => (new Query())
+                                    ->from('CarBodyModelsEN')
+                                    ->select('Name')
+                                    ->where(['id' => (int)$body_id]),
+                                ],
+                            ])
+                            ->andWhere(['in', 'ID_Mark', $mark_search])
+                            ->andWhere(['in', 'ID_Model', $model_search])
+                    )->all();
+
+                $body_search = array_reduce($body_search, function ($acc, $el) {
+                    $acc[] = (int)$el['ID_BodyGroup'];
+                    return $acc;
+                }, [(int)$body_id]);
+
+                $query = $query->andWhere([
+                    'in',
+                    'A.ID_Body',
+                    $body_search,
+                ]);
+            }
+            if ($engine_id) {
+                $engine_search = (new Query())
+                    ->from('CarEngineModelGroupsEN')
+                    ->select('ID_EngineModel')
+                    ->where(['ID_EngineGroup' => $engine_id])
+                    ->union(
+                        (new Query())
+                            ->from('CarEngineModelsEN')
+                            ->select('id')
+                            ->where(['Name' => '***'])
+                    )->all();
+
+                $engine_search = array_reduce($engine_search, function ($acc, $el) {
+                    $acc[] = (int)$el['ID_EngineModel'];
+                    return $acc;
+                }, [(int)$engine_id]);
+
+                $query = $query->andWhere([
+                    'in',
+                    'A.ID_Engine',
+                    $engine_search,
+                ]);
+            }
+
+            // поиск по номеру
+            if ($number) {
+                $str = trim($number);
+                if (!empty($str)) {
+                    // Делаем лайком ибо объемы не такие большие и скорость должа быть норм,
+                    // а в требованиях строгий поиск
+                    $query = $query->andWhere([
+                        'or',
+                        [
+                            'like',  'A.Comment', $str
+                        ],
+                        [
+                            'like', 'A.Catalog_Number', $str
+                        ],
+                        [
+                            'like',  'A.Comment', str_replace('-', '', $str)
+                        ],
+                        [
+                            'like', 'A.Catalog_Number', str_replace('-', '', $str)
+                        ],
+                        [
+                            'like',  'A.Comment', str_replace('-', ' ', $str)
+                        ],
+                        [
+                            'like', 'A.Catalog_Number', str_replace('-', ' ', $str)
+                        ],
+                    ]);
+                }
+            }
+
+            $parts = $query->orderBy([
+                'Firms.Priority' => SORT_ASC,
+                'Firms.id'       => SORT_ASC,
+                'DetailName'     => SORT_ASC,
+            ])->limit(10000)->all();
+
+            // пишем статистику
+            $stat = new StatPartsQuery();
+            $stat->partStatistic($detail_id, $mark_id, $model_id, $body_id, $engine_id, $number, \Yii::$app->user->identity->getId());
+
+            // получаем Id запроса
+            $id = StatPartsQuery::find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->getId(),
+            ])->select('max(id)')->scalar();
+
+            // формируем список фирм согласно их позиции
+            $stat = new StatPartsFirms();
+            $firm_list = [];
+            $last_id = 0;
+            foreach ($parts as $key => $value) {
+                if ($last_id != $value['id']) {
+                    $last_id = $value['id'];
+                    $firm_list[] = $last_id;
+                }
+            }
+            $stat->partStatistic($firm_list, $id);
+
+            $_SESSION['parts_last_query_id'] = $id;
+
+            return [
+                'success' => true,
+                'data'    => $parts,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
         }
-        $link = implode(',', $tmp);
-
-        return $link;
     }
 
     /**
@@ -494,94 +661,88 @@ class SiteController extends Controller
      *
      * @return array
      */
-    public function actionGetServiceGroup($id)
+    public function actionGetServiceGroup($id = null)
     {
-        $services = Services::find()->where(['=', 'ID_Parent', $id])->orderBy(['Name' => SORT_ASC])->all();
-
-        $html = '';
-        foreach ($services as $value) {
-            $html .= '<option style="border-bottom: solid 1px;" value="'.$value['id'].'">'.$value['Name'].'</option>';
-        }
-
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            $services = Services::find()
+                ->where(['=', 'ID_Parent', $id])
+                ->orderBy(['Name' => SORT_ASC])
+                ->all();
 
-        return [
-            'success' => true,
-            'message' => $html,
-        ];
+            $html = '';
+            foreach ($services as $value) {
+                $html .= "<option value=\"{$value['id']}\">{$value['Name']}</option>";
+            }
+
+            return [
+                'success' => true,
+                'data'    => $html,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
     }
 
-    public function actionServiceSearch($id)
+    public function actionServiceSearch($id = null)
     {
-        $rows = [];
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            if (is_null($id)) {
+                throw new Exception('Укажите id сервиса');
+            }
+            $rows = ServicePresence::find()
+                ->select([
+                    'A.ID_Firm as id',
+                    'Firms.Address',
+                    'A.Comment',
+                    'A.CarList',
+                    'Firms.District',
+                    'Firms.Name as Name',
+                ])
+                ->alias('A')
+                ->leftJoin('Firms', 'A.ID_Firm=Firms.id')
+                ->where(['A.ID_Service' => $id])
+                ->andWhere(['Firms.Enabled' => 1])
+                ->orderBy(['Firms.Name' => SORT_ASC, 'Firms.Priority' => SORT_ASC])
+                ->asArray()->all();
 
-        $sql = "SELECT @rn:=@rn+1 as Row, d.* FROM
-                  (SELECT @rn := 0) as r,
-                  (SELECT A.ID_Firm, Firms.Address, A.Comment, A.CarList, Firms.District, Firms.Name as Name
-                    FROM ServicePresence as A
-                    LEFT JOIN Firms ON (A.ID_Firm=Firms.id)
-                    WHERE A.ID_Service={$id} AND Firms.Enabled=1 
-                    ORDER BY Firms.Name, Firms.Priority) as d";
+            // пишем статистику
+            $stat = new StatServiceQuery();
+            $stat->serviceStatistic($id, \Yii::$app->user->identity->getId());
 
-        $command = \Yii::$app->getDb()->createCommand($sql);
-        $rows = $command->queryAll();
-
-        // пишем статистику
-        $stat = new StatServiceQuery();
-        $stat->serviceStatistic($id, \Yii::$app->user->identity->id);
-
-        // получаем Id запроса
-        $id_query = $stat->find()->andWhere([
-                'id_operator' => \Yii::$app->user->identity->id,
+            // получаем Id запроса
+            $id_query = $stat->find()->andWhere([
+                'id_operator' => \Yii::$app->user->identity->getId(),
             ])->select('max(id)')->scalar();
 
-        // формируем список фирм согласно их позиции
-        $stat = new StatServiceFirms();
-        $firm_list = [];
-        $last_id = 0;
-        foreach ($rows as $key => $value) {
-            if ($last_id != $value['ID_Firm']) {
-                $last_id = $value['ID_Firm'];
-                array_push($firm_list, $last_id);
+            // формируем список фирм согласно их позиции
+            $stat = new StatServiceFirms();
+            $firm_list = [];
+            $last_id = 0;
+            foreach ($rows as $key => $value) {
+                if ($last_id != $value['id']) {
+                    $last_id = $value['id'];
+                    $firm_list[] = $last_id;
+                }
             }
-        }
-        $stat->serviceStatistic($firm_list, $id_query);
+            $stat->serviceStatistic($firm_list, $id_query);
 
-        \Yii::$app->response->format = Response::FORMAT_JSON;
+            $_SESSION['service_last_query_id'] = $id_query;
 
-        return [
-            'rows'     => $rows,
-            'query_id' => $id_query,
-        ];
-    }
-
-    /**
-     * Функция записи статистики открытых фирм
-     *
-     * @param int $firm_id
-     * @param int $query_id
-     *
-     * @return array
-     */
-    public function actionStatPartOpenFirm($firm_id, $query_id)
-    {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $stat = StatPartsFirms::find()->andWhere([
-                'id_query' => $query_id,
-                'id_firm'  => $firm_id,
-            ])->one();
-        $stat->opened = 1;
-
-        if ($stat->update()) {
             return [
                 'success' => true,
+                'data'    => $rows,
             ];
-        } else {
-            Yii::error('stat_parts_firms: Фирма не открыта');
-
+        } catch (Exception $e) {
             return [
                 'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ];
         }
     }
@@ -589,30 +750,41 @@ class SiteController extends Controller
     /**
      * Функция записи статистики открытых фирм
      *
-     * @param int $firm_id
-     * @param int $query_id
+     * @param int $id
      *
      * @return array
+     * @throws Exception
      */
-    public function actionStatFirmOpenFirm($firm_id, $query_id)
+    public function actionStatPartOpenFirm($id = null)
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            $query_id = isset($_SESSION['parts_last_query_id']) ? $_SESSION['parts_last_query_id'] : null;
+            if (!$query_id || !$id) {
+                throw new Exception('Не указан firm_id или не было еще не одного запроса от пользователя');
+            }
 
-        $stat = StatFirmsFirms::find()->andWhere([
+            /** @var StatPartsFirms $stat */
+            $stat = StatPartsFirms::find()->andWhere([
                 'id_query' => $query_id,
-                'id_firm'  => $firm_id,
+                'id_firm'  => $id,
             ])->one();
-        $stat->opened = 1;
+            if ($stat) {
+                $stat->opened = 1;
+                if (!$stat->update()) {
+                    throw new Exception('Не удалось обновить запись');
+                }
+                return [
+                    'success' => true,
+                ];
+            }
+            throw new Exception('Фирма в данном запросе не участвовала');
 
-        if ($stat->update()) {
-            return [
-                'success' => true,
-            ];
-        } else {
-            Yii::error('stat_firm_firms: Фирма не открыта');
-
+        } catch (Exception $e) {
             return [
                 'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ];
         }
     }
@@ -620,30 +792,81 @@ class SiteController extends Controller
     /**
      * Функция записи статистики открытых фирм
      *
-     * @param int $firm_id
-     * @param int $query_id
+     * @param int $id
      *
      * @return array
      */
-    public function actionStatServiceOpenFirm($firm_id, $query_id)
+    public function actionStatFirmOpenFirm($id = null)
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            $query_id = isset($_SESSION['firms_last_query_id']) ? $_SESSION['firms_last_query_id'] : null;
+            if (!$query_id || !$id) {
+                throw new Exception('Не указан firm_id или не было еще не одного запроса от пользователя');
+            }
 
-        $stat = StatServiceFirms::find()->andWhere([
+            /** @var StatFirmsFirms $stat */
+            $stat = StatFirmsFirms::find()->andWhere([
                 'id_query' => $query_id,
-                'id_firm'  => $firm_id,
+                'id_firm'  => $id,
             ])->one();
-        $stat->opened = 1;
+            if ($stat) {
+                $stat->opened = 1;
+                if (!$stat->update()) {
+                    throw new Exception('Не удалось обновить запись');
+                }
+                return [
+                    'success' => true,
+                ];
+            }
+            throw new Exception('Фирма в данном запросе не участвовала');
 
-        if ($stat->update()) {
-            return [
-                'success' => true,
-            ];
-        } else {
-            Yii::error('stat_service_firms: Фирма не открыта');
-
+        } catch (Exception $e) {
             return [
                 'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
+    }
+
+    /**
+     * Функция записи статистики открытых фирм
+     *
+     * @param int $id
+     *
+     * @return array
+     */
+    public function actionStatServiceOpenFirm($id = null)
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        try {
+            $query_id = isset($_SESSION['service_last_query_id']) ? $_SESSION['service_last_query_id'] : null;
+            if (!$query_id || !$id) {
+                throw new Exception('Не указан firm_id или не было еще не одного запроса от пользователя');
+            }
+
+            /** @var StatServiceFirms $stat */
+            $stat = StatServiceFirms::find()->andWhere([
+                'id_query' => $query_id,
+                'id_firm'  => $id,
+            ])->one();
+            if ($stat) {
+                $stat->opened = 1;
+                if (!$stat->update()) {
+                    throw new Exception('Не удалось обновить запись');
+                }
+                return [
+                    'success' => true,
+                ];
+            }
+            throw new Exception('Фирма в данном запросе не участвовала');
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ];
         }
     }

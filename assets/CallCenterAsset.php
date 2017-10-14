@@ -13,7 +13,6 @@ class CallCenterAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/select2.css',
-        'css/select2-bootstrap.css',
         'css/select2-bootstrap.min.css',
     ];
     public $js = [
@@ -24,5 +23,6 @@ class CallCenterAsset extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
+        'app\assets\JqGridAsset'
     ];
 }

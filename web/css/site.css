@@ -32,24 +32,28 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 tr.hover {
-   background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
 .table > tbody > tr > td {
-    padding: 0px 1px;
+    padding: 0 1px;
 }
 
 .table > thead > tr > th {
-    padding: 0px 1px;
+    padding: 0 1px;
 }
 
 .table > tbody > tr > td > label {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 /*
@@ -58,15 +62,15 @@ tr.hover {
 pre {
     max-width: 450px;
     background-color: inherit;
-    border:none;
-    width:90%;
+    border: none;
+    width: 90%;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     overflow-wrap: normal;
     word-wrap: normal;
     word-break: keep-all;
@@ -75,11 +79,11 @@ pre {
 /*
     Для перетаскиваемых модальных окон
 */
-.modal
-{
+.modal {
     overflow: hidden;
 }
-.modal-dialog{
+
+.modal-dialog {
     margin-right: 0;
     margin-left: 0;
 }
@@ -90,6 +94,7 @@ pre {
     padding: 0;
     margin: 0;
 }
+
 .modal-content-fullscreen {
     height: 100%;
     border-radius: 0;
@@ -98,6 +103,7 @@ pre {
 .ui-jqgrid .ui-jqgrid-view {
     font-size: 14px;
 }
+
 #modalParts, #modalFirm {
     z-index: 1250;
 }
@@ -108,7 +114,7 @@ pre {
 .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
     overflow: hidden;
     white-space: pre-wrap;
-    padding-right: 0px;
+    padding-right: 0;
     word-wrap: normal;
     overflow-wrap: normal;
 }
@@ -122,10 +128,11 @@ pre {
 }
 
 .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     height: auto;
 }
+
 /*
     что бы текущая строка не теряла цвет при "зебре"
     грязно и иначе ни как пока
@@ -144,4 +151,32 @@ pre {
 
 .glyphicon {
     font-size: large;
+}
+
+.search_firm_wrap {
+    margin-top: 35px;
+}
+
+.search_firm_wrap > div {
+    width: 100%;
+}
+
+.inform_message {
+    width: 100%;
+    font-size: large;
+    margin-top: 30px;
+    padding: 3px
+}
+
+.parts-form > input {
+    width: 100%
+}
+
+.parts-submit {
+    margin-top: 5px;
+    float: right;
+}
+
+#service > option {
+    border-bottom:solid 1px;
 }

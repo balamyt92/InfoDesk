@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+use yii\db\Exception;
+
 /**
  * This is the model class for table "stat_firms_query".
  *
@@ -10,7 +13,7 @@ namespace app\models;
  * @property int $id_operator
  * @property string $search
  */
-class StatFirmsQuery extends \yii\db\ActiveRecord
+class StatFirmsQuery extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -49,9 +52,9 @@ class StatFirmsQuery extends \yii\db\ActiveRecord
      * Функция записывает в базу данных запрос
      *
      * @param string $search
-     * @param int    $operator_id
+     * @param int $operator_id
      *
-     * @return bool
+     * @throws Exception
      */
     public function firmStatistic($search, $operator_id)
     {
@@ -60,12 +63,8 @@ class StatFirmsQuery extends \yii\db\ActiveRecord
 
         if ($this->validate()) {
             $this->save();
-
-            return true;
         } else {
-            \Yii::error('stat_firms_query : Не прошла запись в базу статистики');
-
-            return false;
+            throw new Exception("stat_firms_query : Не прошла запись в базу статистики - search {$search}, operator {$operator_id}");
         }
     }
 }

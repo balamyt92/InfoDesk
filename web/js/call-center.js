@@ -1,959 +1,747 @@
-"use strict";
-/**
- * Объект хранящий в результатах какого поиска мы находимся
- */
-var result = {
-    firms : false,
-    parts : false,
-    service : false,
-    opened : false,
-};
+$ = window.jQuery;
+$(function () {
+    const STATE = {};
+    const URLS = {
+        FIRMS_FIND: "index.php?r=site/search",
+        FIRM_BY_ID: "index.php?r=site/get-firm",
+        GET_MARKS: "index.php?r=site/get-marks",
+        GET_MODELS: "index.php?r=site/get-models",
+        GET_BODIES: "index.php?r=site/get-bodys",
+        GET_ENGINES: "index.php?r=site/get-engine",
+        GET_DETAILS: "index.php?r=site/get-details-name",
+        PARTS_FIND: "index.php?r=site/search-parts",
+        SERVICE_GET_CATEGORY: "index.php?r=site/get-service-group",
+        SERVICE_FIND: "index.php?r=site/service-search",
+        STATISTIC_FIRMS: "index.php?r=site/stat-firm-open-firm",
+        STATISTIC_PARTS: "index.php?r=site/stat-part-open-firm",
+        STATISTIC_SERVICE: "index.php?r=site/stat-service-open-firm",
+    };
+    const KEY = {
+        TAB: 9, ENTER: 13, ESC: 27, SPACE: 32,
+        LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40,
+        SHIFT: 16, CTRL: 17, ALT: 18, PAGE_UP: 33,
+        PAGE_DOWN: 34, HOME: 36, END: 35, BACKSPACE: 8,
+        DELETE: 46, F1: 112, F2: 113, F3: 114,
+    };
 
-var KEY = {
-    TAB: 9,
-    ENTER: 13,
-    ESC: 27,
-    SPACE: 32,
-    LEFT: 37,
-    UP: 38,
-    RIGHT: 39,
-    DOWN: 40,
-    SHIFT: 16,
-    CTRL: 17,
-    ALT: 18,
-    PAGE_UP: 33,
-    PAGE_DOWN: 34,
-    HOME: 36,
-    END: 35,
-    BACKSPACE: 8,
-    DELETE: 46,
-    F1: 112,
-    F2: 113,
-    F3: 114,
-};
-
-/**
- * Объект отвечающий за запрос к серверу о поиске фирмы и рендере результата
- */
-var searcherFirms = {
-    input : false,
-    gridCreate : false,
-    pagerToNext: false,
-    pagerToBack: false,
-    pagerLastRow : false,
-    modalWindow: false,
-    lastQuery : {
-        response : false,
-    },
-    grid: false,
-
-    highlightRow: function () {
-        // заглушка
-    },
-    render : function(data) {
-        let grid = this.grid;
-
-        grid.jqGrid('setGridParam', {data: data});
-        // hide the show message
-        grid[0].grid.endReq();
-        // refresh the grid
-        grid.trigger('reloadGrid');
-        grid.setSelection(1, true);
-        grid.focus();
-
-        result.firms = true;
-        result.parts = false;
-        result.service = false;
-    },
-    search : function() {
-        result.opened = true;
-        this.modalWindow.modal({backdrop: false});
-        let str = document.getElementById('search-line').value.toString().trim();
-
-        if(str == '') {
-            alert("Введите искомую строку");
-            return false;
-        }
-
-        let grid = this.grid;
-        $('#gbox_firm-result-search').show();
-        if(!this.gridCreate) {
-            grid.jqGrid({
-                colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'ID', name: 'id', width: -1, hidden: true},
-                    {label: 'Фирма', name: 'Name', width: 250},
-                    {label: 'Профиль деятельности', name: 'ActivityType', width: 250},
-                    {label: 'Адерс', name: 'Address', width: 250},
-                    {label: 'Район', name: 'District', width: 250},
-                    {label: 'Примечание', name: 'Comment', width: 250},
-                ],
-                viewrecords: true, // show the current page, data rang and total records on the toolbar
-                autowidth: true,
-                height: $('#modalResult').height() - 100,
-                rowNum: 100,
-                pager: "#firm-pager",
-                datatype: 'local',
-                styleUI: 'Bootstrap',
-                responsive: true,
-                loadonce: true,
-                cmTemplate: {sortable: false,},
-                ondblClickRow: function(id) {
-                    openFirm(grid.getCell(id, 'id'));
-                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
-                },
-            });
-
-            grid.jqGrid('bindKeys', {
-                "onEnter": function (id) {
-                    openFirm(grid.getCell(id, 'id'));
-                    searcherFirms.statisticOpenFirm(grid.getCell(id, 'id'));
+    $(document).ready(function () {
+        $("body").on("keydown", function (e) {
+            if (!$(this).hasClass("modal-open")) {
+                if (e.keyCode === KEY.F1) {
+                    $("#search-line").focus();
+                    e.preventDefault();
                 }
-            });
-
-            grid.bind('keydown', function (e) {
-                gridKeyHandler(e, grid, searcherFirms);
-            });
-
-            this.gridCreate = true;
-        }
-
-        grid.jqGrid("clearGridData");
-        grid[0].grid.beginReq();
-
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/search",
-            data: {str: str}
-        }).done(function(data){
-            searcherFirms.render(data.message);
-            searcherFirms.lastQuery.response = data;
-        });
-    },
-
-
-    /**
-     * По энтеру в поле запускаем поиск фирм
-     */
-    runSearch: function(e) {
-        if (e.keyCode == KEY.ENTER) {
-            this.search();
-            $($('#search-line').focus()).select();
-            return false;
-        }
-    },
-
-    /**
-     * Функция записи статистики в поиске фирм что фирма открыта
-     * @param  {integer} id фирмы
-     * @return {bool}
-     */
-    statisticOpenFirm : function(id) {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/stat-firm-open-firm",
-            data: {
-                firm_id  : id,
-                query_id : this.lastQuery.response.query_id,
-            }
-        });
-    },
-};
-
-/**
- * Объект отвечающий за работу с фильтром запчастей
- */
-var searchParts = {
-    idDetail : false,
-    idMark   : false,
-    idModel  : false,
-    idBody   : false,
-    idEngine : false,
-    idNumber : false,
-    lastQuery : {
-        idDetail : false,
-        idMark   : false,
-        idModel  : false,
-        idBody   : false,
-        idEngine : false,
-        idNumber : false,
-        response : false,
-    },
-
-
-    currentSelect : false,
-    pagerToNext : false,
-    pagerToBack : false,
-    pagerLastRow : false,
-    gridCreate: false,
-    modalWindow: false,
-    grid: false,
-
-    highlightRow : function () {
-        let rowInPage = this.grid.jqGrid('getGridParam','rowNum');
-        let totalPages = this.grid.jqGrid('getGridParam','lastpage');
-        let currentPage = this.grid.jqGrid('getGridParam','page');
-        let realRowInLasPage = this.grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
-        let firmID = this.grid.getCell(1, 'ID_Firm');
-        let color = false;
-        for(let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
-            let newId = this.grid.getCell(i, 'ID_Firm');
-            if (firmID != newId) {
-                firmID = newId;
-                color = !color;
-            }
-            if(color) {
-                this.grid.setCell(i,1,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,2,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,3,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,4,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,5,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,6,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,7,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,8,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,9,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,10,'',{ background:'#dff0d8'});
-                this.grid.setCell(i,11,'',{ background:'#dff0d8'});
-            }
-        }
-    },
-
-    // функция вывода результата запроса
-    render : function(data) {
-        let grid = this.grid;
-
-        grid.jqGrid('setGridParam', {data: data});
-        // hide the show message
-        grid[0].grid.endReq();
-        // refresh the grid
-        grid.trigger('reloadGrid');
-        grid.setSelection(1, true);
-        grid.focus();
-
-        this.highlightRow();
-
-        result.firms = false;
-        result.parts = true;
-        result.service = false;
-    },
-
-    eventStatus : function(e) {
-        if(e.keyCode == KEY.ENTER) {
-            this.search();
-        }
-    },
-    search : function() {
-        if(!this.idBody
-            && !this.idDetail
-            && !this.idEngine
-            && !this.idMark
-            && !this.idModel 
-            && !this.idNumber) {
-            console.log('Выберите хотябы один из пунктов фильтра');
-            return false;
-        }
-        result.opened = true;
-        $('#gbox_part-result-search').show();
-        this.modalWindow.modal({backdrop: false});
-
-        // "кешируем" запрос
-        if(this.lastQuery.idBody    == this.idBody      &&
-           this.lastQuery.idDetail  == this.idDetail    &&
-           this.lastQuery.idModel   == this.idModel     &&
-           this.lastQuery.idMark    == this.idMark      &&
-           this.lastQuery.idEngine  == this.idEngine    &&
-           this.lastQuery.idNumber  == document.getElementById('number').value    && this.gridCreate) {
-            this.grid.focus();
-            return false;
-        }
-        this.lastQuery.idBody    = this.idBody;
-        this.lastQuery.idDetail  = this.idDetail;
-        this.lastQuery.idModel   = this.idModel;
-        this.lastQuery.idMark    = this.idMark;
-        this.lastQuery.idEngine  = this.idEngine;
-        this.lastQuery.idNumber  = document.getElementById('number').value;
-
-        let grid = this.grid;
-
-        if(!this.gridCreate) {
-            grid.jqGrid({
-                colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'Приоритет', name: 'Priority', width: 7},
-                    {label: 'ID', name: 'ID_Firm', width: 10},
-                    {label: 'Марка', name: 'MarkName', width: 30},
-                    {label: 'Модель', name: 'ModelName', width: 30},
-                    {label: 'Деталь', name: 'DetailName', width: 50},
-                    {label: 'Год', name: 'CarYear', width: 20},
-                    {label: 'Кузов', name: 'BodyName', width: 50},
-                    {label: 'Двигатель', name: 'EngineName', width: 30},
-                    {label: 'Комментарий', name: 'Comment', width: 50},
-                    {label: 'Цена', name: 'Cost', width: 20},
-                    {label: 'Номер', name: 'Catalog_Number', width: 20},
-                ],
-                viewrecords: true, // show the current page, data rang and total records on the toolbar
-                autowidth: true,
-                height: $('#modalResult').height() - 100,
-                rowNum: 500,
-                datatype: 'local',
-                pager: "#part-pager",
-                styleUI: 'Bootstrap',
-                responsive: true,
-                cmTemplate: {sortable: false,},
-                ondblClickRow: function(id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
-                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
-                },
-            });
-
-            grid.jqGrid('bindKeys', {
-                "onEnter": function (id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
-                    searchParts.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
+                if (e.keyCode === KEY.F2) {
+                    STATE.parts.detailInput.select2("focus");
+                    e.preventDefault();
                 }
-            });
-
-            grid.bind('keydown', function (e) {
-                gridKeyHandler(e, grid, searchParts);
-            });
-            this.gridCreate = true;
-        }
-
-        grid.jqGrid("clearGridData");
-        grid[0].grid.beginReq();
-
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/search-parts",
-            data: {
-                detail_id : searchParts.idDetail,
-                mark_id   : searchParts.idMark,
-                model_id  : searchParts.idModel,
-                body_id   : searchParts.idBody,
-                engine_id : searchParts.idEngine,
-                number    : document.getElementById('number').value,
-            }
-        }).done(function(data){
-            searchParts.render(data.message);
-            searchParts.lastQuery.response = data;
-        });
-    },
-
-    getDetails :  function () {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/get-details-name",
-            data: {}
-        }).done(function(data){
-            $('#detail-select').select2({
-                data : { results: data, text: 'Name' },
-                sortResults : searchParts.filterSort,
-                openOnEnter : false,
-                allowClear : true,
-            }).on("select2-selecting", function(e) {
-                searchParts.idDetail = e.choice.id;
-            }).on("select2-removed", function(e) {
-                searchParts.idDetail = false;
-            }).on("select2-focus", function (e) {
-                searchParts.currentSelect = this;
-            });
-        });
-    },
-
-    getMarks :  function () {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/get-marks",
-            data: {}
-        }).done(function(data){
-            $('#mark-select').select2({
-                data : { results: data, text: 'Name' },
-                sortResults : searchParts.filterSort,
-                openOnEnter : false,
-                allowClear : true,
-            }).on("select2-selecting", function(e) {
-                $('#model-select').select2("enable", true);
-                $('#engine-select').select2("enable", true);
-                $('#body-select').select2("enable", false);
-                $('#body-select').select2("val", "");
-                searchParts.idMark = e.choice.id;
-                searchParts.idModel = false;
-                searchParts.idBody = false;
-                searchParts.idEngine = false;
-                searchParts.getModels();
-                searchParts.getEngine();
-            }).on("select2-removed", function(e) {
-                searchParts.idMark = false;
-                searchParts.idModel = false;
-                searchParts.idBody = false;
-                searchParts.idEngine = false;
-                $('#model-select').select2("enable", false);
-                $('#model-select').select2("val", "");
-                $('#body-select').select2("enable", false);
-                $('#body-select').select2("val", "");
-                $('#engine-select').select2("enable", false);
-                $('#engine-select').select2("val", "");
-            }).on("select2-focus", function (e) {
-                searchParts.currentSelect = this;
-            });
-        });
-    },
-
-    getModels : function() {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/get-models",
-            data: {id : searchParts.idMark}
-        }).done(function(data){
-            $('#model-select').select2({
-                data : { results: data, text: 'Name' },
-                sortResults : searchParts.filterSort,
-                openOnEnter : false,
-                allowClear : true,
-            }).select2("val", "");
-        });
-    },
-
-    getBodys : function() {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/get-bodys",
-            data: {id : searchParts.idModel}
-        }).done(function(data){
-            $('#body-select').select2({
-                data : { results: data, text: 'Name' },
-                sortResults : searchParts.filterSort,
-                openOnEnter : false,
-                allowClear : true,
-            }).select2("val", "");
-        });
-    },
-
-    getEngine : function() {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/get-engine",
-            data: {
-                mark_id: searchParts.idMark,
-                model_id: searchParts.idModel,
-                body_id: searchParts.idBody,
-            }
-        }).done(function(data){
-            $('#engine-select').select2({
-                data : { results: data, text: 'Name' },
-                sortResults : searchParts.filterSort,
-                openOnEnter : false,
-                allowClear : true,
-            }).select2("val", "");
-        });
-    },
-    /**
-     * Функция записи статистики в запчастях что фирма открыта
-     * @param  {integer} id фирмы
-     * @return {bool}
-     */
-    statisticOpenFirm : function(id) {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/stat-part-open-firm",
-            data: {
-                firm_id  : id,
-                query_id : this.lastQuery.response.query_id,
+                if (e.keyCode === KEY.F3) {
+                    STATE.service.lastInput.focus();
+                    e.preventDefault();
+                }
             }
         });
-    },
-    filterSort : function(results, container, query) {
-        if(query.term != undefined && query.term.length > 0) {
-            return results.sort(function(a, b) {
-                let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
-                let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+        STATE.parts = {
+            modal: $("#parts-search-result"),
+            grid: $("#parts-result"),
+            gridPager: $("#parts-pager"),
+            detailInput: $("#detail-select"),
+            markInput: $("#mark-select"),
+            modelInput: $("#model-select"),
+            bodyInput: $("#body-select"),
+            engineInput: $("#engine-select"),
+            numberInput: $("#number"),
+            submitButton: $("#search-parts-button"),
+            lastInput: undefined,
+            cols: [
+                {label: "Row", name: "Row", key: true, width: -1, hidden: true},
+                {label: "Приоритет", name: "Priority", width: 7},
+                {label: "ID", name: "id", width: 10},
+                {label: "Марка", name: "MarkName", width: 30},
+                {label: "Модель", name: "ModelName", width: 30},
+                {label: "Деталь", name: "DetailName", width: 50},
+                {label: "Год", name: "CarYear", width: 20},
+                {label: "Кузов", name: "BodyName", width: 50},
+                {label: "Двигатель", name: "EngineName", width: 30},
+                {label: "Комментарий", name: "Comment", width: 50},
+                {label: "Цена", name: "Cost", width: 20},
+                {label: "Номер", name: "Catalog_Number", width: 20},
+            ],
+            highlightRow: function () {
+                let rowInPage = this.grid.jqGrid("getGridParam", "rowNum");
+                let totalPages = this.grid.jqGrid("getGridParam", "lastpage");
+                let currentPage = this.grid.jqGrid("getGridParam", "page");
+                let realRowInLasPage = this.grid.jqGrid("getGridParam", "records") - (rowInPage * (totalPages - 1));
+                let firmID = this.grid.getCell(1, "id");
+                let color = false;
+                for (let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
+                    let newId = this.grid.getCell(i, "id");
+                    if (firmID !== newId) {
+                        firmID = newId;
+                        color = !color;
+                    }
+                    if (color) {
+                        for (let j = 1; j <= 11; j++) {
+                            this.grid.setCell(i, j, "", {background: "#dff0d8"});
+                        }
+                    }
+                }
+            },
+            statisticOpenFirm: function (id) {
+                $.get(URLS.STATISTIC_PARTS, {
+                    id: id
+                }, function (resp) {
+                    if(!resp.success) {
+                        console.log('Не пршла статистика. ' + resp.message);
+                    }
+                })
+            },
+            filterSort: function (results, container, query) {
+                if (query.term !== undefined && query.term.length > 0) {
+                    return results.sort(function (a, b) {
+                        let indexA = a.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
+                        let indexB = b.Name.toLowerCase().indexOf(query.term.toLowerCase().trim());
 
-                let x = a.Name.toLowerCase();
-                let y = b.Name.toLowerCase();
-                if(indexA == indexB && indexA == 0) {
-                    return x < y ? -1 : x > y ? 1 : 0;
+                        let x = a.Name.toLowerCase();
+                        let y = b.Name.toLowerCase();
+                        if (indexA === indexB && indexA === 0) {
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        } else {
+                            if (indexA === 0) return -1;
+                            if (indexB === 0) return 1;
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        }
+                    });
                 } else {
-                    if(indexA == 0) return -1;
-                    if(indexB == 0) return 1;
-                    return x < y ? -1 : x > y ? 1 : 0;
+                    return results;
                 }
-            });
-        } else {
-            return results;
-        }
-    },
-};
-/**
- * Объект отвечает за работу с поиском сервисов
- */
-var serviceSearch = {
-    input: false,
-    groupList: false,
-    lastGroupId: false,
-    gridCreate: false,
-    inCategory: false,
-    modalWindow: false,
-    lastQuery : {
-        response : false,
-    },
-    grid: $("#service-result-search"),
+            },
+            getDetail: function () {
+                return STATE.parts.detailInput.select2("val");
+            },
+            getMark: function () {
+                return STATE.parts.markInput.select2("val");
+            },
+            getModel: function () {
+                return !STATE.parts.modelInput[0].disabled ? STATE.parts.modelInput.select2("val") : null;
+            },
+            getBody: function () {
+                return !STATE.parts.bodyInput[0].disabled ? STATE.parts.bodyInput.select2("val") : null;
+            },
+            getEngine: function () {
+                return !STATE.parts.engineInput[0].disabled ? STATE.parts.engineInput.select2("val") : null;
+            },
+            getNumber: function () {
+                return STATE.parts.numberInput.val().trim() !== "" ? STATE.parts.numberInput.val().trim() : null;
+            }
+        };
 
-    highlightRow: function () {
-        // заглушка
-    },
-    open: function (event) {
-        if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && (!this.inCategory)) {
-            this.openCategory();
-            this.inCategory = true;
-            return false;
-        } else if ((event.keyCode == KEY.ENTER || event.type == "dblclick") && this.inCategory) {
-            this.searchService();
-            return false;
-        }
-        if (event.keyCode == KEY.ESC && this.inCategory) {
-            this.renderGroups();
-            this.inCategory = false;
-            this.input[0].value = this.lastGroupId;
-            return false;
-        }
-    },
-    openCategory: function () {
-        this.lastGroupId = this.input[0].value;
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site%2Fget-service-group",
-            data: {id: this.input[0].value}
-        }).done(function (data) {
-            serviceSearch.input.html(data.message);
-            serviceSearch.input[0].value = serviceSearch.input[0][0].value;
-        });
+        buildGrid(STATE.parts);
+        initializePartsSelect(STATE.parts);
 
-    },
-    searchService: function () {
-        result.opened = true;
-        this.modalWindow.modal({backdrop: false});
-        let grid = this.grid;
-        $('#gbox_service-result-search').show();
-        // настраиваем грид для результатов
-        // делаем это здесь что бы ширина соотвествала экрану
-        if (!this.gridCreate) {
-            grid.jqGrid({
-                colModel: [
-                    {label: 'Row', name: 'Row', key: true, width: -1, hidden: true},
-                    {label: 'ID_Firm', name: 'ID_Firm', width: -1, hidden: true},
-                    {label: 'Фирма', name: 'Name', width: 150},
-                    {label: 'Адрес', name: 'Address', width: 100},
-                    {label: 'Комментарий', name: 'Comment', width: 100},
-                    {label: 'Список авто', name: 'CarList', width: 150},
-                    {label: 'Район', name: 'District', width: 50},
-                ],
-                viewrecords: true, // show the current page, data rang and total records on the toolbar
-                autowidth: true,
-                height: $('#modalResult').height() - 100,
-                rowNum: 100,
-                datatype: 'local',
-                pager: "#service-pager",
-                styleUI: 'Bootstrap',
-                responsive: true,
-                cmTemplate: {sortable: false,},
-                ondblClickRow: function(id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
-                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
-                },
-            });
+        STATE.firm = {
+            modal: $("#firm-search-result"),
+            grid: $("#firm-result"),
+            gridPager: $("#firm-pager"),
+            lastInput: $("#search-line"),
+            cols: [
+                {label: "Row", name: "Row", key: true, width: -1, hidden: true},
+                {label: "ID", name: "id", width: -1, hidden: true},
+                {label: "enabled", name: "enabled", width: -1, hidden: true},
+                {label: "Фирма", name: "Name", width: 250},
+                {label: "Профиль деятельности", name: "ActivityType", width: 250},
+                {label: "Адерс", name: "Address", width: 250},
+                {label: "Район", name: "District", width: 250},
+                {label: "Примечание", name: "Comment", width: 250},
+            ],
+            highlightRow: function () {
 
-            grid.jqGrid('bindKeys', {
-                "onEnter": function (id) {
-                    openFirm(grid.getCell(id, 'ID_Firm'));
-                    serviceSearch.statisticOpenFirm(grid.getCell(id, 'ID_Firm'));
+            },
+            statisticOpenFirm: function (id) {
+                $.get(URLS.STATISTIC_FIRMS, {
+                    id: id
+                }, function (resp) {
+                    if(!resp.success) {
+                        console.log('Не пршла статистика. ' + resp.message);
+                    }
+                })
+            }
+        };
+
+        buildGrid(STATE.firm);
+        initializeFirmsSearchInput(STATE.firm);
+
+        STATE.service = {
+            grid: $("#service-result"),
+            gridPager: $("#service-pager"),
+            lastInput: $("#service"),
+            categories: undefined,
+            lastCategory: undefined,
+            inCategory: false,
+            modal: $("#service-search-result"),
+            cols: [
+                {label: "Row", name: "Row", key: true, width: -1, hidden: true},
+                {label: "id", name: "id", width: -1, hidden: true},
+                {label: "Фирма", name: "Name", width: 150},
+                {label: "Адрес", name: "Address", width: 100},
+                {label: "Комментарий", name: "Comment", width: 100},
+                {label: "Список авто", name: "CarList", width: 150},
+                {label: "Район", name: "District", width: 50},
+            ],
+            highlightRow: function () {
+
+            },
+            statisticOpenFirm: function (id) {
+                $.get(URLS.STATISTIC_SERVICE, {
+                    id: id
+                }, function (resp) {
+                    if(!resp.success) {
+                        console.log('Не пршла статистика. ' + resp.message);
+                    }
+                })
+            },
+            openCategory: function (id) {
+                $.get(URLS.SERVICE_GET_CATEGORY, {id: id}, function (resp) {
+                    if (resp.success) {
+                        STATE.service.lastCategory = id;
+                        STATE.service.lastInput.html(resp.data);
+                        STATE.service.lastInput[0].value = STATE.service.lastInput[0][0].value;
+                        STATE.service.inCategory = true;
+                    } else {
+                        alert("Не удалось получить список сервисов в группе. " + resp.message);
+                    }
+                });
+            },
+            renderCategories: function () {
+                STATE.service.lastInput.html(STATE.service.categories);
+                STATE.service.inCategory = false;
+                if(STATE.service.lastCategory) {
+                    STATE.service.lastInput[0].value = STATE.service.lastCategory;
                 }
-            });
+            }
+        };
 
-            grid.bind('keydown', function (e) {
-                gridKeyHandler(e, grid, serviceSearch);
-            });
+        buildGrid(STATE.service);
+        initializeService(STATE.service);
 
-            this.gridCreate = true; // для того что бы делать это единожды
-        }
-
-        grid.jqGrid("clearGridData");
-        grid[0].grid.beginReq();
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/service-search",
-            data: {id: this.input[0].value}
-        }).done(function (data) {
-            serviceSearch.lastQuery.response = data;
-            grid.jqGrid('setGridParam', {data: data.rows});
-            // hide the show message
-            grid[0].grid.endReq();
-            // refresh the grid
-            grid.trigger('reloadGrid');
-            grid.setSelection(1, true);
-            grid.focus();
-            result.service = true;
-            result.firms = false;
-            result.parts = false;
-        });
-    },
-    renderGroups: function () {
-        this.input.html(this.groupList);
-    },
+    });
 
     /**
-     * Функция записи статистики в поиске сервисов что фирма открыта
-     * @param  {integer} id фирмы
-     * @return {bool}
+     * Инициализация инпутов поиска фирм по строке
+     * @param firm
      */
-    statisticOpenFirm : function(id) {
-        $.ajax({
-            method: "GET",
-            url: "index.php?r=site/stat-service-open-firm",
-            data: {
-                firm_id  : id,
-                query_id : this.lastQuery.response.query_id,
+    function initializeFirmsSearchInput(firm) {
+        /**
+         * Навешиваем на инпут и кнопку эвенты поиск фирм по строке
+         * @type {jQuery|HTMLElement}
+         */
+        let firmSearchInput = $("#search-line");
+
+        firmSearchInput
+            .on("keydown", searchFirm);
+
+        $("#search-firm-button")
+            .on("click", searchFirm);
+
+        function searchFirm(e) {
+            let value = firmSearchInput.val().toString().trim();
+            if (value.length) {
+                if (e.keyCode === KEY.ENTER || e.keyCode === undefined) {
+                    firm.modal.modal({backdrop: false});
+                    firm.grid[0].grid.beginReq();
+                    findFirmsByString(value, function (data) {
+                        renderGrid(firm.grid, data);
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Инициализация поиска сервисов
+     * @param service
+     */
+    function initializeService(service) {
+        service.categories = service.lastInput[0].innerHTML;
+
+        service.lastInput.on("keydown", function (e) {
+            if (e.keyCode === KEY.ENTER) {
+                if (service.inCategory) {
+                    serviceSearch(this.value, function (data) {
+                        service.modal.modal({backdrop: false});
+                        renderGrid(service.grid, data);
+                    });
+                } else {
+                    service.openCategory(this.value);
+                }
+            }
+            if (e.keyCode === KEY.ESC && service.inCategory) {
+                service.renderCategories();
             }
         });
-    },
-};
 
-/**
- * Функция открытия карточки фирмы в результатах поиска фирм
- * @param id
- */
-function openFirm(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data) {
-        // мапим данные
-        $('#firmName').html(data.message[0].Name);
-        $('#firmOrganizationType').html(data.message[0].OrganizationType);
-        $('#firmActivityType').html(data.message[0].ActivityType);
-        $('#firmDistrict').html(data.message[0].District);
-        $('#firmAddress').html(data.message[0].Address);
-        $('#firmPhone').html(data.message[0].Phone);
-        $('#firmFax').html(data.message[0].Fax);
-        $('#firmEmail').html(data.message[0].Email);
-        $('#firmURL').html(data.message[0].URL);
-        $('#firmOperatingMode').html('<pre>' + data.message[0].OperatingMode + '</pre>');
-        $('#firmComment').html(data.message[0].Comment);
-
-        // открываем окно
-        $('#modalFirm').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop: false});
-    });
-}
-
-/**
- * функция открытия "урезаной" карточки фирмы в результатах поиска запчастей и сервисов
- * @param id
- */
-function openFirmInParts(id) {
-    $.ajax({
-        method: "GET",
-        url: "index.php?r=site/get-firm",
-        data: {
-            firm_id : id,
-        }
-    }).done(function(data){
-        $('#partsName').html(data.message[0].Name);
-        $('#partsDistrict').html(data.message[0].District);
-        $('#partsAddress').html(data.message[0].Address);
-        $('#partsPhone').html(data.message[0].Phone);
-        $('#partsOperatingMode').html(data.message[0].OperatingMode);
-
-        $('#modalParts').draggable({
-            handle: ".modal-dialog"
-        }).modal({backdrop : false});
-    });
-}
-
-/**
- * Функция обработки хоткеев навигации
- */
-function keyNavigate(event) {
-    if (!result.opened) {
-        switch(event.keyCode) {
-            case KEY.F1 :
-                $($('#search-line').focus()).select();
-                result.firms   = true;
-                result.parts   = false;
-                result.service = false;
-                event.preventDefault();
-                break;
-            case KEY.F2 :
-                $(searchParts.currentSelect).select2("open");
-                $(searchParts.currentSelect).select2("close");
-                result.firms   = false;
-                result.parts   = true;
-                result.service = false;
-                event.preventDefault();
-                break;
-            case KEY.F3 :
-                $('#service').focus();
-                result.service = true;
-                result.firms   = false;
-                result.parts   = false;
-                event.preventDefault();
-                break;
-        }
-    } else if (event.keyCode == KEY.F1 ||
-               event.keyCode == KEY.F2 ||
-               event.keyCode == KEY.F3 ) {
-        event.preventDefault()
+        service.lastInput.dblclick(function () {
+            if (service.inCategory) {
+                serviceSearch(this.value, function (data) {
+                    service.modal.modal({backdrop: false});
+                    renderGrid(service.grid, data);
+                });
+            } else {
+                service.openCategory(this.value);
+            }
+        });
     }
-}
 
-/**
- * Функция обработки хоткеев в грде резултатов поиска
- * @param  {object} e    евент нажатия кнопки
- * @param  {object} grid целевой грид
- * @param  {object} obj  целевой объект
- */
-function gridKeyHandler(e, grid, obj) {
-    let rowInPage = grid.jqGrid('getGridParam','rowNum');
-    let totalPages = grid.jqGrid('getGridParam','lastpage');
-    let currentPage = grid.jqGrid('getGridParam','page');
-    let currentRow = grid.jqGrid ('getGridParam', 'selrow');
-    let realRowInLasPage = grid.jqGrid ('getGridParam', 'records') - (rowInPage * (totalPages - 1));
+    function serviceSearch(id, cb) {
+        $.get(
+            URLS.SERVICE_FIND,
+            {id: id},
+            function (resp) {
+                if (resp.success) {
+                    cb(resp.data);
+                } else {
+                    alert("Не смог произвести поиск по сервисам. " + resp.message);
+                }
+            });
+    }
 
-    if(e.ctrlKey && ((e.keyCode == KEY.DOWN && !obj.pagerLastRow) || e.keyCode == KEY.UP)){
-        let i = currentRow;
-        let oldID = grid.getCell(i, 'ID_Firm');
-        let newID = oldID;
+    /**
+     * Поиск фирм по строке
+     * @param {string} str
+     * @param {function} cb
+     */
+    function findFirmsByString(str, cb) {
+        $.get(
+            URLS.FIRMS_FIND,
+            {
+                "str": str
+            },
+            function (res) {
+                if (res.success) {
+                    if (cb) {
+                        cb(res.data);
+                    }
+                } else {
+                    alert("Произошла ошибка при запросе: " + res.message);
+                }
+            });
+    }
 
-        if(e.keyCode == KEY.DOWN && e.ctrlKey)
-            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
-        else
-            newID = grid.getCell( Math.abs(i - 1), 'ID_Firm');
+    /**
+     * Инициализирует благин таблицы результатов для объекта
+     * @param obj
+     */
+    function buildGrid(obj) {
+        obj.grid.jqGrid({
+            colModel: obj.cols,
+            viewrecords: true,
+            autowidth: true,
+            height: obj.modal.height() - 100,
+            rowNum: 1000,
+            pager: obj.pager,
+            datatype: "local",
+            styleUI: "Bootstrap",
+            responsive: true,
+            loadonce: true,
+            cmTemplate: {sortable: false,},
+            ondblClickRow: function (id) {
+                openFirmCard(obj.grid.getCell(id, "id"), obj);
+                obj.statisticOpenFirm(obj.grid.getCell(id, "id"));
+            },
+        });
 
-        while(newID == oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0){
-            if(e.keyCode == KEY.DOWN && e.ctrlKey)
-                i++;
-            else
-                i--;
-            newID = grid.getCell(i, 'ID_Firm');
-        }
-        if(e.keyCode == KEY.DOWN && e.ctrlKey) {
-            grid.jqGrid('setSelection', i, false);
-            i === realRowInLasPage ? obj.pagerLastRow = true : obj.pagerLastRow = false;
-        } else {
-            grid.jqGrid('setSelection', i + 1, false);
-        }
+        obj.grid.jqGrid("bindKeys", {
+            "onEnter": function (id) {
+                openFirmCard(obj.grid.getCell(id, "id"), obj);
+                obj.statisticOpenFirm(obj.grid.getCell(id, "id"));
+            }
+        });
+
+        obj.grid.bind("keydown", function (e) {
+            gridKeyHandler(e, obj.grid, obj);
+        });
+
+        obj.grid.setGridWidth(window.innerWidth - 20);
+
+        obj.modal.on("hidden.bs.modal", function () {
+            if (obj.lastInput) {
+                if (obj.lastInput[0].style.display === "none") {
+                    obj.lastInput.select2("focus");
+                } else {
+                    obj.lastInput.focus();
+                }
+            }
+        });
+    }
+
+    /**
+     * Отображает данные в таблицу
+     * @param grid
+     * @param data
+     */
+    function renderGrid(grid, data) {
+        grid.jqGrid("clearGridData");
+
+        data = data.map(function (item, i) {
+            item.Row = i + 1;
+            return item;
+        });
+
+        grid.jqGrid("setGridParam", {data: data});
+        grid[0].grid.endReq();
+        grid.trigger("reloadGrid");
+        grid.setSelection(1, true);
         grid.focus();
     }
 
-    // если вниз и последняя строка
-    if (e.keyCode == KEY.DOWN && totalPages != currentPage && obj.pagerToNext) {
-        grid.jqGrid('setGridParam', {"page": currentPage + 1}).trigger("reloadGrid");
-        grid.jqGrid('setSelection', 1, false);
-        obj.highlightRow();
-        grid.focus();
-        obj.pagerToBack = true;
-        currentPage = currentPage + 1;
-        currentRow = 1;
-    }
-    // если вниз и последняя строка последней страницы
-    if(e.keyCode == KEY.DOWN && totalPages == currentPage && obj.pagerLastRow){
-        grid.jqGrid('setSelection', realRowInLasPage, false);
-        grid.focus();
-        currentRow = realRowInLasPage;
-    }
-    if (e.keyCode == KEY.UP && currentPage > 1 && obj.pagerToBack) {
-        grid.jqGrid('setGridParam', {"page": currentPage - 1}).trigger("reloadGrid");
-        grid.jqGrid('setSelection', rowInPage, false);
-        obj.highlightRow();
-        grid.focus();
-        obj.pagerToNext = true;
-        currentPage = currentPage - 1;
-        currentRow = rowInPage;
+    /**
+     * Отображает карточку фирмы по её id
+     * @param id
+     * @param obj
+     */
+    function openFirmCard(id, obj) {
+        $.get(URLS.FIRM_BY_ID, {
+            firm_id: id,
+        }, function (resp) {
+            if (resp.success) {
+                // мапим данные
+                $("#firmName").html(resp.firm.Name);
+                $("#firmOrganizationType").html(resp.firm.OrganizationType);
+                $("#firmActivityType").html(resp.firm.ActivityType);
+                $("#firmDistrict").html(resp.firm.District);
+                $("#firmAddress").html(resp.firm.Address);
+                $("#firmPhone").html(resp.firm.Phone);
+                $("#firmFax").html(resp.firm.Fax);
+                $("#firmEmail").html(resp.firm.Email);
+                $("#firmURL").html(resp.firm.URL);
+                $("#firmOperatingMode").html("<pre>" + resp.firm.OperatingMode + "</pre>");
+                $("#firmComment").html(resp.firm.Comment);
+
+                // открываем окно
+                $("#modalFirm")
+                    .draggable({
+                        handle: ".modal-dialog"
+                    })
+                    .modal({backdrop: false})
+                    .one("hidden.bs.modal", function () {
+                        obj.grid.focus();
+                    });
+            } else {
+                alert("Произошла ошибка: " + resp.message);
+            }
+        });
     }
 
-    if (e.keyCode == KEY.UP && currentPage == 1 && currentRow <= 1) {
-        grid.jqGrid('setSelection', 1, false);
-        grid.focus();
-        currentRow = 1;
-    }
+    /**
+     * Хоткеи в гридах результатов
+     * @param e
+     * @param grid
+     * @param obj
+     */
+    function gridKeyHandler(e, grid, obj) {
+        let rowInPage = grid.jqGrid("getGridParam", "rowNum");
+        let totalPages = grid.jqGrid("getGridParam", "lastpage");
+        let currentPage = grid.jqGrid("getGridParam", "page");
+        let currentRow = grid.jqGrid("getGridParam", "selrow");
+        let realRowInLasPage = grid.jqGrid("getGridParam", "records") - (rowInPage * (totalPages - 1));
 
-    if (e.keyCode == KEY.PAGE_DOWN || e.keyCode == KEY.PAGE_UP) {
-        setTimeout(function () {
-            document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
-        }, 500);
-    }
+        obj.pagerLastRow = (!currentRow && currentPage === totalPages);
+        obj.pagerToNext = currentRow === rowInPage;
+        obj.pagerToBack = currentRow === 1;
 
-    if(e.keyCode == KEY.HOME) {
-        if(currentPage > 1) {
-            grid.jqGrid('setGridParam', {"page": 1}).trigger("reloadGrid");
+        if (e.ctrlKey && ((e.keyCode === KEY.DOWN && !obj.pagerLastRow) || e.keyCode === KEY.UP)) {
+            let i = currentRow;
+            let oldID = grid.getCell(i, "id"),
+                newID = oldID;
+
+            while (newID === oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0) {
+                e.keyCode === KEY.DOWN ? i++ : i--;
+                newID = grid.getCell(i, "id");
+            }
+
+            grid.jqGrid("setSelection", i, false);
+            grid.focus();
+        }
+
+        // если вниз и последняя строка
+        if (e.keyCode === KEY.DOWN && totalPages !== currentPage && obj.pagerToNext) {
+            grid.jqGrid("setGridParam", {"page": currentPage + 1}).trigger("reloadGrid");
+            grid.jqGrid("setSelection", 1, false);
             obj.highlightRow();
+            grid.focus();
+            currentPage = currentPage + 1;
             currentRow = 1;
         }
-        grid.jqGrid('setSelection', 1, false);
-        grid.focus();
-    }
-
-    if(e.keyCode == KEY.END) {
-        if(currentPage == totalPages) {
-            grid.jqGrid('setSelection', realRowInLasPage, false);
+        // если вниз и последняя строка последней страницы
+        if (e.keyCode === KEY.DOWN && totalPages === currentPage && obj.pagerLastRow) {
+            grid.jqGrid("setSelection", realRowInLasPage, false);
+            grid.focus();
             currentRow = realRowInLasPage;
-        } else {
-            grid.jqGrid('setSelection', rowInPage, false);
+        }
+        if (e.keyCode === KEY.UP && currentPage > 1 && obj.pagerToBack) {
+            grid.jqGrid("setGridParam", {"page": currentPage - 1}).trigger("reloadGrid");
+            grid.jqGrid("setSelection", rowInPage, false);
+            obj.highlightRow();
+            grid.focus();
+            currentPage = currentPage - 1;
             currentRow = rowInPage;
         }
-        obj.pagerToNext = true;
-        grid.focus();
+
+        if (e.keyCode === KEY.UP && currentPage === 1 && currentRow <= 1) {
+            grid.jqGrid("setSelection", 1, false);
+            grid.focus();
+        }
+
+        if (e.keyCode === KEY.PAGE_DOWN || e.keyCode === KEY.PAGE_UP) {
+            setTimeout(function () {
+                document.elementFromPoint(200, grid.closest(".ui-jqgrid-bdiv").height() / 2).click();
+            }, 500);
+        }
+
+        if (e.keyCode === KEY.HOME) {
+            if (currentPage > 1) {
+                grid.jqGrid("setGridParam", {"page": 1}).trigger("reloadGrid");
+                obj.highlightRow();
+            }
+            grid.jqGrid("setSelection", 1, false);
+            grid.focus();
+        }
+
+        if (e.keyCode === KEY.END) {
+            if (currentPage === totalPages) {
+                grid.jqGrid("setSelection", realRowInLasPage, false);
+            } else {
+                grid.jqGrid("setSelection", rowInPage, false);
+            }
+            grid.focus();
+        }
+
     }
 
-
-    (currentRow == realRowInLasPage && currentPage == totalPages)
-    ? obj.pagerLastRow = true : obj.pagerLastRow = false;
-
-    currentRow == rowInPage
-    ? obj.pagerToNext = true : obj.pagerToNext = false;
-
-    currentRow == 1
-    ? obj.pagerToBack = true : obj.pagerToBack = false;
-}
-
-function ready() {
-    // Инициализация
-    searcherFirms.input         = $('#search-line');
-    searcherFirms.modalWindow   = $('#modalResult');
-    searcherFirms.grid          = $("#firm-result-search");
-
-    searchParts.currentSelect   = $('#detail-select');
-    searchParts.modalWindow     = $('#modalResult');
-    searchParts.grid            = $("#part-result-search");
-
-    serviceSearch.input         = $('#service');
-    serviceSearch.groupList     = $('#service')[0].innerHTML;
-    serviceSearch.lastGroupId   = $('#service')[0][0].value;
-    serviceSearch.modalWindow   = $('#modalResult');
-
-    $('body').on("keydown", keyNavigate);
-
-    let search = $('#search-line');
-    $(search.focus()).select();
-    search.keypress(function(e) { searcherFirms.runSearch(e) });
-    $('#search-firm-button').on( "click", function () {
-        searcherFirms.search();
-    });
-
-    $('#search-parts-button').on( "keydown", function (e) {
-        if(e.keyCode == KEY.TAB) {
-            let detal = $('#detail-select');
-            detal.select2("open");
-            detal.select2("close");
-            e.preventDefault();
+    function findParts(parts) {
+        parts.modal.modal({backdrop: false});
+        if (parts.lastQuery) {
+            if (
+                parts.lastQuery.detail_id === parts.getDetail() &&
+                parts.lastQuery.mark_id === parts.getMark() &&
+                parts.lastQuery.model_id === parts.getModel() &&
+                parts.lastQuery.body_id === parts.getBody() &&
+                parts.lastQuery.engine_id === parts.getEngine() &&
+                parts.lastQuery.number === parts.getNumber()
+            ) {
+                parts.grid.focus();
+                return;
+            }
         }
-    });
 
-    result.firms = true;
-    result.parts = false;
-    result.service = false;
+        parts.lastQuery = {
+            detail_id: parts.getDetail(),
+            mark_id: parts.getMark(),
+            model_id: parts.getModel(),
+            body_id: parts.getBody(),
+            engine_id: parts.getEngine(),
+            number: parts.getNumber(),
+        };
 
-    $('#modalFirm').on('hidden.bs.modal', function () {
-        if(result.firms) {
-            $("#firm-result-search").focus();
-        } else if(result.service) {
-            $("#service-result-search").focus();
-        } else if (result.parts) {
-            $("#part-result-search").focus();
-        }
-    });
+        parts.grid[0].grid.beginReq();
+        $.get(URLS.PARTS_FIND, {
+            detail_id: parts.getDetail(),
+            mark_id: parts.getMark(),
+            model_id: parts.getModel(),
+            body_id: parts.getBody(),
+            engine_id: parts.getEngine(),
+            number: parts.getNumber(),
+        }, function (resp) {
+            if (resp.success) {
+                renderGrid(parts.grid, resp.data);
+                parts.highlightRow();
+            } else {
+                alert("Произошла ошибка поиска запчастей. " + resp.message);
+            }
+        });
+    }
 
-    $('#modalParts').on('hidden.bs.modal', function () {
-        if(result.service) {
-            $("#service-result-search").focus();
-        } else if (result.parts) {
-            $("#part-result-search").focus();
-        }
-    });
+    function initializePartsSelect(parts) {
+        parts.numberInput
+            .on("keydown", function (e) {
+                if (e.keyCode === KEY.TAB) {
+                    parts.detailInput.select2("focus");
+                    e.preventDefault();
+                }
+                if (e.keyCode === KEY.ENTER) {
+                    findParts(parts);
+                }
+            })
+            .on("focus", function (e) {
+                parts.lastInput = $(this);
+            })
+        ;
 
-    $('#modalResult').on('hidden.bs.modal', function () {
-        if(result.service) {
-            serviceSearch.pagerLastRow = false;
-            $('#service').focus();
-            $('#gbox_service-result-search').hide();
-        }
-        if(result.firms) {
-            searcherFirms.pagerLastRow = false;
-            $('#search-line').focus();
-            $('#gbox_firm-result-search').hide();
-        }
-        if(result.parts) {
-            searchParts.pagerLastRow = false;
-            $('#gbox_part-result-search').hide();
-            $(searchParts.currentSelect).select2("open");
-            $(searchParts.currentSelect).select2("close");
-        }
-        result.opened = false;
-    });
+        parts.submitButton.parent("form")
+            .on("submit", function (e) {
+                findParts(parts);
+                e.preventDefault();
+            });
+        parts.modelInput
+            .select2({
+                data: {},
+                sortResults: parts.filterSort,
+                openOnEnter: false,
+                allowClear: true,
+            })
+            .select2("enable", false)
+            .on("change", function (e) {
+                if (e.val) {
+                    parts.bodyInput.select2("val", "");
+                    getBodies(parts);
+                    getEngines(parts);
+                } else {
+                    parts.bodyInput.select2("enable", false);
+                }
+            })
+            .on("select2-focus", function (e) {
+                parts.lastInput = $(this);
+            });
 
-    searchParts.getDetails();
-    searchParts.getMarks();
+        parts.bodyInput
+            .select2({
+                data: {},
+                sortResults: parts.filterSort,
+                openOnEnter: false,
+                allowClear: true,
+            })
+            .select2("enable", false)
+            .on("change", function (e) {
+                getEngines(parts);
+            })
+            .on("select2-focus", function (e) {
+                parts.lastInput = $(this);
+            });
 
+        parts.engineInput
+            .select2({
+                data: {},
+                sortResults: parts.filterSort,
+                openOnEnter: false,
+                allowClear: true,
+            })
+            .select2("enable", false)
+            .on("select2-focus", function (e) {
+                parts.lastInput = $(this);
+            });
 
-    $('#model-select').select2({
-        data : { results: [{id : 1, Name : 'new'}], text: 'Name' },
-        sortResults : searchParts.filterSort,
-        openOnEnter : false,
-        allowClear : true,
-    }).on("select2-selecting", function(e) {
-        searchParts.idModel = e.choice.id;
-        searchParts.idBody = false;
-        searchParts.idEngine = false;
-        $('#body-select').select2("enable", true);
-        searchParts.getBodys();
-        searchParts.getEngine();
-    }).on("select2-removed", function(e) {
-        searchParts.idModel = false;
-        searchParts.idBody = false;
-        searchParts.idEngine = false;
-        $('#body-select').select2("enable", false);
-        $('#body-select').select2("val", "");
-        searchParts.getEngine();
-    }).on("select2-focus", function (e) {
-        searchParts.currentSelect = this;
-    });
+        $.get(URLS.GET_DETAILS, function (resp) {
+            if (resp.success) {
+                parts.detailInput
+                    .select2({
+                        data: {results: resp.data, text: "Name"},
+                        sortResults: parts.filterSort,
+                        openOnEnter: false,
+                        allowClear: true,
+                    })
+                    .select2("val", "")
+                    .on("select2-focus", function (e) {
+                        parts.lastInput = $(this);
+                    });
+            } else {
+                alert("Не смог получить список наименований деталей. " + resp.message);
+            }
+        });
 
+        $.get(URLS.GET_MARKS, function (resp) {
+            if (resp.success) {
+                parts.markInput
+                    .select2({
+                        data: {results: resp.data, text: "Name"},
+                        sortResults: parts.filterSort,
+                        openOnEnter: false,
+                        allowClear: true,
+                    })
+                    .on("change", function (e) {
+                        if (e.val) {
+                            parts.modelInput.select2("val", "");
+                            parts.engineInput.select2("val", "");
+                            getModels(parts);
+                            getEngines(parts);
+                        } else {
+                            parts.modelInput.select2("enable", false);
+                            parts.bodyInput.select2("enable", false);
+                            parts.engineInput.select2("enable", false);
+                        }
+                        console.log(parts.getModel());
+                        console.log(parts.getBody());
+                        console.log(parts.getEngine());
+                    })
+                    .select2("val", "")
+                    .on("select2-focus", function (e) {
+                        parts.lastInput = $(this);
+                    });
+            } else {
+                alert("Не смог получить список марок. " + resp.message);
+            }
+        });
+    }
 
-    $('#body-select').select2({
-        data : [],
-        sortResults : searchParts.filterSort,
-        openOnEnter : false,
-        allowClear : true,
-    }).on("select2-selecting", function(e) {
-        searchParts.idBody = e.choice.id;
-        searchParts.idEngine = false;
-        searchParts.getEngine();
-    }).on("select2-removed", function(e) {
-        searchParts.idBody = false;
-        searchParts.getEngine();
-    }).on("select2-focus", function (e) {
-        searchParts.currentSelect = this;
-    });
+    function getModels(parts) {
+        parts.bodyInput.select2("enable", false);
+        parts.bodyInput.select2("val", "");
+        $.get(URLS.GET_MODELS, {id: parts.getMark()}, function (resp) {
+            if (resp.success) {
+                parts.modelInput.select2({
+                    data: {results: resp.data, text: "Name"},
+                    sortResults: parts.filterSort,
+                    openOnEnter: false,
+                    allowClear: true,
+                }).select2("enable", true);
+            } else {
+                alert("Не смог получить список моделей. " + resp.message);
+            }
+        });
+    }
 
-    $('#engine-select').select2({
-        data : [],
-        sortResults : searchParts.filterSort,
-        openOnEnter : false,
-        allowClear : true,
-    }).on("select2-selecting", function(e) {
-        searchParts.idEngine = e.choice.id;
-    }).on("select2-removed", function(e) {
-        searchParts.idEngine = false;
-    }).on("select2-focus", function (e) {
-        searchParts.currentSelect = this;
-    });
+    function getEngines(parts) {
+        $.get(URLS.GET_ENGINES, {
+            mark_id: parts.getMark(),
+            model_id: parts.getModel(),
+            body_id: parts.getBody()
+        }, function (resp) {
+            if (resp.success) {
+                parts.engineInput.select2({
+                    data: {results: resp.data, text: "Name"},
+                    sortResults: parts.filterSort,
+                    openOnEnter: false,
+                    allowClear: true,
+                }).select2("enable", true);
+            } else {
+                alert("Не смог получить список двигателей. " + resp.message);
+            }
+        });
+    }
 
-    $('#model-select').select2("enable", false);
-    $('#body-select').select2("enable", false);
-    $('#engine-select').select2("enable", false);
-}
+    function getBodies(parts) {
+        $.get(URLS.GET_BODIES, {
+            id: parts.getModel()
+        }, function (resp) {
+            if (resp.success) {
+                let search = parts.bodyInput.select2("val");
+                let flag = resp.data.reduce(function (flag, item) {
+                    flag = item.id === search;
+                    return flag;
+                }, false);
+                if (!flag) {
+                    parts.bodyInput.select2("val", "");
+                }
+                parts.bodyInput.select2({
+                    data: {results: resp.data, text: "Name"},
+                    sortResults: parts.filterSort,
+                    openOnEnter: false,
+                    allowClear: true,
+                }).select2("enable", true);
+            } else {
+                alert("Не смог получить список кузовов. " + resp.message);
+            }
+        });
+    }
 
-document.addEventListener("DOMContentLoaded", ready);
+});
+

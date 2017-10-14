@@ -357,8 +357,6 @@ HTML;
                             'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];
@@ -503,8 +501,6 @@ HTML;
                             'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];
@@ -649,8 +645,6 @@ HTML;
                             'class' => 'btn btn-default',
                         ],
                         'showConfirmAlert' => false,
-                        'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                        'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                     ]),
                     '{toggleData}',
                 ];

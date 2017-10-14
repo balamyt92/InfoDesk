@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "ServicePresence".
  *
@@ -13,7 +15,7 @@ namespace app\models;
  * @property Firms $iDFirm
  * @property Services $iDService
  */
-class ServicePresence extends \yii\db\ActiveRecord implements iLegacyImport
+class ServicePresence extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}

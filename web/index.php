@@ -12,6 +12,7 @@ if (YII_DEBUG) {
     $clean_html = $purifier->purify('');
 }
 
+require __DIR__.'/../vendor/mpdf/mpdf/mpdf.php';
 require __DIR__.'/../vendor/yiisoft/yii2/Yii.php';
 require_once __DIR__.'/../vendor/phpoffice/phpexcel/Classes/PHPExcel.php';
 

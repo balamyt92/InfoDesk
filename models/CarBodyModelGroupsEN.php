@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "CarBodyModelGroupsEN".
  *
@@ -14,7 +16,7 @@ namespace app\models;
  * @property CarMarksEN $iDMark
  * @property CarModelsEN $iDModel
  */
-class CarBodyModelGroupsEN extends \yii\db\ActiveRecord implements iLegacyImport
+class CarBodyModelGroupsEN extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}

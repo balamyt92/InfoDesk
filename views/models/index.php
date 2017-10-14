@@ -113,8 +113,6 @@ $add_button = Html::a('Добавить модель', ['create', 'ID_Mark' => $
                     'class' => 'btn btn-default',
                 ],
                 'showConfirmAlert' => false,
-                'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
                 'enableFormatter'  => false,
             ]),
         ],

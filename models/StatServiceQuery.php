@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+use yii\db\Exception;
+
 /**
  * This is the model class for table "stat_service_query".
  *
@@ -10,7 +13,7 @@ namespace app\models;
  * @property int $id_operator
  * @property int $id_service
  */
-class StatServiceQuery extends \yii\db\ActiveRecord
+class StatServiceQuery extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -50,7 +53,7 @@ class StatServiceQuery extends \yii\db\ActiveRecord
      * @param int $service_id
      * @param int $operator_id
      *
-     * @return bool
+     * @throws Exception
      */
     public function serviceStatistic($service_id, $operator_id)
     {
@@ -59,12 +62,8 @@ class StatServiceQuery extends \yii\db\ActiveRecord
 
         if ($this->validate()) {
             $this->save();
-
-            return true;
         } else {
-            \Yii::error('stat_service_query : Не прошла запись в базу статистики');
-
-            return false;
+            throw new Exception("stat_service_query : Не прошла запись в базу статистики - service {$service_id}, operator {$operator_id}");
         }
     }
 }

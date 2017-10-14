@@ -134,8 +134,6 @@ $columns = [
                     'class' => 'btn btn-default',
                 ],
                 'showConfirmAlert' => false,
-                'pdfLibrary'       => PHPExcel_Settings::PDF_RENDERER_MPDF,
-                'pdfLibraryPath'   => '@vendor/mpdf/mpdf',
             ]),
         ],
     ]); ?>

@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+use yii\db\Exception;
+
 /**
  * This is the model class for table "stat_parts_query".
  *
@@ -15,7 +18,7 @@ namespace app\models;
  * @property int $engine_id
  * @property string $number
  */
-class StatPartsQuery extends \yii\db\ActiveRecord
+class StatPartsQuery extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -58,15 +61,15 @@ class StatPartsQuery extends \yii\db\ActiveRecord
     /**
      * Функция записывает в базу данных запрос
      *
-     * @param int    $detail_id
-     * @param int    $mark_id
-     * @param int    $model_id
-     * @param int    $body_id
-     * @param int    $engine_id
+     * @param int $detail_id
+     * @param int $mark_id
+     * @param int $model_id
+     * @param int $body_id
+     * @param int $engine_id
      * @param string $number
-     * @param int    $operator_id
+     * @param int $operator_id
      *
-     * @return bool
+     * @throws Exception
      */
     public function partStatistic($detail_id, $mark_id, $model_id, $body_id, $engine_id, $number, $operator_id)
     {
@@ -80,12 +83,8 @@ class StatPartsQuery extends \yii\db\ActiveRecord
 
         if ($this->validate()) {
             $this->save();
-
-            return true;
         } else {
-            \Yii::error('stat_parts_query : Не прошла запись в базу статистики');
-
-            return false;
+            throw new Exception("stat_parts_query : Не прошла запись в базу статистики - $detail_id, $mark_id, $model_id, $body_id, $engine_id, $number, $operator_id");
         }
     }
 }
