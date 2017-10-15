@@ -64,21 +64,19 @@ class CarMarkGroupsEN extends ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $mark = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_Group = $mark[0];
-                    $this->ID_Mark = $mark[1];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $mark]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 2);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_Group', 'ID_Mark'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

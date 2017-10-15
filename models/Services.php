@@ -69,22 +69,21 @@ class Services extends \yii\db\ActiveRecord implements iLegacyImport
      */
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $service = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->id = $service[0];
-                    $this->Name = $service[1];
-                    $this->ID_Parent = $service[3];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $service]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return [
+                $el[0], $el[1], $el[3]
+            ];
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'id', 'Name', 'ID_Parent'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

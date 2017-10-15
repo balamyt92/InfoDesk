@@ -586,31 +586,11 @@ class SiteController extends Controller
 
             // поиск по номеру
             if ($number) {
-                $str = trim($number);
+                $str = mb_strtolower(str_replace('-', '', trim($number)));
                 if (!empty($str)) {
                     // Делаем лайком ибо объемы не такие большие и скорость должа быть норм,
                     // а в требованиях строгий поиск
-                    $query = $query->andWhere([
-                        'or',
-                        [
-                            'like',  'A.Comment', $str
-                        ],
-                        [
-                            'like', 'A.Catalog_Number', $str
-                        ],
-                        [
-                            'like',  'A.Comment', str_replace('-', '', $str)
-                        ],
-                        [
-                            'like', 'A.Catalog_Number', str_replace('-', '', $str)
-                        ],
-                        [
-                            'like',  'A.Comment', str_replace('-', ' ', $str)
-                        ],
-                        [
-                            'like', 'A.Catalog_Number', str_replace('-', ' ', $str)
-                        ],
-                    ]);
+                    $query = $query->andWhere(['like', 'A.search', $str]);
                 }
             }
 

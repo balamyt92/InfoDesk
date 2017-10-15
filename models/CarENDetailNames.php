@@ -2,13 +2,15 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "CarENDetailNames".
  *
  * @property int $id
  * @property string $Name
  */
-class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
+class CarENDetailNames extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}
@@ -42,21 +44,19 @@ class CarENDetailNames extends \yii\db\ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $name = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->id = $name[0];
-                    $this->Name = $name[1];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $name]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 2);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'id', 'Name'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

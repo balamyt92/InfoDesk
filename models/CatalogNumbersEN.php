@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "CatalogNumbersEN".
  *
@@ -9,7 +11,7 @@ namespace app\models;
  * @property int $ID_Mark
  * @property int $ID_Name
  */
-class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
+class CatalogNumbersEN extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}
@@ -45,22 +47,19 @@ class CatalogNumbersEN extends \yii\db\ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $number = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->Catalog_Number = $number[0];
-                    $this->ID_Mark = $number[1];
-                    $this->ID_Name = $number[2];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $number]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 3);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'Catalog_Number', 'ID_Mark', 'ID_Name'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

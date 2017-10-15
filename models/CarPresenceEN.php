@@ -25,17 +25,10 @@ use yii\db\ActiveRecord;
  * @property CarMarksEN $iDMark
  * @property CarModelsEN $iDModel
  * @property CarENDetailNames $iDName
+ * @property mixed search
  */
 class CarPresenceEN extends ActiveRecord implements iLegacyImport
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'CarPresenceEN';
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -44,7 +37,7 @@ class CarPresenceEN extends ActiveRecord implements iLegacyImport
         return [
             [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'CarYear', 'ID_Body', 'ID_Engine', 'Hash_Comment', 'TechNumber', 'Catalog_Number', 'Cost'], 'required'],
             [['ID_Mark', 'ID_Model', 'ID_Name', 'ID_Firm', 'ID_Body', 'ID_Engine'], 'integer'],
-            [['Comment', 'TechNumber'], 'string'],
+            [['Comment', 'TechNumber', 'search'], 'string'],
             [['Cost'], 'number'],
             [['CarYear'], 'string', 'max' => 20],
             [['Hash_Comment', 'Catalog_Number'], 'string', 'max' => 255],
@@ -128,40 +121,45 @@ class CarPresenceEN extends ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $line = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_Mark = $line[0];
-                    $this->ID_Model = $line[1];
-                    $this->ID_Name = $line[2];
-                    $this->ID_Firm = $line[3];
-                    $this->CarYear = $line[4];
-                    $this->ID_Body = $line[5];
-                    $this->ID_Engine = $line[6];
-                    $this->Comment = $line[7];
-                    $this->Hash_Comment = md5($line[7]);
+        $result = array_map(function ($line) {
+            return [
+                $line[0],
+                $line[1],
+                $line[2],
+                $line[3],
+                $line[4],
+                $line[5],
+                $line[6],
+                $line[7],
+                md5($line[7]),
+                $line[8],
+                $line[9],
+                mb_strtolower(trim(str_replace('-', '', $line[7] . ' ' . $line[9]))),
+                floatval(substr($line[10], 0, count($line[10]) - 4)),
+            ];
+        }, $data);
 
-                    if (empty($line[8]) || ($line[8] == ' ')) {
-                        $this->TechNumber = 'нет';
-                    } else {
-                        $this->TechNumber = $line[8];
-                    }
-                    if (empty($line[9]) || ($line[9] == ' ')) {
-                        $this->Catalog_Number = 'нет';
-                    } else {
-                        $this->Catalog_Number = $line[9];
-                    }
-                    $this->Cost = floatval(substr($line[10], 0, count($line[10]) - 4));
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $line]);
-                    }
-                }
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_Mark', 'ID_Model', 'ID_Name',
+                    'ID_Firm', 'CarYear', 'ID_Body',
+                    'ID_Engine', 'Comment', 'Hash_comment',
+                    'TechNumber', 'Catalog_Number', 'search',
+                    'Cost',
+                ],
+                $result
+            )->execute();
 
-                return $msg;
-            }
-        );
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'CarPresenceEN';
     }
 }

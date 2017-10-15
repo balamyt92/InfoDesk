@@ -88,23 +88,19 @@ class CarBodyModelGroupsEN extends ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $body = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_BodyGroup = $body[0];
-                    $this->ID_BodyModel = $body[1];
-                    $this->ID_Mark = $body[2];
-                    $this->ID_Model = $body[3];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $body]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 4);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_BodyGroup', 'ID_BodyModel', 'ID_Mark', 'ID_Model'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

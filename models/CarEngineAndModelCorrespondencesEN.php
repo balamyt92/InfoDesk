@@ -70,22 +70,21 @@ class CarEngineAndModelCorrespondencesEN extends ActiveRecord implements iLegacy
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $line = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_Mark = $line[0];
-                    $this->ID_Engine = $line[1];
-                    $this->ID_Model = $line[2];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $line]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return [
+                $el[0], $el[1], $el[2]
+            ];
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_Mark', 'ID_Engine', 'ID_Model'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

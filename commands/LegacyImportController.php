@@ -20,6 +20,7 @@ use app\models\Firms;
 use app\models\ServicePresence;
 use app\models\Services;
 use yii\console\Controller;
+use yii\db\ActiveRecord;
 use yii\db\IntegrityException;
 
 class LegacyImportController extends Controller
@@ -33,15 +34,15 @@ class LegacyImportController extends Controller
     }
 
     /**
-     *	Инициализация параметров импорта.
+     *    Инициализация параметров импорта.
      */
     private function initImport()
     {
-        $this->config = require __DIR__.'/../config/legacy-import.php';
+        $this->config = require __DIR__ . '/../config/legacy-import.php';
     }
 
     /**
-     *	Запуск импорта.
+     *    Запуск импорта.
      */
     private function runImport()
     {
@@ -49,9 +50,11 @@ class LegacyImportController extends Controller
 
         $files = $this->config['files'];
         foreach ($files as $file) {
-            $data = $this->parseFile(__DIR__.'/../import/'.$file[0], $file[1]);
-            $tableName = substr($file[0], 0, count($file[0]) - 5);
-            $this->loadToBase($tableName, $data);
+            $this->parseFile(
+                __DIR__ . '/../import/' . $file[0],
+                $file[1],
+                substr($file[0], 0, count($file[0]) - 5)
+            );
         }
 
         $this->log('Импорт завершён', 'fin');
@@ -82,33 +85,57 @@ class LegacyImportController extends Controller
      *
      * @param $filename
      * @param null $column ожидаемое число столбцов
-     *
-     * @return array результирующий массив
      */
-    private function parseFile($filename, $column = null)
+    private function parseFile($filename, $column = null, $table)
     {
         $f = file_get_contents($filename);
         $f = iconv('WINDOWS-1251', 'UTF-8', $f);
-        file_put_contents($filename.'.new', $f);
+        file_put_contents($filename . '.new', $f);
 
-        $handle = fopen($filename.'.new', 'r');
+        $handle = fopen($filename . '.new', 'r');
         $result = [];
+
+        $class_name = "app\models\\" . $table;
+        /** @var ActiveRecord $model */
+        $model = new $class_name();
+
+        $this->log('Очистка таблицы ' . $table);
+        \Yii::$app->db->createCommand('SET foreign_key_checks = 0;')->execute();
+        \Yii::$app->db->createCommand()->truncateTable($model::tableName())->execute();
+        $this->log('Заполнение таблицы ' . $table);
 
         while (!feof($handle)) {
             $firm = fgetcsv($handle, 0, ';', '^');
             while (count($firm) < $column && !feof($handle)) {
                 $tmp = fgetcsv($handle, 0, ';', '^');
-                $tmp[0] = array_pop($firm)."\n".$tmp[0];
+                $tmp[0] = array_pop($firm) . "\n" . $tmp[0];
                 $firm = array_merge($firm, $tmp);
             }
             if ($firm != false) {
-                array_push($result, $firm);
+                $result[] = $firm;
+            }
+            if (count($result) >= 1000 || feof($handle)) {
+                if ($table == 'Service') {
+                    // сортируем по ID_Parent для устранения ошибки внешнего ключа
+                    // [ID_Parent] => Id  Parent is invalid.
+                    usort($result, function ($a, $b) {
+                        if ($a[3] == $b[3]) {
+                            return 0;
+                        }
+
+                        return ($a[3] < $b[3]) ? -1 : 1;
+                    });
+                }
+                $this->loadToBase($model, $result);
+                $result = [];
             }
         }
-        fclose($handle);
-        unlink($filename.'.new');
 
-        return $result;
+        $this->log('Таблица ' . $table . ' импортирована (успешно записано строк ' . $model->find()->count() . ')');
+        // если были отключены внешние ключи, включим их
+        \Yii::$app->db->createCommand('SET foreign_key_checks = 1;')->execute();
+        fclose($handle);
+        unlink($filename . '.new');
     }
 
     /**
@@ -116,103 +143,25 @@ class LegacyImportController extends Controller
      * Функция ожидает что в базе созданы таблица в которых порядок столбцов
      * соответсвует порядку столбцов в передаваемом массвие $data.
      *
-     * @param string $table имя таблицы
-     * @param array  $data  данные на запись в таблицу
+     * @param $model ActiveRecord
+     * @param array $data данные на запись в таблицу
      *
-     * @return bool возвращает false если произошла ошибка импорта
+     * @internal param string $table имя таблицы
      */
-    private function loadToBase($table, $data)
+    private function loadToBase($model, $data)
     {
-        $model = null;
-
-        switch ($table) {
-            case 'Firms':
-                $model = new Firms();
-                break;
-            case 'Services':
-                $model = new Services();
-                // сортируем по ID_Parent для устранения ошибки внешнего ключа
-                // [ID_Parent] => Id  Parent is invalid.
-                usort($data, function ($a, $b) {
-                    if ($a[3] == $b[3]) {
-                        return 0;
-                    }
-
-                    return ($a[3] < $b[3]) ? -1 : 1;
-                });
-                break;
-            case 'ServicePresence':
-                $model = new ServicePresence();
-                break;
-            case 'CarENDetailNames':
-                $model = new CarENDetailNames();
-                break;
-            case 'CarENLinkedDetailNames':
-                $model = new CarENLinkedDetailNames();
-                break;
-            case 'CarMarksEN':
-                $model = new CarMarksEN();
-                break;
-            case 'CarMarkGroupsEN':
-                $model = new CarMarkGroupsEN();
-                break;
-            case 'CarModelsEN':
-                $model = new CarModelsEN();
-                break;
-            case 'CarModelGroupsEN':
-                $model = new CarModelGroupsEN();
-                break;
-            case 'CarBodyModelsEN':
-                $model = new CarBodyModelsEN();
-                break;
-            case 'CarBodyModelGroupsEN':
-                $model = new CarBodyModelGroupsEN();
-                break;
-            case 'CarEngineModelGroupsEN':
-                $model = new CarEngineModelGroupsEN();
-                break;
-            case 'CarEngineModelsEN':
-                $model = new CarEngineModelsEN();
-                break;
-            case 'CarEngineAndModelCorrespondencesEN':
-                $model = new CarEngineAndModelCorrespondencesEN();
-                break;
-            case 'CarEngineAndBodyCorrespondencesEN':
-                $model = new CarEngineAndBodyCorrespondencesEN();
-                break;
-            case 'CatalogNumbersEN':
-                $model = new CatalogNumbersEN();
-                break;
-            case 'CarPresenceEN':
-                $model = new CarPresenceEN();
-                break;
-
-            // TODO: дописать все ожидаемые входные файлы
-        }
-
         if ($model !== null) {
-            \Yii::$app->db->createCommand('SET foreign_key_checks = 0;')->execute();
-            $this->log('Очистка таблицы '.$table);
-
-            if (!($model::deleteAll() >= 0)) {
-                $this->log('Ошибка очисти таблицы '.$table.'. Импорт прерван', 'err');
-
-                return false;
-            }
-
-            $this->log('Заполнение таблицы '.$table.' (кол-во записей '.count($data).')');
-
             while ($data) {
                 $tmp = array_splice($data, 0, 1000);
                 try {
-                    $msg = $model->loadData($tmp);
+                    $model->loadData($tmp);
                 } catch (IntegrityException $e) {
                     // произошла ошибка записи, скорее всего из-за дублирования ключа
                     // перезапускаем заливу но уже по одному элементу
                     while ($tmp) {
                         $once = array_pop($tmp);
                         try {
-                            $msg = $model->loadData($once);
+                            $model->loadData($once);
                         } catch (IntegrityException $e) {
                             // поймали гадину
                             $this->log($e, 'err');
@@ -223,20 +172,8 @@ class LegacyImportController extends Controller
                     // все плохо
                     $this->log($e, 'err');
                 }
-                if (count($msg) > 0) {
-                    $this->log($msg, 'wrn');
-                }
-                $this->log('Осталось строк '.count($data));
+                $this->log('Записано строк ' . $model->find()->count());
             }
-
-            $this->log('Таблица '.$table.' импортирована (успешно записано строк '.$model->find()->count().')');
-
-            // если были отключены внешние ключи, включим их
-            \Yii::$app->db->createCommand('SET foreign_key_checks = 1;')->execute();
-        } else {
-            $this->log('Ошибка загрузки в базу, не правильное имя таблицы - '.$table, 'wrn');
         }
-
-        return true;
     }
 }

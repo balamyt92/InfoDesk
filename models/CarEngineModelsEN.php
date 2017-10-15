@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "CarEngineModelsEN".
  *
@@ -13,7 +15,7 @@ namespace app\models;
  * @property CarMarksEN $iDMark
  * @property ModelTypes $ID_Type
  */
-class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
+class CarEngineModelsEN extends ActiveRecord implements iLegacyImport
 {
     /**
      * {@inheritdoc}
@@ -84,23 +86,21 @@ class CarEngineModelsEN extends \yii\db\ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $engine = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->id = $engine[0];
-                    $this->ID_Mark = $engine[1];
-                    $this->Name = $engine[2];
-                    $this->ID_Type = $engine[4];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $engine]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return [
+                $el[0], $el[1], $el[2], $el[4]
+            ];
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'id', 'ID_Mark', 'Name', 'ID_Type'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

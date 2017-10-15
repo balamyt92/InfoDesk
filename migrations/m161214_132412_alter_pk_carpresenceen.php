@@ -47,8 +47,6 @@ class m161214_132412_alter_pk_carpresenceen extends Migration
         echo 'Load data to base'.PHP_EOL;
         exec('mysql -uroot '.$dbname.' < '.__DIR__.'/tmp.sql');
         unlink(__DIR__.'/tmp.sql');
-
-        $this->execute('ALTER TABLE `CarPresenceEN` ADD FULLTEXT INDEX `full_text_index` (`Comment` ASC, `Catalog_Number` ASC)');
     }
 
     public function down()

@@ -59,23 +59,19 @@ class CarModelsEN extends ActiveRecord implements iLegacyImport
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $model = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->id = $model[0];
-                    $this->ID_Mark = $model[1];
-                    $this->Name = $model[2];
-                    $this->ID_Type = $model[3];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $model]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 4);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'id', 'ID_Mark', 'Name', 'ID_Type'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

@@ -78,24 +78,19 @@ class ServicePresence extends ActiveRecord implements iLegacyImport
      */
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $service = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_Service = $service[0];
-                    $this->ID_Firm = $service[1];
-                    $this->Comment = $service[2];
-                    $this->CarList = $service[3];
-                    $this->Coast = $service[4];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $service]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 5);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_Service', 'ID_Firm', 'Comment', 'CarList', 'Coast'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }

@@ -62,21 +62,19 @@ class CarENLinkedDetailNames extends \yii\db\ActiveRecord implements iLegacyImpo
 
     public function loadData($data)
     {
-        return self::getDb()->transaction(
-            function ($db) use ($data) {
-                $msg = [];
-                while ($data) {
-                    $name = array_shift($data);
-                    self::setIsNewRecord(true);
-                    $this->ID_GroupDetail = $name[0];
-                    $this->ID_LinkedDetail = $name[1];
-                    if (!$this->save()) {
-                        array_push($msg, [$this->getFirstErrors(), $name]);
-                    }
-                }
+        $result = array_map(function ($el) {
+            return array_slice($el, 0, 2);
+        }, $data);
 
-                return $msg;
-            }
-        );
+        \Yii::$app->db->createCommand()
+            ->batchInsert(
+                self::tableName(),
+                [
+                    'ID_GroupDetail', 'ID_LinkedDetail'
+                ],
+                $result
+            )->execute();
+
+        return '';
     }
 }
