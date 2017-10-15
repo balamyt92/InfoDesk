@@ -91,10 +91,10 @@ $(function () {
                 $.get(URLS.STATISTIC_PARTS, {
                     id: id
                 }, function (resp) {
-                    if(!resp.success) {
-                        console.log('Не пршла статистика. ' + resp.message);
+                    if (!resp.success) {
+                        console.log("Не пршла статистика. " + resp.message);
                     }
-                })
+                });
             },
             filterSort: function (results, container, query) {
                 if (query.term !== undefined && query.term.length > 0) {
@@ -161,10 +161,10 @@ $(function () {
                 $.get(URLS.STATISTIC_FIRMS, {
                     id: id
                 }, function (resp) {
-                    if(!resp.success) {
-                        console.log('Не пршла статистика. ' + resp.message);
+                    if (!resp.success) {
+                        console.log("Не пршла статистика. " + resp.message);
                     }
-                })
+                });
             }
         };
 
@@ -195,10 +195,10 @@ $(function () {
                 $.get(URLS.STATISTIC_SERVICE, {
                     id: id
                 }, function (resp) {
-                    if(!resp.success) {
-                        console.log('Не пршла статистика. ' + resp.message);
+                    if (!resp.success) {
+                        console.log("Не пршла статистика. " + resp.message);
                     }
-                })
+                });
             },
             openCategory: function (id) {
                 $.get(URLS.SERVICE_GET_CATEGORY, {id: id}, function (resp) {
@@ -215,7 +215,7 @@ $(function () {
             renderCategories: function () {
                 STATE.service.lastInput.html(STATE.service.categories);
                 STATE.service.inCategory = false;
-                if(STATE.service.lastCategory) {
+                if (STATE.service.lastCategory) {
                     STATE.service.lastInput[0].value = STATE.service.lastCategory;
                 }
             }
@@ -667,10 +667,10 @@ $(function () {
                             parts.modelInput.select2("enable", false);
                             parts.bodyInput.select2("enable", false);
                             parts.engineInput.select2("enable", false);
+                            parts.modelInput.select2("val", "");
+                            parts.bodyInput.select2("val", "");
+                            parts.engineInput.select2("val", "");
                         }
-                        console.log(parts.getModel());
-                        console.log(parts.getBody());
-                        console.log(parts.getEngine());
                     })
                     .select2("val", "")
                     .on("select2-focus", function (e) {
@@ -683,16 +683,34 @@ $(function () {
     }
 
     function getModels(parts) {
-        parts.bodyInput.select2("enable", false);
-        parts.bodyInput.select2("val", "");
+        parts.modelInput
+            .select2("data", {results: null})
+            .select2("val", "")
+            .select2("enable", true);
+        parts.bodyInput
+            .select2("enable", false)
+            .select2("data", {results: null, text: null})
+            .select2("val", "");
         $.get(URLS.GET_MODELS, {id: parts.getMark()}, function (resp) {
             if (resp.success) {
+                let s = false;
+                let input = $("#select2-drop").find("div > input");
+                if (input.length) {
+                    s = input.val();
+                }
                 parts.modelInput.select2({
                     data: {results: resp.data, text: "Name"},
                     sortResults: parts.filterSort,
                     openOnEnter: false,
                     allowClear: true,
-                }).select2("enable", true);
+                });
+                if (parts.lastInput.select2) {
+                    parts.lastInput.select2("focus");
+                    if (s && input.length) {
+                        parts.lastInput.select2("open");
+                        $("#select2-drop").find("div > input").val(s);
+                    }
+                }
             } else {
                 alert("Не смог получить список моделей. " + resp.message);
             }
@@ -700,6 +718,7 @@ $(function () {
     }
 
     function getEngines(parts) {
+        parts.engineInput.select2("enable", true);
         $.get(URLS.GET_ENGINES, {
             mark_id: parts.getMark(),
             model_id: parts.getModel(),
@@ -711,7 +730,7 @@ $(function () {
                     sortResults: parts.filterSort,
                     openOnEnter: false,
                     allowClear: true,
-                }).select2("enable", true);
+                });
             } else {
                 alert("Не смог получить список двигателей. " + resp.message);
             }
@@ -719,6 +738,7 @@ $(function () {
     }
 
     function getBodies(parts) {
+        parts.bodyInput.select2("enable", true);
         $.get(URLS.GET_BODIES, {
             id: parts.getModel()
         }, function (resp) {
@@ -736,7 +756,7 @@ $(function () {
                     sortResults: parts.filterSort,
                     openOnEnter: false,
                     allowClear: true,
-                }).select2("enable", true);
+                });
             } else {
                 alert("Не смог получить список кузовов. " + resp.message);
             }
