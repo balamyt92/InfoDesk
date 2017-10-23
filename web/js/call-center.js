@@ -44,7 +44,7 @@ $(function () {
         STATE.parts = {
             modal: $("#parts-search-result"),
             grid: $("#parts-result"),
-            gridPager: $("#parts-pager"),
+            gridPager: "#parts-pager",
             detailInput: $("#detail-select"),
             markInput: $("#mark-select"),
             modelInput: $("#model-select"),
@@ -74,15 +74,19 @@ $(function () {
                 let realRowInLasPage = this.grid.jqGrid("getGridParam", "records") - (rowInPage * (totalPages - 1));
                 let firmID = this.grid.getCell(1, "id");
                 let color = false;
-                for (let i = 2; currentPage < totalPages ? i < rowInPage : i <= realRowInLasPage; i++) {
+                let i = 1;
+                let totalRows = this.grid.jqGrid("getGridParam", "records");
+                for (; i <= totalRows; i++) {
                     let newId = this.grid.getCell(i, "id");
-                    if (firmID !== newId) {
-                        firmID = newId;
-                        color = !color;
-                    }
-                    if (color) {
-                        for (let j = 1; j <= 11; j++) {
-                            this.grid.setCell(i, j, "", {background: "#dff0d8"});
+                    if(newId) {
+                        if (firmID !== newId) {
+                            firmID = newId;
+                            color = !color;
+                        }
+                        if (color) {
+                            for (let j = 1; j <= 11; j++) {
+                                this.grid.setCell(i, j, "", {background: "#dff0d8"});
+                            }
                         }
                     }
                 }
@@ -142,7 +146,7 @@ $(function () {
         STATE.firm = {
             modal: $("#firm-search-result"),
             grid: $("#firm-result"),
-            gridPager: $("#firm-pager"),
+            gridPager: "#firm-pager",
             lastInput: $("#search-line"),
             cols: [
                 {label: "Row", name: "Row", key: true, width: -1, hidden: true},
@@ -173,7 +177,7 @@ $(function () {
 
         STATE.service = {
             grid: $("#service-result"),
-            gridPager: $("#service-pager"),
+            gridPager: "#service-pager",
             lastInput: $("#service"),
             categories: undefined,
             lastCategory: undefined,
@@ -338,7 +342,7 @@ $(function () {
             autowidth: true,
             height: obj.modal.height() - 100,
             rowNum: 1000,
-            pager: obj.pager,
+            pager: obj.gridPager,
             datatype: "local",
             styleUI: "Bootstrap",
             responsive: true,
@@ -439,55 +443,67 @@ $(function () {
      * @param obj
      */
     function gridKeyHandler(e, grid, obj) {
-        let rowInPage = grid.jqGrid("getGridParam", "rowNum");
-        let totalPages = grid.jqGrid("getGridParam", "lastpage");
-        let currentPage = grid.jqGrid("getGridParam", "page");
-        let currentRow = grid.jqGrid("getGridParam", "selrow");
-        let realRowInLasPage = grid.jqGrid("getGridParam", "records") - (rowInPage * (totalPages - 1));
-
-        obj.pagerLastRow = (!currentRow && currentPage === totalPages);
-        obj.pagerToNext = currentRow === rowInPage;
-        obj.pagerToBack = currentRow === 1;
+        let rowInPage = parseInt(grid.jqGrid("getGridParam", "rowNum"));
+        let totalPages = parseInt(grid.jqGrid("getGridParam", "lastpage"));
+        let currentPage = parseInt(grid.jqGrid("getGridParam", "page"));
+        let currentRow = parseInt(grid.jqGrid("getGridParam", "selrow"));
+        let realRowInLasPage = parseInt(grid.jqGrid("getGridParam", "records")) - (rowInPage * (totalPages - 1));
+        let totalRows = parseInt(grid.jqGrid("getGridParam", "records"));
 
         if (e.ctrlKey && ((e.keyCode === KEY.DOWN && !obj.pagerLastRow) || e.keyCode === KEY.UP)) {
-            let i = currentRow;
+            let i = currentRow - 1;
             let oldID = grid.getCell(i, "id"),
                 newID = oldID;
 
-            while (newID === oldID && i < (currentPage < totalPages ? rowInPage : realRowInLasPage) && i > 0) {
+            while (newID && newID === oldID && i < totalRows && i > 0) {
                 e.keyCode === KEY.DOWN ? i++ : i--;
                 newID = grid.getCell(i, "id");
             }
 
-            grid.jqGrid("setSelection", i, false);
+            if(!newID) {
+                if(e.keyCode === KEY.DOWN) {
+                    grid.jqGrid("setGridParam", {"page": currentPage + 1}).trigger("reloadGrid");
+                    obj.highlightRow();
+                    grid.jqGrid("setSelection", (currentPage * rowInPage) + 1, false);
+                } else {
+                    grid.jqGrid("setGridParam", {"page": currentPage - 1}).trigger("reloadGrid");
+                    obj.highlightRow();
+                    grid.jqGrid("setSelection", ((currentPage - 1) * rowInPage) + 1, false);
+                    console.log('prev');
+                    console.log(((currentPage - 1) * rowInPage) + 1);
+                }
+            } else {
+                grid.jqGrid("setSelection", i, false);
+            }
+
             grid.focus();
         }
 
         // если вниз и последняя строка
-        if (e.keyCode === KEY.DOWN && totalPages !== currentPage && obj.pagerToNext) {
-            grid.jqGrid("setGridParam", {"page": currentPage + 1}).trigger("reloadGrid");
-            grid.jqGrid("setSelection", 1, false);
+        if (e.keyCode === KEY.DOWN && currentPage < totalPages && obj.pagerToNext) {
+            currentRow = (rowInPage * currentPage) + 1;
+            currentPage = currentPage + 1;
+            grid.jqGrid("setGridParam", {"page": currentPage}).trigger("reloadGrid");
+            grid.jqGrid("setSelection", currentRow, false);
             obj.highlightRow();
             grid.focus();
-            currentPage = currentPage + 1;
-            currentRow = 1;
         }
         // если вниз и последняя строка последней страницы
-        if (e.keyCode === KEY.DOWN && totalPages === currentPage && obj.pagerLastRow) {
-            grid.jqGrid("setSelection", realRowInLasPage, false);
+        if (e.keyCode === KEY.DOWN && totalPages === currentPage && isNaN(currentRow)) {
+            currentRow = (totalPages - 1) * rowInPage + realRowInLasPage;
+            grid.jqGrid("setSelection", currentRow, false);
             grid.focus();
-            currentRow = realRowInLasPage;
         }
         if (e.keyCode === KEY.UP && currentPage > 1 && obj.pagerToBack) {
-            grid.jqGrid("setGridParam", {"page": currentPage - 1}).trigger("reloadGrid");
-            grid.jqGrid("setSelection", rowInPage, false);
+            currentPage = currentPage - 1;
+            currentRow = (rowInPage * (currentPage - 1)) + rowInPage;
+            grid.jqGrid("setGridParam", {"page": currentPage}).trigger("reloadGrid");
+            grid.jqGrid("setSelection", currentRow, false);
             obj.highlightRow();
             grid.focus();
-            currentPage = currentPage - 1;
-            currentRow = rowInPage;
         }
 
-        if (e.keyCode === KEY.UP && currentPage === 1 && currentRow <= 1) {
+        if (e.keyCode === KEY.UP && currentPage === 1 && isNaN(currentRow)) {
             grid.jqGrid("setSelection", 1, false);
             grid.focus();
         }
@@ -508,14 +524,18 @@ $(function () {
         }
 
         if (e.keyCode === KEY.END) {
-            if (currentPage === totalPages) {
+            grid.jqGrid("setGridParam", {"page": totalPages}).trigger("reloadGrid");
+            if (totalPages === 1) {
                 grid.jqGrid("setSelection", realRowInLasPage, false);
             } else {
-                grid.jqGrid("setSelection", rowInPage, false);
+                grid.jqGrid("setSelection", (totalPages - 1) * rowInPage + realRowInLasPage, false);
             }
             grid.focus();
         }
 
+        obj.pagerLastRow = (!currentRow && currentPage === totalPages);
+        obj.pagerToNext = currentRow === (rowInPage * currentPage);
+        obj.pagerToBack = currentRow === (rowInPage * (currentPage - 1)) + 1 && currentPage > 1;
     }
 
     function findParts(parts) {
