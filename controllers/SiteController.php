@@ -539,15 +539,21 @@ class SiteController extends Controller
                             ->where([
                                 'or',
                                 ['Name' => '***'],
-                                ['Name' => (new Query())
-                                    ->from('CarBodyModelsEN')
-                                    ->select('Name')
-                                    ->where(['id' => (int)$body_id]),
-                                ],
+                                ['id' => (int)$body_id],
                             ])
                             ->andWhere(['in', 'ID_Mark', $mark_search])
                             ->andWhere(['in', 'ID_Model', $model_search])
-                    )->all();
+                    )->union(
+                        (new Query())
+                            ->from('CarBodyModelGroupsEN')
+                            ->select('ID_BodyModel')
+                            ->where([
+                                'ID_BodyGroup' => (int)$body_id,
+                            ])
+                            ->andWhere(['in', 'ID_Mark', $mark_search])
+                            ->andWhere(['in', 'ID_Model', $model_search])
+                    )
+                    ->all();
 
                 $body_search = array_reduce($body_search, function ($acc, $el) {
                     $acc[] = (int)$el['ID_BodyGroup'];
