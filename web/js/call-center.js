@@ -78,7 +78,7 @@ $(function () {
                 let totalRows = this.grid.jqGrid("getGridParam", "records");
                 for (; i <= totalRows; i++) {
                     let newId = this.grid.getCell(i, "id");
-                    if(newId) {
+                    if (newId) {
                         if (firmID !== newId) {
                             firmID = newId;
                             color = !color;
@@ -460,17 +460,19 @@ $(function () {
                 newID = grid.getCell(i, "id");
             }
 
-            if(!newID) {
-                if(e.keyCode === KEY.DOWN) {
-                    grid.jqGrid("setGridParam", {"page": currentPage + 1}).trigger("reloadGrid");
-                    obj.highlightRow();
-                    grid.jqGrid("setSelection", (currentPage * rowInPage) + 1, false);
+            if (!newID) {
+                if (e.keyCode === KEY.DOWN) {
+                    if (currentPage < totalPages) {
+                        grid.jqGrid("setGridParam", {"page": currentPage + 1}).trigger("reloadGrid");
+                        obj.highlightRow();
+                        grid.jqGrid("setSelection", (currentPage * rowInPage) + 1, false);
+                    }
                 } else {
-                    grid.jqGrid("setGridParam", {"page": currentPage - 1}).trigger("reloadGrid");
-                    obj.highlightRow();
-                    grid.jqGrid("setSelection", ((currentPage - 1) * rowInPage) + 1, false);
-                    console.log('prev');
-                    console.log(((currentPage - 1) * rowInPage) + 1);
+                    if (currentPage > 1) {
+                        grid.jqGrid("setGridParam", {"page": currentPage - 1}).trigger("reloadGrid");
+                        obj.highlightRow();
+                        grid.jqGrid("setSelection", ((currentPage - 1) * rowInPage) + 1, false);
+                    }
                 }
             } else {
                 grid.jqGrid("setSelection", i, false);
@@ -524,10 +526,11 @@ $(function () {
         }
 
         if (e.keyCode === KEY.END) {
-            grid.jqGrid("setGridParam", {"page": totalPages}).trigger("reloadGrid");
-            if (totalPages === 1) {
+            if (totalPages === 1 || totalPages == currentPage) {
                 grid.jqGrid("setSelection", realRowInLasPage, false);
             } else {
+                grid.jqGrid("setGridParam", {"page": totalPages}).trigger("reloadGrid");
+                obj.highlightRow();
                 grid.jqGrid("setSelection", (totalPages - 1) * rowInPage + realRowInLasPage, false);
             }
             grid.focus();
@@ -758,7 +761,10 @@ $(function () {
     }
 
     function getBodies(parts) {
-        parts.bodyInput.select2("enable", true);
+        parts.bodyInput
+            .select2("enable", true)
+            .select2("data", {results: null, text: null})
+            .select2("val", "");
         $.get(URLS.GET_BODIES, {
             id: parts.getModel()
         }, function (resp) {
@@ -771,12 +777,25 @@ $(function () {
                 if (!flag) {
                     parts.bodyInput.select2("val", "");
                 }
+
+                let s = false;
+                let input = $("#select2-drop").find("div > input");
+                if (input.length) {
+                    s = input.val();
+                }
                 parts.bodyInput.select2({
                     data: {results: resp.data, text: "Name"},
                     sortResults: parts.filterSort,
                     openOnEnter: false,
                     allowClear: true,
                 });
+                if (parts.lastInput.select2) {
+                    parts.lastInput.select2("focus");
+                    if (s && input.length) {
+                        parts.lastInput.select2("open");
+                        $("#select2-drop").find("div > input").val(s);
+                    }
+                }
             } else {
                 alert("Не смог получить список кузовов. " + resp.message);
             }
