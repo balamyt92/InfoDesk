@@ -620,6 +620,7 @@ $(function () {
                     getEngines(parts);
                 } else {
                     parts.bodyInput.select2("enable", false);
+                    parts.bodyInput.select2("val", "");
                 }
             })
             .on("select2-focus", function (e) {
