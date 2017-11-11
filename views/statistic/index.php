@@ -278,7 +278,7 @@ HTML;
                                 ma.Name as mark,
                                 d.Name as detail,
                                 mo.Name as model,
-                                b.Name as boyd,
+                                b.Name as body,
                                 e.Name as engine
                                 {$position}
                             FROM stat_parts_query as q
