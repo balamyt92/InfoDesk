@@ -683,8 +683,6 @@ $(function () {
                     })
                     .on("change", function (e) {
                         if (e.val) {
-                            parts.modelInput.select2("val", "");
-                            parts.engineInput.select2("val", "");
                             getModels(parts);
                             getEngines(parts);
                         } else {
@@ -742,7 +740,11 @@ $(function () {
     }
 
     function getEngines(parts) {
-        parts.engineInput.select2("enable", true);
+        let last = parts.engineInput.select2("data");
+        parts.engineInput
+            .select2("data", {results: null})
+            .select2("val", "")
+            .select2("enable", true);
         $.get(URLS.GET_ENGINES, {
             mark_id: parts.getMark(),
             model_id: parts.getModel(),
@@ -755,6 +757,13 @@ $(function () {
                     openOnEnter: false,
                     allowClear: true,
                 });
+                if(last) {
+                    resp.data.map(function (i) {
+                        if(i.id === last.id) {
+                            parts.engineInput.select2('val', i.id);
+                        }
+                    });
+                }
             } else {
                 alert("Не смог получить список двигателей. " + resp.message);
             }
