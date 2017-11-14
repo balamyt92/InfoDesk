@@ -32,33 +32,33 @@ foreach ($days as $key => $day) {
             <td>
                 День
             </td>
-            <? foreach ($date_column as $item): ?>
+            <?php foreach ($date_column as $item): ?>
                 <td>
                     <?= $item['name'] ?>
                 </td>
-            <? endforeach; ?>
+            <?php endforeach; ?>
             <td>
                 Сумма дня
             </td>
         </tr>
         </thead>
         <tbody>
-        <? foreach ($rows as $row): ?>
+        <?php foreach ($rows as $row): ?>
         <tr>
-            <? foreach ($row as $cell): ?>
+            <?php foreach ($row as $cell): ?>
             <td>
                 <?= $cell ?>
             </td>
-            <? endforeach; ?>
+            <?php endforeach; ?>
         </tr>
-        <? endforeach; ?>
+        <?php endforeach; ?>
         <tr class="success">
             <td>ИТОГО:</td>
-            <? foreach ($sum_by_column as $item): ?>
+            <?php foreach ($sum_by_column as $item): ?>
                 <td>
                     <?= $item ?>
                 </td>
-            <? endforeach; ?>
+            <?php endforeach; ?>
             <td>
                 <?= $total_sum ?>
             </td>

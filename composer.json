@@ -8,7 +8,6 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": "2.0.12",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-jui": "^2.0",
         "bower-asset/jqgrid": "*",
         "kartik-v/yii2-widget-datepicker": "@dev",
@@ -19,11 +18,10 @@
         "kartik-v/yii2-mpdf": "*",
         "kartik-v/yii2-export": "*",
         "phpoffice/phpexcel": "1.8.1",
-        "miloschuman/yii2-highcharts-widget": "dev-master",
+        "miloschuman/yii2-highcharts-widget": "*",
         "lesha724/yii2-ckeditor": "*"
     },
     "require-dev": {
-        "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
