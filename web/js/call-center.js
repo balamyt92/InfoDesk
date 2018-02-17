@@ -384,6 +384,7 @@ $(function () {
      * @param data
      */
     function renderGrid(grid, data) {
+        $(window).trigger('resize');
         grid.jqGrid("clearGridData");
 
         data = data.map(function (item, i) {
@@ -616,12 +617,12 @@ $(function () {
             .on("change", function (e) {
                 if (e.val) {
                     parts.bodyInput.select2("val", "");
-                    getBodies(parts);
-                    getEngines(parts);
                 } else {
                     parts.bodyInput.select2("enable", false);
                     parts.bodyInput.select2("val", "");
                 }
+                getBodies(parts);
+                getEngines(parts);
             })
             .on("select2-focus", function (e) {
                 parts.lastInput = $(this);
