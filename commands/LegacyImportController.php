@@ -161,7 +161,7 @@ class LegacyImportController extends Controller
                     while ($tmp) {
                         $once = array_pop($tmp);
                         try {
-                            $model->loadData($once);
+                            $model->loadData([$once]);
                         } catch (IntegrityException $e) {
                             // поймали гадину
                             $this->log($e, 'err');
